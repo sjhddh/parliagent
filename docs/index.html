@@ -601,7 +601,7 @@ if (currentRound >= maxRounds) {
   "Should a startup use microservices or a monolith for their fintech platform that needs to handle payments, KYC, and regulatory compliance?"
 </blockquote>
 
-<p>Here are the results:</p>
+<p data-i18n="case_results">Here are the results:</p>
 
 <div class="metrics-grid">
   <div class="metric-card">
@@ -662,9 +662,9 @@ if (currentRound >= maxRounds) {
 <p data-i18n="case4">You saw this quote in the opening. Here's why it matters beyond shock value: NietzscheSeat reframed a technical architecture question as a <em>psychological</em> one. No other seat thought to question the motivation behind the question itself. That's not something you get from a single agent, no matter how good — it requires a persona whose entire job is to challenge the premise.</p>
 
 <details>
-  <summary>View the minority report</summary>
+  <summary data-i18n="sum_minority">View the minority report</summary>
   <div class="details-content">
-    <p>Even in a 94% consensus, two seats held back:</p>
+    <p data-i18n="minority1">Even in a 94% consensus, two seats held back:</p>
     <div class="seat-card">
       <div class="seat-name">OpenAISeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
       <div class="seat-text">"Both microservices and monoliths have distinct advantages; the choice depends on the startup's specific needs and resources. Microservices offer scalability and flexibility. Monolithic architectures can lead to faster initial development."</div>
@@ -673,12 +673,12 @@ if (currentRound >= maxRounds) {
       <div class="seat-name">KantSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
       <div class="seat-text">"The choice must be determined by which architecture better enables the startup to treat its duties to customers, regulators, and society as categorical imperatives, not mere technical preferences."</div>
     </div>
-    <p>The minority report exists because Parliagent <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
+    <p data-i18n="minority2">The minority report exists because Parliagent <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
   </div>
 </details>
 
 <details>
-  <summary>View selected warnings (33 total raised)</summary>
+  <summary data-i18n="sum_warnings">View selected warnings (33 total raised)</summary>
   <div class="details-content">
     <ul>
       <li>"Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade security controls" — SecurityPrivacySeat</li>
@@ -687,7 +687,7 @@ if (currentRound >= maxRounds) {
       <li>"The planning fallacy suggests we're systematically overestimating the coordination benefits while underestimating implementation complexity" — KahnemanSeat</li>
       <li>"Distributed financial systems without formal verification of consistency properties pose systemic risk to payment integrity" — TuringSeat</li>
     </ul>
-    <p>Each warning is tied to the seat that raised it. You can trace <em>who</em> flagged what, and decide for yourself how much weight to give it.</p>
+    <p data-i18n="warn_trace">Each warning is tied to the seat that raised it. You can trace <em>who</em> flagged what, and decide for yourself how much weight to give it.</p>
   </div>
 </details>
 
@@ -718,7 +718,7 @@ if (currentRound >= maxRounds) {
 
 <h2 data-i18n="h_cost">What It Costs</h2>
 
-<p>Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All four providers (Anthropic, OpenAI, Google/Gemini, FLOCK) have been live-validated individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
+<p data-i18n="cost1">Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All four providers (Anthropic, OpenAI, Google/Gemini, FLOCK) have been live-validated individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
 
 <table>
   <thead>
@@ -732,15 +732,15 @@ if (currentRound >= maxRounds) {
   </tbody>
 </table>
 
-<p>Micro mode is the sweet spot for everyday use — it costs a penny, takes 16 seconds, and still surfaces 3+ disagreements on average. Fast mode is what we default for <code>plan</code> and <code>review</code> commands, where thoroughness matters more than speed.</p>
+<p data-i18n="cost2">Micro mode is the sweet spot for everyday use — it costs a penny, takes 16 seconds, and still surfaces 3+ disagreements on average. Fast mode is what we default for <code>plan</code> and <code>review</code> commands, where thoroughness matters more than speed.</p>
 
-<p>We're being honest about balanced mode: <strong>it has diminishing returns.</strong> It costs 13.3x baseline but only produces 1.7x more disagreements than fast. Almost everything resolves as "uncertain" (9 out of 10 runs). More seats don't automatically mean more clarity — they mean more perspectives, which can fragment rather than converge. We recommend fast for most use cases and reserve balanced for genuinely high-stakes decisions.</p>
+<p data-i18n="cost3">We're being honest about balanced mode: <strong>it has diminishing returns.</strong> It costs 13.3x baseline but only produces 1.7x more disagreements than fast. Almost everything resolves as "uncertain" (9 out of 10 runs). More seats don't automatically mean more clarity — they mean more perspectives, which can fragment rather than converge. We recommend fast for most use cases and reserve balanced for genuinely high-stakes decisions.</p>
 
 <div class="warning-box">
   <strong>A caveat our own parliament demanded we include:</strong> These benchmarks measure disagreement <em>volume</em> (how many objections are raised), not decision <em>quality</em> (whether the final answer is actually better). We don't yet have ground-truth validation comparing Parliagent decisions against outcomes or human expert panels. Ten prompts across six categories is enough to calibrate defaults, not enough to prove systematic superiority. We're being upfront about this because the parliament literally told us to — KahnemanSeat called it "measuring activity rather than accuracy."
 </div>
 
-<p>Full Parliament at $1.50 per run is a special-purpose tool. You'd use it the way you'd schedule a board meeting — not for every question, but for the ones where you need every disciplinary angle covered.</p>
+<p data-i18n="cost4">Full Parliament at $1.50 per run is a special-purpose tool. You'd use it the way you'd schedule a board meeting — not for every question, but for the ones where you need every disciplinary angle covered.</p>
 
 <hr>
 
@@ -752,19 +752,19 @@ if (currentRound >= maxRounds) {
 
 <h3 data-i18n="h_conv_rare">Convergence rarely triggers</h3>
 
-<p>In 30 parliament runs across our benchmark suite, only 1 reached the convergence threshold early. The other 29 hit the round limit. This means either our convergence thresholds are too strict, or these debates genuinely don't converge when you have personas with different priors.</p>
+<p data-i18n="conv_r1">In 30 parliament runs across our benchmark suite, only 1 reached the convergence threshold early. The other 29 hit the round limit. This means either our convergence thresholds are too strict, or these debates genuinely don't converge when you have personas with different priors.</p>
 
-<p>We think it's the latter — and it's by design. Parliagent is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
+<p data-i18n="conv_r2">We think it's the latter — and it's by design. Parliagent is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
 
 <h3 data-i18n="h_writing">Writing tasks don't benefit from debate</h3>
 
-<p>A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
+<p data-i18n="writing1">A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
 
-<p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
+<p data-i18n="writing2">If your question has a single good answer, don't convene a parliament. Just answer it.</p>
 
 <h3 data-i18n="h_providers">Four providers, all tested</h3>
 
-<p>Parliagent ships adapters for four LLM providers. All four are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations:</p>
+<p data-i18n="prov1">Parliagent ships adapters for four LLM providers. All four are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations:</p>
 
 <table>
   <thead>
@@ -778,33 +778,33 @@ if (currentRound >= maxRounds) {
   </tbody>
 </table>
 
-<p>FLOCK deserves a note: it uses an OpenAI-compatible API format with <code>x-litellm-api-key</code> header auth, which means any OpenAI-compatible endpoint can plug in through the same adapter. You specify your model explicitly via <code>FLOCK_MODEL</code> — there's no hardcoded default, which keeps it genuinely provider-agnostic.</p>
+<p data-i18n="prov2">FLOCK deserves a note: it uses an OpenAI-compatible API format with <code>x-litellm-api-key</code> header auth, which means any OpenAI-compatible endpoint can plug in through the same adapter. You specify your model explicitly via <code>FLOCK_MODEL</code> — there's no hardcoded default, which keeps it genuinely provider-agnostic.</p>
 
-<p>The federated execution profile — where OpenAISeat runs on OpenAI, ClaudeSeat runs on Anthropic, and other seats use whichever provider is primary — has been validated with both Anthropic+OpenAI and FLOCK+Anthropic combinations. We can confirm that cross-provider debates work; whether they produce <em>meaningfully different</em> disagreements than single-provider runs is a question we're still investigating.</p>
+<p data-i18n="prov3">The federated execution profile — where OpenAISeat runs on OpenAI, ClaudeSeat runs on Anthropic, and other seats use whichever provider is primary — has been validated with both Anthropic+OpenAI and FLOCK+Anthropic combinations. We can confirm that cross-provider debates work; whether they produce <em>meaningfully different</em> disagreements than single-provider runs is a question we're still investigating.</p>
 
 <h3 data-i18n="h_security">Security detection is coarse</h3>
 
-<p>The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a limitation we intend to improve.</p>
+<p data-i18n="sec1">The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a limitation we intend to improve.</p>
 
 <h3 data-i18n="h_meta">The meta-critique (and the critique of the critique)</h3>
 
-<p>We used Parliagent to write this article. Then we used Parliagent to review this article. The review was brutal.</p>
+<p data-i18n="meta_intro">We used Parliagent to write this article. Then we used Parliagent to review this article. The review was brutal.</p>
 
-<p>In a balanced review (7 seats), the parliament returned <code>decisionType: "majority"</code> with this verdict:</p>
+<p data-i18n="meta_bal">In a balanced review (7 seats), the parliament returned <code>decisionType: "majority"</code> with this verdict:</p>
 
 <div class="seat-card">
   <div class="seat-name">Parliament Verdict <span class="seat-stance">majority &middot; 7 seats</span></div>
   <div class="seat-text">"This article showcases impressive technical execution and refreshing intellectual honesty, but undermines its own credibility through circular validation, scientifically inadequate benchmarks, and conflation of artificial disagreement with genuine insight."</div>
 </div>
 
-<p>In a full parliament review (33 seats, 79 disagreements, 29 warnings), the verdict was sharper:</p>
+<p data-i18n="meta_full">In a full parliament review (33 seats, 79 disagreements, 29 warnings), the verdict was sharper:</p>
 
 <div class="seat-card">
   <div class="seat-name">Full Parliament Verdict <span class="seat-stance">majority &middot; 33 seats</span></div>
   <div class="seat-text">"This is a technically impressive article with a compelling core insight about structured disagreement, but it's trapped between being product documentation and paradigm manifesto — it needs to pick one lane and commit fully."</div>
 </div>
 
-<p>Individual seats were even more pointed:</p>
+<p data-i18n="meta_pointed">Individual seats were even more pointed:</p>
 
 <div class="seat-card">
   <div class="seat-name">KahnemanSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
@@ -840,7 +840,7 @@ if (currentRound >= maxRounds) {
 
 <h2 data-i18n="h_when">When to Use It (and When Not To)</h2>
 
-<p>Parliagent ships with a <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
+<p data-i18n="when1">Parliagent ships with a <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
 
 <div class="mermaid">
 graph TD
@@ -856,7 +856,7 @@ graph TD
     I -->|"No"| K["mode: micro"]
 </div>
 
-<p>The key principle: <strong>match the cost to the stakes.</strong> A penny for a quick take. Four cents for a thorough review. A dollar fifty for a full parliament. Zero cents for a question that doesn't need debate.</p>
+<p data-i18n="when2">The key principle: <strong>match the cost to the stakes.</strong> A penny for a quick take. Four cents for a thorough review. A dollar fifty for a full parliament. Zero cents for a question that doesn't need debate.</p>
 
 <hr>
 
@@ -887,7 +887,7 @@ parliagent plan "Migration plan from monolith to microservices"
 # All 33 seats — the board meeting
 parliagent debate "Should we open-source our core?" --full-parliagent</code></pre>
 
-<p>Or from code:</p>
+<p data-i18n="try_code">Or from code:</p>
 
 <pre><code class="language-typescript">import { debate } from "parliagent";
 
@@ -908,7 +908,7 @@ if (result.warnings?.length) {
   console.warn("Parliament raised concerns:", result.warnings);
 }</code></pre>
 
-<p>The <code>inspect</code> command is free — it shows you exactly which seats would be selected and why, without making any API calls. Use it to understand routing before committing to a debate.</p>
+<p data-i18n="try_inspect">The <code>inspect</code> command is free — it shows you exactly which seats would be selected and why, without making any API calls. Use it to understand routing before committing to a debate.</p>
 
 <hr>
 
@@ -916,9 +916,9 @@ if (result.warnings?.length) {
 
 <h2 data-i18n="h_next">What Comes Next</h2>
 
-<p>Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (all live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
+<p data-i18n="next1">Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (all live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
 
-<p>Here are the genuine open questions — several surfaced by the parliament's own self-review:</p>
+<p data-i18n="next2">Here are the genuine open questions — several surfaced by the parliament's own self-review:</p>
 
 <ul>
   <li><strong>Ground-truth validation:</strong> The parliament's sharpest critique of itself: we measure disagreement volume, not decision quality. The next step is comparing Parliagent outputs against human expert panels and tracking actual outcomes. Until then, we're honest that "more disagreements" is a proxy, not proof.</li>
@@ -929,7 +929,7 @@ if (result.warnings?.length) {
   <li><strong>FLOCK as a universal adapter:</strong> The FLOCK provider's OpenAI-compatible interface means any LiteLLM-style proxy or custom endpoint could plug in. We want to explore this as a path to supporting dozens of model backends through a single adapter pattern.</li>
 </ul>
 
-<p>The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much. When we asked 33 seats to review this very article, every single one gave "mixed" — not "support." They found the architecture compelling but the evidence insufficient. They liked the honesty but wanted ground-truth validation. They thought the Nietzsche quote was memorable but worried it was gimmicky.</p>
+<p data-i18n="next3">The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much. When we asked 33 seats to review this very article, every single one gave "mixed" — not "support." They found the architecture compelling but the evidence insufficient. They liked the honesty but wanted ground-truth validation. They thought the Nietzsche quote was memorable but worried it was gimmicky.</p>
 
 <p data-i18n="close1">We're publishing their critique alongside our claims because that's the whole point: <strong>the tool that suppresses its own dissent has already failed.</strong></p>
 
@@ -938,9 +938,9 @@ if (result.warnings?.length) {
 <hr>
 
 <div class="article-footer">
-  <p><strong>Parliagent</strong> is open-source under MIT. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a></p>
-  <p>This article was shaped by six Parliagent debates: four for content generation (article structure, core thesis, comparison, and a full parliament case study), plus two self-reviews where the parliament critiqued this article (balanced mode + full parliament, 79 disagreements, 29 warnings). Total debate cost: approximately $3.30. Every criticism the parliament raised about this article is included above, unedited.</p>
-  <p>Published April 2026.</p>
+  <p data-i18n="footer1"><strong>Parliagent</strong> is open-source under MIT. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a></p>
+  <p data-i18n="footer2">This article was shaped by six Parliagent debates: four for content generation (article structure, core thesis, comparison, and a full parliament case study), plus two self-reviews where the parliament critiqued this article (balanced mode + full parliament, 79 disagreements, 29 warnings). Total debate cost: approximately $3.30. Every criticism the parliament raised about this article is included above, unedited.</p>
+  <p data-i18n="footer3">Published April 2026.</p>
 </div>
 
 </article>
@@ -1034,6 +1034,38 @@ if (result.warnings?.length) {
       h_next: "下一步",
       close1: '我们把他们的批评和我们的主张并列发表，因为这就是重点：<strong>压制自身异议的工具已经失败了。</strong>',
       close2: "也许结构化分歧不是AI推理的终极答案。但它是一个比盲目一致更好的起点。不是每个工具都需要成为神谕。有时它只需要成为那个追问神谕遗漏了什么的人。",
+      case_results: "结果如下：",
+      sum_minority: "查看少数派报告",
+      minority1: "即使在94%的共识中，仍有两个席位保留意见：",
+      minority2: "少数派报告之所以存在，是因为Parliagent<em>从不压制异议</em>。当决策类型不是共识时，少数派声音会被显式地呈现——而不是埋在一段模棱两可的措辞里。",
+      sum_warnings: "查看部分警告（共33条）",
+      warn_trace: "每条警告都关联到发出它的席位。你可以追溯<em>谁</em>标记了什么，自己决定给予多少权重。",
+      cost1: "以下基准数据来自6个类别（编码、规划、写作、策略、安全、分析）的10个提示，基于Anthropic Claude运行，测量于2026年4月2日。全部四个提供商（Anthropic、OpenAI、Google/Gemini、FLOCK）均已单独和联合模式下通过实时验证；成本基准以Anthropic为参考。",
+      cost2: "Micro模式是日常使用的最佳选择——花费一美分，耗时16秒，仍能平均浮现3+个分歧。Fast模式是我们对<code>plan</code>和<code>review</code>命令的默认设置，因为这些场景下全面性比速度更重要。",
+      cost3: '我们对balanced模式很坦诚：<strong>边际收益递减。</strong>它的成本是基线的13.3倍，但只比fast多产生1.7倍的分歧。几乎所有结果都是"uncertain"（10次中有9次）。更多席位不自动意味着更清晰——它们意味着更多视角，可能分散而非收敛。我们建议大多数场景使用fast，balanced留给真正高风险的决策。',
+      cost4: "全议会模式每次运行$1.50，是一个专用工具。就像你安排一次董事会会议——不是每个问题都需要，但对于需要覆盖每个学科角度的问题，值得。",
+      conv_r1: "在我们基准测试的30次议会运行中，只有1次提前达到收敛阈值。其余29次都触发了轮次限制。这意味着要么我们的收敛阈值过于严格，要么当你有不同先验的角色时，这些辩论确实不会收敛。",
+      conv_r2: "我们认为是后者——而且这是设计使然。Parliagent的构建目标是暴露结构化的分歧，而不是制造过早的共识。价值在于分歧记录和少数派报告，而不在于所有人都同意。",
+      writing1: '写作提示在micro模式下一轮就达成共识，<strong>零分歧</strong>。即使在fast模式下，写作也只产生了5个分歧——所有类别中最低的。这证实了<a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a>明确警告的：<em>"任务是纯写作或草稿——辩论无益。"</em>',
+      writing2: "如果你的问题只有一个正确答案，就别召开议会了。直接回答吧。",
+      prov1: "Parliagent为四个LLM提供商提供了适配器。全部四个都已端到端实时验证——单独和联合/supreme组合：",
+      prov2: "FLOCK值得一提：它使用与OpenAI兼容的API格式，采用<code>x-litellm-api-key</code>头部认证，这意味着任何OpenAI兼容的端点都可以通过同一适配器接入。你通过<code>FLOCK_MODEL</code>显式指定模型——没有硬编码默认值，保持真正的提供商无关性。",
+      prov3: "联合执行配置——OpenAISeat运行在OpenAI上，ClaudeSeat运行在Anthropic上，其他席位使用主提供商——已通过Anthropic+OpenAI和FLOCK+Anthropic组合验证。我们可以确认跨提供商辩论有效；它们是否产生<em>有实质区别的</em>分歧仍在研究中。",
+      sec1: '从micro自动升级到fast的安全敏感提示使用关键词匹配。它能捕获"auth"、"credentials"和"PCI"，但无法捕获隐藏在业务逻辑描述中的微妙安全隐患。这是一个我们打算改进的限制。',
+      meta_intro: "我们用Parliagent写了这篇文章。然后用Parliagent审查了这篇文章。审查非常残酷。",
+      meta_bal: '在balanced审查（7个席位）中，议会返回<code>decisionType: "majority"</code>，裁决如下：',
+      meta_full: "在全议会审查（33个席位，79个分歧，29条警告）中，裁决更加尖锐：",
+      meta_pointed: "个别席位更加直言不讳：",
+      when1: 'Parliagent附带一个<a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a>，AI agent可以直接读取。以下是人类版本的决策树：',
+      when2: "核心原则：<strong>让成本匹配风险。</strong>一分钱换一个快速判断。四分钱换一个全面审查。一块五换一个全议会。零成本回答不需要辩论的问题。",
+      try_code: "或者在代码中使用：",
+      try_inspect: "<code>inspect</code>命令是免费的——它准确显示会选择哪些席位及原因，不需要任何API调用。在决定开始辩论之前，用它来了解路由。",
+      next1: "Parliagent提供33个生产级席位、4种辩论模式、3种执行配置、5种回答模式、4个提供商适配器（全部实时验证）、CLI、SDK和无服务器适配器。151个测试覆盖14个文件。它能用。基准数据是真实的。限制已记录。",
+      next2: "以下是真正的开放问题——其中几个由议会自我审查浮现：",
+      next3: '更宏观的问题——<em>结构化多智能体审议对于复杂决策是否从根本上优于单一智能体推理？</em>——还没有明确答案。我们自己的议会也这么说。当我们让33个席位审查这篇文章时，每一个都给了"mixed"——不是"support"。他们认为架构有说服力但证据不足。他们喜欢诚实但想要真相基准验证。他们认为尼采的引言令人印象深刻但担心是噱头。',
+      footer1: '<strong>Parliagent</strong>是MIT许可的开源项目。<a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
+      footer2: "这篇文章由六次Parliagent辩论塑造：四次用于内容生成（文章结构、核心论点、对比、全议会案例研究），加上两次自我审查（balanced模式 + 全议会，79个分歧，29条警告）。辩论总成本：约$3.30。议会对本文提出的每一条批评都未经编辑地收录在上面。",
+      footer3: "发布于2026年4月。",
     },
     ko: {
       title: "AI 하나에게 묻지 마세요.<br>토론을 열어보세요.",
@@ -1092,6 +1124,38 @@ if (result.warnings?.length) {
       h_next: "다음 단계",
       close1: '그들의 비평을 우리의 주장과 나란히 게시합니다. 이것이 핵심이기 때문입니다: <strong>자체 이견을 억압하는 도구는 이미 실패한 것입니다.</strong>',
       close2: "구조화된 의견 불일치가 AI 추론의 최종 답이 아닐 수도 있습니다. 하지만 자신감 넘치는 합의보다 더 나은 시작 질문입니다. 모든 도구가 신탁이 될 필요는 없습니다. 때로는 신탁이 놓친 것을 물어보는 존재만 되면 됩니다.",
+      case_results: "결과는 다음과 같습니다:",
+      sum_minority: "소수 의견 보고서 보기",
+      minority1: "94% 합의에서도 두 좌석이 유보했습니다:",
+      minority2: "소수 의견 보고서가 존재하는 이유는 Parliagent가 <em>이견을 억압하지 않기</em> 때문입니다. 결정 유형이 합의가 아닐 때 소수 의견은 명시적으로 표면화됩니다 — 모호한 표현 속에 묻히지 않습니다.",
+      sum_warnings: "선택된 경고 보기 (총 33개)",
+      warn_trace: "각 경고는 이를 제기한 좌석에 연결됩니다. <em>누가</em> 무엇을 표시했는지 추적하고 얼마나 비중을 둘지 직접 결정할 수 있습니다.",
+      cost1: "아래 벤치마크 데이터는 2026년 4월 2일 Anthropic Claude로 측정한 6개 카테고리(코딩, 계획, 글쓰기, 전략, 보안, 분석) 10개 프롬프트 기준입니다. 4개 제공자(Anthropic, OpenAI, Google/Gemini, FLOCK) 모두 개별 및 연합 조합으로 라이브 검증 완료; 비용 벤치마크는 Anthropic 기준입니다.",
+      cost2: "Micro 모드는 일상 사용에 최적입니다 — 1센트, 16초, 평균 3개 이상의 의견 불일치. Fast 모드는 <code>plan</code>과 <code>review</code> 명령의 기본값으로, 철저함이 속도보다 중요한 경우입니다.",
+      cost3: 'Balanced 모드에 대해 솔직히 말하면: <strong>수확 체감입니다.</strong> 기준선의 13.3배 비용이지만 Fast보다 1.7배 더 많은 의견 불일치만 생성합니다. 거의 모든 결과가 "uncertain"(10번 중 9번). 좌석이 많다고 자동으로 명확해지지 않습니다 — 관점이 많아져 수렴보다 분산될 수 있습니다. 대부분의 경우 Fast를 권장하고 Balanced는 진정한 고위험 결정에만.',
+      cost4: "Full Parliament는 건당 $1.50의 특수 도구입니다. 이사회 회의를 잡는 것처럼 사용하세요 — 모든 질문에 필요한 건 아니지만, 모든 학문적 각도를 다뤄야 할 때 사용합니다.",
+      conv_r1: "벤치마크 스위트의 30회 의회 실행 중 1회만 수렴 임계값에 일찍 도달했습니다. 나머지 29회는 라운드 제한에 도달했습니다. 수렴 임계값이 너무 엄격하거나, 서로 다른 선험적 판단을 가진 페르소나가 있을 때 토론이 실제로 수렴하지 않는 것입니다.",
+      conv_r2: "후자라고 생각합니다 — 설계 의도입니다. Parliagent는 구조화된 의견 불일치를 표면화하도록 만들어졌지, 조기 합의를 만들어내기 위한 것이 아닙니다. 가치는 의견 불일치 기록과 소수 의견 보고서에 있지, 모두가 동의하는 데 있지 않습니다.",
+      writing1: 'Micro 모드에서 글쓰기 프롬프트는 한 라운드에서 <strong>의견 불일치 제로</strong>로 합의에 도달했습니다. Fast 모드에서도 글쓰기는 5개 불일치만 생성 — 모든 카테고리 중 최저. <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a>의 명시적 경고를 확인합니다: <em>"순수 글쓰기나 초안 작업 — 토론은 무의미."</em>',
+      writing2: "질문에 정답이 하나뿐이라면 의회를 소집하지 마세요. 그냥 답하세요.",
+      prov1: "Parliagent는 4개 LLM 제공자를 위한 어댑터를 제공합니다. 4개 모두 실제 API 엔드포인트에 대해 단독 및 연합/supreme 조합으로 엔드투엔드 라이브 검증 완료:",
+      prov2: "FLOCK에 대해: OpenAI 호환 API 형식에 <code>x-litellm-api-key</code> 헤더 인증을 사용합니다. 즉, 모든 OpenAI 호환 엔드포인트가 같은 어댑터로 연결 가능합니다. <code>FLOCK_MODEL</code>로 모델을 명시적으로 지정합니다 — 하드코딩된 기본값이 없어 진정한 제공자 무관성을 유지합니다.",
+      prov3: "연합 실행 프로필 — OpenAISeat가 OpenAI에서, ClaudeSeat가 Anthropic에서, 나머지 좌석이 기본 제공자에서 실행 — Anthropic+OpenAI 및 FLOCK+Anthropic 조합으로 검증 완료. 크로스 제공자 토론이 작동함을 확인; <em>의미 있게 다른</em> 의견 불일치를 생성하는지는 아직 조사 중입니다.",
+      sec1: '보안 민감 프롬프트의 micro에서 fast로의 자동 업그레이드는 키워드 매칭을 사용합니다. "auth", "credentials", "PCI"는 잡지만, 비즈니스 로직 설명에 묻힌 미묘한 보안 함의는 잡지 못합니다. 개선 예정인 한계입니다.',
+      meta_intro: "이 글을 Parliagent로 작성했습니다. 그런 다음 Parliagent로 리뷰했습니다. 리뷰는 잔인했습니다.",
+      meta_bal: 'Balanced 리뷰(7개 좌석)에서 의회는 <code>decisionType: "majority"</code>와 함께 이 판결을 반환했습니다:',
+      meta_full: "Full Parliament 리뷰(33개 좌석, 79개 의견 불일치, 29개 경고)에서 판결은 더 날카로웠습니다:",
+      meta_pointed: "개별 좌석은 더욱 신랄했습니다:",
+      when1: 'Parliagent는 AI 에이전트가 직접 읽을 수 있는 <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a>와 함께 제공됩니다. 인간용 의사결정 트리는 다음과 같습니다:',
+      when2: "핵심 원칙: <strong>비용을 위험에 맞추세요.</strong> 빠른 의견에 1센트. 철저한 리뷰에 4센트. 전체 의회에 1.5달러. 토론이 필요 없는 질문에 0원.",
+      try_code: "또는 코드에서:",
+      try_inspect: "<code>inspect</code> 명령은 무료입니다 — 어떤 좌석이 선택될지와 그 이유를 정확히 보여주며, API 호출 없이. 토론을 시작하기 전에 라우팅을 이해하는 데 사용하세요.",
+      next1: "Parliagent는 33개 프로덕션 등급 좌석, 4개 토론 모드, 3개 실행 프로필, 5개 답변 모드, 4개 제공자 어댑터(모두 라이브 검증), CLI, SDK, 서버리스 어댑터를 제공합니다. 14개 파일에 151개 테스트. 작동합니다. 벤치마크는 실제입니다. 한계는 문서화되어 있습니다.",
+      next2: "진정한 미해결 질문들 — 일부는 의회 자체 리뷰에서 제기되었습니다:",
+      next3: '더 큰 질문 — <em>구조화된 다중 에이전트 심의가 복잡한 결정에서 단일 에이전트 추론보다 근본적으로 우월한가?</em> — 아직 명확한 답이 없습니다. 의회 자체가 그렇게 말했습니다. 33개 좌석에 이 글을 리뷰하라고 했을 때, 모든 좌석이 "mixed"를 줬습니다 — "support"가 아니라. 아키텍처는 설득력 있지만 증거가 부족하다고 했습니다. 솔직함은 좋지만 실증 검증을 원했습니다. 니체 인용은 인상적이지만 기믹이 아닌지 걱정했습니다.',
+      footer1: '<strong>Parliagent</strong>는 MIT 라이선스 오픈소스입니다. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
+      footer2: "이 글은 6번의 Parliagent 토론으로 만들어졌습니다: 콘텐츠 생성용 4회(글 구조, 핵심 논지, 비교, 전체 의회 사례 연구) + 의회가 이 글을 비평한 자체 리뷰 2회(balanced + 전체 의회, 79개 의견 불일치, 29개 경고). 총 토론 비용: 약 $3.30. 의회가 이 글에 대해 제기한 모든 비평이 위에 편집 없이 수록되어 있습니다.",
+      footer3: "2026년 4월 게시.",
     }
   };
 
