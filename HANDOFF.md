@@ -15,9 +15,29 @@
 | Phase 5: 33-Seat Complete Parliament | **complete** | All 33 production-grade, benchmarked |
 | **Parliagent Upgrade (v0.3)** | **complete** | Protocol + convergence + evidence + evaluation |
 | **v0.3 Review Fixes (2 rounds)** | **complete** | 13 issues resolved from code review |
-| **v0.3.1 Hardening** | **complete** | Runtime compat, parsing robustness, protocol completion |
+| **v0.3.x Hardening (0.3.1–0.3.2)** | **complete** | Runtime compat, parsing robustness, protocol completion |
+| **v0.4.0 Reliability + Evidence** | **complete** | JSON mode, evidence bundles, baseline comparison, convergence fix |
+| **v0.4.1 Review Fixes** | **complete** | Retry-with-feedback, Anthropic JSON prefill, convergence calibration |
 
-## v0.3.x Hardening Summary (0.3.1 → 0.3.3)
+## Current Version: v0.4.1
+
+Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-chamber runs.
+
+## v0.4.x Summary
+
+### v0.4.0: JSON Mode + Evidence + Evaluation
+- Provider-native JSON mode (OpenAI, Google, FLOCK request structured output at API level)
+- Evidence bundle mechanism (`evidenceBundle` in request contract)
+- Baseline comparison (`generateBaseline`, `compareWithBaseline`)
+- `parliamentBeatBaseline` returns `null` when no baseline (not false)
+
+### v0.4.1: Retry-with-Feedback + Convergence Calibration
+- Retry-with-feedback: when a seat produces degraded/unparseable output, one automatic retry with explicit JSON-only feedback before falling back
+- Anthropic JSON prefill: assistant message starts with `{` to force JSON output
+- `determineDecisionType` rewritten: high `agreementRatio` (≥0.6) now maps to `majority` even with unresolved disputes — resolves "semantic majority → machine uncertain" gap in large-chamber runs
+- Degraded parse detection: `isDegradedParse()` identifies statements that were recovered from partial output
+
+## v0.3.x Hardening Summary (0.3.1 → 0.3.2)
 
 ### Runtime and Structured Output
 - OpenAI adapter: auto-selects `max_completion_tokens` for o-series models, `max_tokens` for standard models

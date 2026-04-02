@@ -80,7 +80,7 @@ describe("Protocol invariant: decisionType ↔ dispute resolution consistency", 
     expect(determineDecisionType(round)).toBe("consensus");
   });
 
-  it("uncertain requires either no disputes or high unresolved count", () => {
+  it("split when unresolved disputes exist with moderate agreement", () => {
     const round = makeRound({
       round: 2,
       disagreements: [
@@ -92,7 +92,22 @@ describe("Protocol invariant: decisionType ↔ dispute resolution consistency", 
       acceptedSplitCount: 0,
       unresolvedCount: 3,
     });
-    expect(determineDecisionType(round)).toBe("uncertain");
+    expect(determineDecisionType(round)).toBe("split");
+  });
+
+  it("majority when high agreementRatio despite unresolved disputes", () => {
+    const round = makeRound({
+      round: 1,
+      disagreements: [
+        { topic: "a", seats: ["A", "B"], type: "claim_conflict", status: "open" },
+      ],
+      resolvedCount: 0,
+      acceptedSplitCount: 0,
+      unresolvedCount: 1,
+      agreementRatio: 0.7,
+      objectionCount: 2,
+    });
+    expect(determineDecisionType(round)).toBe("majority");
   });
 });
 

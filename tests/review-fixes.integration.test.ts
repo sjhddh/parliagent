@@ -86,7 +86,7 @@ describe("determineDecisionType — dispute-driven logic", () => {
     expect(determineDecisionType(round)).toBe("split");
   });
 
-  it("uncertain when unresolved dominates", () => {
+  it("split when unresolved disputes exist with moderate agreement", () => {
     const round = makeRound({
       round: 2,
       disagreements: [
@@ -97,6 +97,16 @@ describe("determineDecisionType — dispute-driven logic", () => {
       resolvedCount: 0,
       acceptedSplitCount: 0,
       unresolvedCount: 3,
+    });
+    expect(determineDecisionType(round)).toBe("split");
+  });
+
+  it("uncertain when many distinct views and low agreement", () => {
+    const round = makeRound({
+      round: 1,
+      disagreements: [],
+      agreementRatio: 0.3,
+      distinctViewCount: 4,
     });
     expect(determineDecisionType(round)).toBe("uncertain");
   });

@@ -30,6 +30,15 @@ export class AnthropicAdapter implements ModelAdapter {
     const systemMessage = messages.find((m) => m.role === "system");
     const nonSystemMessages = messages.filter((m) => m.role !== "system");
 
+    const apiMessages = nonSystemMessages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    if (options?.jsonMode) {
+      apiMessages.push({ role: "assistant", content: "{" });
+    }
+
     const response = await fetchWithRetry(
       "https://api.anthropic.com/v1/messages",
       {
@@ -44,10 +53,7 @@ export class AnthropicAdapter implements ModelAdapter {
           max_tokens: options?.maxTokens ?? 1024,
           temperature: options?.temperature ?? 0.7,
           ...(systemMessage ? { system: systemMessage.content } : {}),
-          messages: nonSystemMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: apiMessages,
         }),
       },
     );
@@ -66,8 +72,13 @@ export class AnthropicAdapter implements ModelAdapter {
     const inputTokens = data.usage.input_tokens;
     const outputTokens = data.usage.output_tokens;
 
+    let content = data.content[0]?.text ?? "";
+    if (options?.jsonMode && !content.startsWith("{")) {
+      content = "{" + content;
+    }
+
     return {
-      content: data.content[0]?.text ?? "",
+      content,
       tokensUsed: {
         prompt: inputTokens,
         completion: outputTokens,

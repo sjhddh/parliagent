@@ -393,22 +393,36 @@ export class Speaker {
         userContent += "\n\n" + formatEvidenceBundle(evidenceBundle);
       }
 
-      try {
-        const result = await assignment.adapter.complete(
-          [
-            { role: "system", content: `${seat.systemPrompt}\n\n${instructionPrompt}` },
-            { role: "user", content: userContent },
-          ],
-          {
-            temperature: 0.7,
-            maxTokens: 600,
-            jsonMode: true,
-            ...(numericSeed != null ? { seed: numericSeed } : {}),
-          },
-        );
+      const completionOpts = {
+        temperature: 0.7,
+        maxTokens: 600,
+        jsonMode: true,
+        ...(numericSeed != null ? { seed: numericSeed } : {}),
+      };
 
+      try {
+        const messages = [
+          { role: "system" as const, content: `${seat.systemPrompt}\n\n${instructionPrompt}` },
+          { role: "user" as const, content: userContent },
+        ];
+
+        const result = await assignment.adapter.complete(messages, completionOpts);
         roundTokens += result.tokensUsed.total || estimateTokens(result.content);
-        return parseStatement(result.content, seat.id, round);
+
+        const stmt = parseStatement(result.content, seat.id, round);
+
+        if (isDegradedParse(stmt)) {
+          const retryMessages = [
+            ...messages,
+            { role: "assistant" as const, content: result.content },
+            { role: "user" as const, content: RETRY_FEEDBACK },
+          ];
+          const retry = await assignment.adapter.complete(retryMessages, completionOpts);
+          roundTokens += retry.tokensUsed.total || estimateTokens(retry.content);
+          return parseStatement(retry.content, seat.id, round);
+        }
+
+        return stmt;
       } catch (error) {
         return fallbackStatement(seat.id, round, error);
       }
@@ -662,6 +676,20 @@ function validateConfidence(c: unknown): 1 | 2 | 3 | 4 | 5 {
   return 3;
 }
 
+const RETRY_FEEDBACK = `Your previous response could not be parsed as valid JSON. Please respond with ONLY a valid JSON object — no markdown fences, no preamble text, no trailing commentary. Just the raw JSON object starting with { and ending with }.`;
+
+function isDegradedParse(stmt: SeatStatement): boolean {
+  return (
+    stmt.claims.some((c) =>
+      c === "Recovered from partial output" ||
+      c === "Unable to parse structured response" ||
+      c === "Seat could not produce a response" ||
+      c === "Position stated without specific claims"
+    ) ||
+    (stmt.stance === "uncertain" && stmt.confidence <= 2 && stmt.summary.startsWith("{"))
+  );
+}
+
 function formatEvidenceBundle(items: EvidenceItem[]): string {
   const header = "=== SHARED EVIDENCE (reference these when classifying claim provenance) ===";
   const entries = items.map((item, i) => {
@@ -712,6 +740,17 @@ function buildRebuttalContext(
  * Derive decision type from dispute resolution state, not just stance ratios.
  * Uses issue lifecycle as primary signal, falls back to stance metrics.
  */
+/**
+ * Derive decision type from dispute resolution state AND stance metrics.
+ *
+ * Key insight: in large chambers (10+ seats), pairwise dispute extraction
+ * generates O(n²) disputes from a single round. If most seats share the
+ * same directional stance (high agreementRatio), the raw dispute count
+ * overstates disagreement. We blend both signals:
+ * - dispute lifecycle is primary when disputes have been actively resolved
+ * - agreementRatio is primary in first-round / large-chamber scenarios
+ *   where disputes haven't had a chance to be resolved yet
+ */
 export function determineDecisionType(lastRound?: RoundResult): DecisionType {
   if (!lastRound) return "uncertain";
 
@@ -719,23 +758,24 @@ export function determineDecisionType(lastRound?: RoundResult): DecisionType {
   const resolved = lastRound.resolvedCount ?? 0;
   const splits = lastRound.acceptedSplitCount ?? 0;
   const unresolved = lastRound.unresolvedCount ?? 0;
+  const ratio = lastRound.agreementRatio;
 
-  if (total > 0) {
-    if (unresolved === 0 && splits === 0) return "consensus";
-    if (unresolved === 0 && splits > 0) return "majority";
-    if (resolved + splits > unresolved) return "split";
-    if (unresolved > resolved + splits) return "uncertain";
-  }
+  if (total > 0 && unresolved === 0 && splits === 0) return "consensus";
+  if (total > 0 && unresolved === 0 && splits > 0) return "majority";
 
-  if (lastRound.agreementRatio >= 0.8 && lastRound.objectionCount === 0) {
-    return "consensus";
-  }
-  if (lastRound.agreementRatio >= 0.6) {
+  if (ratio >= 0.8 && lastRound.objectionCount === 0) return "consensus";
+
+  if (ratio >= 0.6) {
+    if (unresolved > 0 && total > 0) return "majority";
     return "majority";
   }
-  if (lastRound.distinctViewCount >= 3) {
-    return "uncertain";
+
+  if (total > 0) {
+    if (resolved + splits > unresolved) return "split";
   }
+
+  if (lastRound.distinctViewCount >= 3) return "uncertain";
+
   return "split";
 }
 

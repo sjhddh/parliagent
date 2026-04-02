@@ -1,96 +1,67 @@
-# Review — Parliagent Upgrade (v0.3)
+# Review — Parliagent v0.4.0
 
 ## Verdict: FAIL
 
-This review was performed as a CLI/library code review with shell verification and code inspection. `npm run typecheck` and `npm test` both pass on the current worktree, but the upgraded protocol/evaluation claims in `HANDOFF.md` are not fully supported by the implementation. Two logic bugs are directly reproducible at runtime, and the current package artifact is not aligned with the claimed release state.
+This review was performed as a CLI/library review with runtime verification and code inspection. `npm run typecheck` and `npm test` both pass on the current tree, and several older issues are clearly fixed. However, the current implementation still does not justify the “robust” maturity implied by the surrounding handoff narrative. The most important remaining gap is not build breakage but reliability: real full-parliament runs still degrade under load, and the product truth surface remains out of sync with the codebase version and current review status.
 
 ## Scores
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Functionality | 2/5 | Core upgrade semantics are not reliable: issue-centered convergence can still stop with open disputes, and the new baseline comparison metric is broken. |
-| Design quality | 3/5 | Direction is stronger than v0.2, but the resolution protocol is still only partially realized in code. |
-| Code quality | 3/5 | Modules are tidy and tests are extensive, but several tests are too weak to catch the main regressions. |
-| Security & robustness | 3/5 | No secret leaks or validation failures found in reviewed files, but package/release truth is drifting from the actual artifact. |
-| Accessibility | 3/5 | No web UI changes were part of this review; score held neutral. |
+| Functionality | 2/5 | Happy-path behavior works, but full-parliament runtime still does not consistently produce a strong machine-readable convergence outcome. |
+| Design quality | 4/5 | The protocol architecture is strong and coherent; this is no longer a design-direction problem. |
+| Code quality | 4/5 | The code is modular and disciplined, with meaningful contracts and tests. |
+| Security & robustness | 2/5 | Evidence grounding and runtime reliability are still below the bar implied by a “robust” claim. |
+| Accessibility | 3/5 | No UI-specific changes were under review; neutral score. |
 
 ## Issues Found
 
-### Issue 1: Debate can stop as `converged` while disputes remain open
+### Issue 1: Full-parliament structured-output reliability is still below the bar for a “robust” claim
 - **Severity**: Critical
-- **Location**: `src/core/convergence.ts:271-291`
+- **Location**: `src/core/speaker.ts:472-598`, `src/core/speaker.ts:601-733`
 - **Verification**: Runtime-verified
-- **Expected**: The new issue-centered convergence model should not return a successful convergence stop reason while any dispute is still open.
-- **Actual**: After the `issues_resolved` check, the code still falls through to the old stance-ratio branch and can return `reason: "converged"` even when `unresolvedCount > 0`.
+- **Expected**: With `jsonMode: true`, multi-strategy extraction, and failed-seat isolation in place, full-parliament runs should mostly yield clean structured seat statements rather than repeated degraded recoveries.
+- **Actual**: A real `parliagent` `v0.4.0` full-parliament self-review still produced degraded seat outputs such as partial JSON and `Recovered from partial output`, and still ended as `decisionType: "uncertain"` with many unresolved disputes. This means the runtime is improved, but not yet robust.
 - **Reproduction**:
-  1. Run:
+  1. Run a real full-parliament self-review via the built CLI:
      ```bash
-     node --input-type=module -e "import { evaluateConvergence } from './dist/core/convergence.js'; import { MODE_CONFIGS } from './dist/core/config.js'; const statements=[{seatId:'A',round:2,stance:'support',summary:'s',claims:['c'],objections:[],confidence:4,warnings:['warn']},{seatId:'B',round:2,stance:'support',summary:'s',claims:['c'],objections:[],confidence:4}]; const prior=[{id:'D1',topic:'risk',seats:['A'],type:'risk_warning',status:'open'}]; console.log(JSON.stringify(evaluateConvergence({statements,modeConfig:MODE_CONFIGS.fast,currentRound:2,priorDisagreements:prior}), null, 2));"
+     node dist/cli/index.js review "<self-review prompt>" --full-parliagent --profile federated --trace full --json --language zh
      ```
-  2. Observe the result returns `"reason": "converged"` while the round still contains an open `risk_warning`.
-- **Suggested fix**: Gate the stance-based convergence branches on `unresolvedCount === 0`, or only allow them when `roundResult.disagreements.length === 0`.
+  2. Inspect the trace output. In the latest verified run, seats such as `GeminiSeat` and `SmithSeat` still degraded to truncated or recovered partial output, while the overall run ended with `round_limit` and `decisionType: "uncertain"`.
+- **Suggested fix**: Move more aggressively toward provider-native schema enforcement and explicit retry-with-feedback on malformed outputs, rather than relying on parser recovery as the primary reliability mechanism.
 
-### Issue 2: `parliamentBeatBaseline` is mathematically inconsistent and gives contradictory results
-- **Severity**: Critical
-- **Location**: `src/evaluation/rubric.ts:57-72`, `src/evaluation/rubric.ts:275-288`
-- **Verification**: Runtime-verified
-- **Expected**: Baseline comparison should use the same unit and rubric scale on both sides, so the flag meaningfully answers whether parliament outperformed baseline.
-- **Actual**: The code compares raw `totalScore` against two incompatible baseline units:
-  - with `baselineResponse`, a rough 0-5 side score
-  - without `baselineResponse`, `percentScore * 0.6` on a 0-60 scale
-  The same response can therefore produce `parliamentBeatBaseline: true` in one branch and `false` in the other.
-- **Reproduction**:
-  1. Run:
-     ```bash
-     npx tsx -e "import { evaluateResponse, EVALUATION_FIXTURES } from './src/evaluation/rubric.ts'; const fixture=EVALUATION_FIXTURES.find(f=>f.id==='arch-tradeoff'); const response={finalAnswer:'Use a modular monolith first, then extract services later. This balances team size, complexity, and scale concerns while preserving delivery speed.',decisionType:'majority',activatedSeats:['Speaker','DijkstraSeat','OperatorSeat'],whyTheseSeats:'Architecture tradeoff',minorityReport:'OperatorSeat: microservices too early',openQuestions:['How fast will the team grow?'],warnings:['Complexity risk for small team'],debateSummary:'Round 1 debate'}; console.log('withBaseline', JSON.stringify(evaluateResponse(fixture,response,'Just use microservices.'), null, 2)); console.log('withoutBaseline', JSON.stringify(evaluateResponse(fixture,response), null, 2));"
-     ```
-  2. Observe the same response yields `parliamentBeatBaseline: true` with a baseline string and `false` without one.
-- **Suggested fix**: Score the baseline with the same five dimensions and compare normalized percentages, or remove the flag until there is a valid apples-to-apples baseline rubric.
-
-### Issue 3: The resolution protocol is still gated away from the common one-dispute case
+### Issue 2: Semantic majority still fails to map cleanly to machine-readable convergence
 - **Severity**: Major
-- **Location**: `src/core/speaker.ts:308-332`
+- **Location**: `src/core/convergence.ts:250-319`, `src/core/speaker.ts:715-733`
+- **Verification**: Runtime-verified
+- **Expected**: When a full-parliament run reaches clear semantic alignment, the machine-readable result should usually settle on `majority` or `consensus` rather than remaining `uncertain`.
+- **Actual**: In the latest full-parliament self-review, the debate text was effectively a broad “mixed, with reservations” consensus, and the trace showed `agreementRatio: 1`, yet the system still returned `decisionType: "uncertain"` because unresolved disputes remained high and the run hit `round_limit`.
+- **Reproduction**:
+  1. Run the real self-review command above.
+  2. Observe that the trace can show strong textual alignment but still end with many open disputes and an `uncertain` machine result.
+- **Suggested fix**: Refine the relationship between dispute extraction, dispute closure, and `determineDecisionType()` so that “majority with reservations” can be represented explicitly instead of collapsing into `uncertain`.
+
+### Issue 3: Version and truth-surface documents are still lagging behind the actual shipped code
+- **Severity**: Major
+- **Location**: `package.json`, `HANDOFF.md`, `REVIEW.md`
 - **Verification**: Code-inspection-only
-- **Expected**: Once the system advertises a dedicated resolution round, the common case of a single open seat-vs-seat conflict should be eligible for that path.
-- **Actual**: `determineStage()` only upgrades to `resolution` when there are at least 2 open `claim_conflict` records. A normal 2-seat disagreement produces 1 conflict and remains in generic `rebuttal`, which undercuts the stated “procedural parliament protocol” upgrade.
+- **Expected**: The main handoff and review artifacts should describe the same version that is actually running on the branch.
+- **Actual**: The codebase is now `v0.4.0`, but `HANDOFF.md` is still framed around `v0.3.x Hardening`, and `REVIEW.md` was previously still a `v0.3` fail report until this overwrite. That means the review/handoff surface was not current with the code that was being validated.
 - **Reproduction**:
-  1. Read the threshold in `determineStage()`.
-  2. Compare it with the upgrade claim in `HANDOFF.md` that resolution rounds are used for dispute resolution and targeted exchange.
-- **Suggested fix**: Trigger `resolution` on any meaningful open `claim_conflict`, or explicitly narrow the product claim and tests to match the current threshold.
-
-### Issue 4: `package-lock.json` still contains the removed self-dependency
-- **Severity**: Major
-- **Location**: `package-lock.json:11-15`, `package-lock.json:210-225`
-- **Verification**: Code-inspection-only
-- **Expected**: After removing the self-dependency from `package.json`, the lockfile root package should no longer list `parliagent`, and there should not be a nested `node_modules/parliagent` entry caused by the old dependency.
-- **Actual**: `package.json` no longer includes `"parliagent": "^0.2.4"`, but `package-lock.json` still does. This directly contradicts `HANDOFF.md`, which claims Track 5 removed the self-dependency cleanly.
-- **Reproduction**:
-  1. Compare `package.json` dependencies with `package-lock.json`.
-  2. Observe the root lock entry still lists `parliagent`, and a nested `node_modules/parliagent` package remains present.
-- **Suggested fix**: Regenerate `package-lock.json` after the dependency removal and verify that the self-reference disappears from the root package entry.
-
-### Issue 5: Current source changes are not reflected in the built artifact
-- **Severity**: Major
-- **Location**: `src/evaluation/rubric.ts`, `dist/`
-- **Verification**: Runtime-verified
-- **Expected**: A handoff that claims final verification and a completed upgrade should have a current build artifact matching the reviewed source tree.
-- **Actual**: The new evaluation source exists, but the built artifact does not contain `dist/evaluation/`. On the current worktree, `ls dist/evaluation` fails.
-- **Reproduction**:
-  1. Run:
-     ```bash
-     ls "/Users/JiahaoRBC/Git/sun-parliament/dist/evaluation"
-     ```
-  2. Observe `No such file or directory`.
-- **Suggested fix**: Rebuild before handoff and verify the packaged artifact, or avoid claiming final verification/package readiness until the artifact matches source.
+  1. Compare `package.json` version with the headings and status framing in `HANDOFF.md`.
+  2. Observe that the handoff narrative is still anchored to `v0.3.x`, despite the package now being `v0.4.0`.
+- **Suggested fix**: Update handoff and related review artifacts every time the product version is advanced, so the repo’s operational truth matches the runtime artifact being reviewed.
 
 ## Passed Checks
-- Runtime-verified: `npm run typecheck` passes on the current worktree.
-- Runtime-verified: `npm test` passes with `210` tests across `17` files.
-- Code inspection: `fullParliagent` request default is now `false` in `src/contracts/request.ts`, matching the documented “explicit opt-in” behavior.
-- Code inspection: `Speaker` now defaults `executionProfile` to `"federated"`, aligning runtime with the request schema and docs.
-- Code inspection: `claimProvenance`, `AgendaStage`, and dispute lifecycle fields are wired through contracts, synthesis, and tests.
+- Runtime-verified: `npm run typecheck` passes on the current tree.
+- Runtime-verified: `npm test` passes with `222` tests across `18` files.
+- Code inspection: `package-lock.json` is now aligned with `package.json` at `0.4.0`.
+- Code inspection: `OpenAIAdapter` now supports `max_completion_tokens` for o-series models and can request JSON mode.
+- Code inspection: `EvidenceItem` / `evidenceBundle` are now part of the public request contract in `src/contracts/request.ts`.
+- Code inspection: `dist/evaluation` exists, so the previously missing built evaluation artifact issue is resolved.
+- Code inspection: `parliamentBeatBaseline` no longer returns contradictory booleans when no baseline is supplied; it now returns `null` in that case.
 
 ## Recommendations
-- Fix the convergence stop-order first; it invalidates the main protocol claim.
-- Rework `parliamentBeatBaseline` before using it in any benchmark, dashboard, or release narrative.
-- Regenerate the lockfile and rerun build/package verification so the artifact matches the source and handoff claims.
+- Treat `v0.4.0` as “architecture solid, reliability still maturing,” not as a fully robust release.
+- Prioritize full-parliament structured-output success rate and decision-state calibration before making stronger maturity claims.
+- Refresh `HANDOFF.md` so versioned delivery truth matches the currently reviewed package. 
