@@ -295,26 +295,50 @@ li { margin-bottom: 0.4rem; }
   margin: 2rem 0;
 }
 
-/* Theme toggle */
-.theme-toggle {
+/* Top-right controls */
+.top-controls {
   position: fixed;
   top: 1rem;
   right: 1rem;
   z-index: 100;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.theme-toggle, .lang-picker {
   background: var(--bg-alt);
   border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: var(--font-heading);
+  color: var(--text);
+}
+
+.theme-toggle {
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  transition: background 0.3s;
 }
 
-.theme-toggle:hover { background: var(--border); }
+.theme-toggle:hover, .lang-picker:hover { background: var(--border); }
+
+.lang-picker {
+  border-radius: 20px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2378716c'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 1.8rem;
+}
 
 /* Separator */
 hr {
@@ -377,57 +401,64 @@ hr {
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
-  <span id="theme-icon">&#9790;</span>
-</button>
+<div class="top-controls">
+  <select class="lang-picker" id="lang-picker" onchange="setLanguage(this.value)" aria-label="Language">
+    <option value="en">EN</option>
+    <option value="zh">中文</option>
+    <option value="ko">한국어</option>
+  </select>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <span id="theme-icon">&#9790;</span>
+  </button>
+</div>
 
 <article class="container">
 
 <header class="article-header">
   <div class="meta">Parliagent &middot; Engineering</div>
-  <h1>Stop Asking One AI.<br>Start Running a Debate.</h1>
-  <p class="subtitle">What happens when 33 AI expert personas argue about your architecture decision &mdash; and why the disagreements are the point.</p>
-  <span class="read-time">21 min read</span>
+  <h1 data-i18n="title">Stop Asking One AI.<br>Start Running a Debate.</h1>
+  <p class="subtitle" data-i18n="subtitle">What happens when 33 AI expert personas argue about your architecture decision &mdash; and why the disagreements are the point.</p>
+  <span class="read-time" data-i18n="readtime">21 min read</span>
 </header>
 
 <!-- ========== SECTION 1: Cold Open ========== -->
 
-<p>We asked Claude whether a fintech startup should use microservices. It gave us a thoughtful, balanced answer: "it depends on your team size, scale requirements, and compliance needs." Reasonable. Polite. Useless.</p>
+<p data-i18n="open1">We asked Claude whether a fintech startup should use microservices. It gave us a thoughtful, balanced answer: "it depends on your team size, scale requirements, and compliance needs." Reasonable. Polite. Useless.</p>
 
-<p>We asked the same question to Parliagent. Thirty-two AI expert personas argued for 24 seconds. The result: 94% opposed microservices, 33 specific warnings about PCI DSS violations and regulatory audit fragmentation, and this from NietzscheSeat:</p>
+<p data-i18n="open2">We asked the same question to Parliagent. Thirty-two AI expert personas argued for 24 seconds. The result: 94% opposed microservices, 33 specific warnings about PCI DSS violations and regulatory audit fragmentation, and this from NietzscheSeat:</p>
 
 <div class="seat-card" style="border-left-color: #7c3aed;">
   <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
   <div class="seat-text">"The microservices movement is largely driven by <strong>engineering ressentiment</strong> &mdash; developers who feel inadequate building simple things well, so they create complexity to justify their existence."</div>
 </div>
 
-<p>That's the difference between asking one AI and running a debate. The single agent hedges. The parliament takes positions, disagrees, warns you about things you didn't ask about, and occasionally says something so uncomfortable it reframes the entire question.</p>
+<p data-i18n="open3">That's the difference between asking one AI and running a debate. The single agent hedges. The parliament takes positions, disagrees, warns you about things you didn't ask about, and occasionally says something so uncomfortable it reframes the entire question.</p>
 
-<p>Ask an LLM a hard architecture question and you'll get a confident, well-structured answer. It will sound authoritative. It will cite best practices. It will have a reassuring tone that makes you want to nod along. The problem is, it's one voice. One set of biases, one set of blind spots, one set of priors baked into a single forward pass. The dissenting voices, the uncomfortable warnings, the "yes, but what about regulatory compliance?" objections? Buried in hedging language, if they surface at all.</p>
+<p data-i18n="open4">Ask an LLM a hard architecture question and you'll get a confident, well-structured answer. It will sound authoritative. It will cite best practices. It will have a reassuring tone that makes you want to nod along. The problem is, it's one voice. One set of biases, one set of blind spots, one set of priors baked into a single forward pass. The dissenting voices, the uncomfortable warnings, the "yes, but what about regulatory compliance?" objections? Buried in hedging language, if they surface at all.</p>
 
-<p>This is the <strong>echo chamber of one</strong>. And it's the default mode for how most people use AI today.</p>
+<p data-i18n="open5">This is the <strong>echo chamber of one</strong>. And it's the default mode for how most people use AI today.</p>
 
-<p>We built <a href="https://github.com/sjhddh/parliagent">Parliagent</a> to fix this. It's a multi-agent deliberation engine that runs a structured parliamentary debate among expert personas — with disagreement tracking, minority reports, and budget controls. One function call. Multiple perspectives. Structured dissent.</p>
+<p data-i18n="open6">We built <a href="https://github.com/sjhddh/parliagent">Parliagent</a> to fix this. It's a multi-agent deliberation engine that runs a structured parliamentary debate among expert personas — with disagreement tracking, minority reports, and budget controls. One function call. Multiple perspectives. Structured dissent.</p>
 
-<p>To write this article, we did something recursive: <strong>we asked Parliagent how to write about itself.</strong> Then we asked it to review what it wrote. Then it flagged its own circular reasoning. More on that later.</p>
+<p data-i18n="open7">To write this article, we did something recursive: <strong>we asked Parliagent how to write about itself.</strong> Then we asked it to review what it wrote. Then it flagged its own circular reasoning. More on that later.</p>
 
 <hr>
 
 <!-- ========== SECTION 2: Why Single-Agent Falls Short ========== -->
 
-<h2>Why Single-Agent Falls Short</h2>
+<h2 data-i18n="h_single">Why Single-Agent Falls Short</h2>
 
-<p>Anthropic's engineering team <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">recently documented</a> a key failure mode they encountered while building long-running coding agents: <strong>self-evaluation doesn't work.</strong></p>
+<p data-i18n="single1">Anthropic's engineering team <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">recently documented</a> a key failure mode they encountered while building long-running coding agents: <strong>self-evaluation doesn't work.</strong></p>
 
 <blockquote>
   "When asked to evaluate work they've produced, agents tend to respond by confidently praising the work — even when, to a human observer, the quality is obviously mediocre."
 </blockquote>
 
-<p>Their solution was to separate the generator from the evaluator — a distinct agent whose job is to be skeptical. This works for code, where there are verifiable outcomes. But what about decisions that don't have unit tests? Architecture tradeoffs. Security design. Strategic pivots. Planning under uncertainty.</p>
+<p data-i18n="single2">Their solution was to separate the generator from the evaluator — a distinct agent whose job is to be skeptical. This works for code, where there are verifiable outcomes. But what about decisions that don't have unit tests? Architecture tradeoffs. Security design. Strategic pivots. Planning under uncertainty.</p>
 
-<p>For these problems, you don't just need a skeptic — you need a <em>parliament</em>. Multiple experts with different domains, different priors, different blind spots, structurally incentivized to disagree.</p>
+<p data-i18n="single3">For these problems, you don't just need a skeptic — you need a <em>parliament</em>. Multiple experts with different domains, different priors, different blind spots, structurally incentivized to disagree.</p>
 
-<p>Here's what the data shows. We benchmarked Parliagent against a single-agent baseline across 10 prompts spanning coding, planning, writing, strategy, security, and analysis:</p>
+<p data-i18n="single4">Here's what the data shows. We benchmarked Parliagent against a single-agent baseline across 10 prompts spanning coding, planning, writing, strategy, security, and analysis:</p>
 
 <table>
   <thead>
@@ -441,17 +472,17 @@ hr {
   </tbody>
 </table>
 
-<p>The baseline produces zero disagreements. Not because there's nothing to disagree about — because there's no one to disagree <em>with</em>. A single agent asked about security will mention security concerns. But it won't have SecurityPrivacySeat specifically raising PCI DSS violations while KahnemanSeat points out that you're anchoring on a microservices hype cycle.</p>
+<p data-i18n="single5">The baseline produces zero disagreements. Not because there's nothing to disagree about — because there's no one to disagree <em>with</em>. A single agent asked about security will mention security concerns. But it won't have SecurityPrivacySeat specifically raising PCI DSS violations while KahnemanSeat points out that you're anchoring on a microservices hype cycle.</p>
 
-<p><strong>The disagreements are the value.</strong> Micro mode adds 3.4 disagreements at just 1.6x the cost and 2 seconds more latency. Fast mode surfaces 10.6 disagreements — three times more conflict for six times the cost. That's not overhead. That's surface area for the things you'd otherwise miss.</p>
+<p data-i18n="single6"><strong>The disagreements are the value.</strong> Micro mode adds 3.4 disagreements at just 1.6x the cost and 2 seconds more latency. Fast mode surfaces 10.6 disagreements — three times more conflict for six times the cost. That's not overhead. That's surface area for the things you'd otherwise miss.</p>
 
 <hr>
 
 <!-- ========== SECTION 3: Architecture ========== -->
 
-<h2>The Architecture</h2>
+<h2 data-i18n="h_arch">The Architecture</h2>
 
-<p>Parliagent is a TypeScript library (<code>npm install parliagent</code>) with a single entry point:</p>
+<p data-i18n="arch1">Parliagent is a TypeScript library (<code>npm install parliagent</code>) with a single entry point:</p>
 
 <pre><code class="language-typescript">import { debate } from "parliagent";
 
@@ -467,7 +498,7 @@ console.log(response.minorityReport);    // dissenting views
 console.log(response.warnings);          // safety/security flags
 </code></pre>
 
-<p>Behind that one-liner, here's what happens:</p>
+<p data-i18n="arch2">Behind that one-liner, here's what happens:</p>
 
 <div class="mermaid">
 graph LR
@@ -482,13 +513,13 @@ graph LR
     H --> I["ParliagentResponse"]
 </div>
 
-<h3>1. The Speaker</h3>
+<h3 data-i18n="h_speaker">1. The Speaker</h3>
 
-<p>The Speaker is the neutral chair — it never takes a substantive position. It routes the question to the right seats, manages debate rounds, and synthesizes the final answer from member contributions. Think of it as the procedural backbone.</p>
+<p data-i18n="speaker1">The Speaker is the neutral chair — it never takes a substantive position. It routes the question to the right seats, manages debate rounds, and synthesizes the final answer from member contributions. Think of it as the procedural backbone.</p>
 
-<h3>2. Seat Routing</h3>
+<h3 data-i18n="h_routing">2. Seat Routing</h3>
 
-<p>When a request arrives, the system classifies the task type (coding, planning, strategy, analysis, ethics, writing, general) using keyword scoring, then selects a chamber of seats appropriate for the mode:</p>
+<p data-i18n="routing1">When a request arrives, the system classifies the task type (coding, planning, strategy, analysis, ethics, writing, general) using keyword scoring, then selects a chamber of seats appropriate for the mode:</p>
 
 <pre><code class="language-typescript">// Simplified from src/core/routing.ts
 export function classifyTask(prompt: string): TaskType {
@@ -501,7 +532,7 @@ export function classifyTask(prompt: string): TaskType {
   // Score each type by keyword hits, return the best match
 }</code></pre>
 
-<p>The routing is deliberately rule-based (not LLM-powered) because it runs on every request and needs to be fast, deterministic, and inspectable. You can preview routing without spending a token:</p>
+<p data-i18n="routing2">The routing is deliberately rule-based (not LLM-powered) because it runs on every request and needs to be fast, deterministic, and inspectable. You can preview routing without spending a token:</p>
 
 <pre><code class="language-bash">$ parliagent inspect "How to handle API key rotation?" --mode fast
 
@@ -513,9 +544,9 @@ Selected Chamber:
 Routing Reason:
   Task classified as "coding". Security seat priority upgraded.</code></pre>
 
-<h3>3. The 33 Seats</h3>
+<h3 data-i18n="h_seats">3. The 33 Seats</h3>
 
-<p>Each seat has a persona with a system prompt, domain expertise, strengths, blind spots, and a speaking style. They're not random — they're chosen to create productive tension:</p>
+<p data-i18n="seats1">Each seat has a persona with a system prompt, domain expertise, strengths, blind spots, and a speaking style. They're not random — they're chosen to create productive tension:</p>
 
 <table>
   <thead>
@@ -532,11 +563,11 @@ Routing Reason:
   </tbody>
 </table>
 
-<p>Seats speak in parallel. Each produces a structured JSON statement with a stance (<code>support</code> / <code>mixed</code> / <code>oppose</code> / <code>uncertain</code>), claims, objections, confidence level, and optional warnings. In subsequent rounds, they read each other's positions and can shift — or dig in.</p>
+<p data-i18n="seats2">Seats speak in parallel. Each produces a structured JSON statement with a stance (<code>support</code> / <code>mixed</code> / <code>oppose</code> / <code>uncertain</code>), claims, objections, confidence level, and optional warnings. In subsequent rounds, they read each other's positions and can shift — or dig in.</p>
 
-<h3>4. Convergence</h3>
+<h3 data-i18n="h_convergence">4. Convergence</h3>
 
-<p>After each round, the system computes agreement ratios, clusters distinct claims using Jaccard similarity, counts objections, and decides whether to stop:</p>
+<p data-i18n="conv1">After each round, the system computes agreement ratios, clusters distinct claims using Jaccard similarity, counts objections, and decides whether to stop:</p>
 
 <pre><code class="language-typescript">// Simplified from src/core/convergence.ts
 if (blockingWarning && agreementRatio < 0.5) {
@@ -552,19 +583,19 @@ if (currentRound >= maxRounds) {
   return { shouldStop: true, reason: "round_limit" };
 }</code></pre>
 
-<p>An important design decision: <strong>the debate stays in English internally</strong>, even when the user requests output in another language. English is where LLM reasoning is strongest. Only the final synthesis step renders in the target language (<code>outputLanguage: "zh"</code>). This means a Chinese-speaking user gets the benefit of English-language deliberation without the reasoning quality loss.</p>
+<p data-i18n="conv2">An important design decision: <strong>the debate stays in English internally</strong>, even when the user requests output in another language. English is where LLM reasoning is strongest. Only the final synthesis step renders in the target language (<code>outputLanguage: "zh"</code>). This means a Chinese-speaking user gets the benefit of English-language deliberation without the reasoning quality loss.</p>
 
-<h3>5. Synthesis</h3>
+<h3 data-i18n="h_synthesis">5. Synthesis</h3>
 
-<p>The Speaker reads all seat statements, disagreements, and warnings, then produces a synthesis that reflects the actual state of the debate — including dissent. If the decision type is <code>split</code> or <code>uncertain</code>, the response says so. It doesn't paper over disagreement with false confidence.</p>
+<p data-i18n="synth1">The Speaker reads all seat statements, disagreements, and warnings, then produces a synthesis that reflects the actual state of the debate — including dissent. If the decision type is <code>split</code> or <code>uncertain</code>, the response says so. It doesn't paper over disagreement with false confidence.</p>
 
 <hr>
 
 <!-- ========== SECTION 4: Live Case Study ========== -->
 
-<h2>Live Case Study: 33 Experts Argue About Microservices</h2>
+<h2 data-i18n="h_case">Live Case Study: 33 Experts Argue About Microservices</h2>
 
-<p>Theory is nice. Let's see it work. We asked all 33 seats of Parliagent:</p>
+<p data-i18n="case1">Theory is nice. Let's see it work. We asked all 33 seats of Parliagent:</p>
 
 <blockquote>
   "Should a startup use microservices or a monolith for their fintech platform that needs to handle payments, KYC, and regulatory compliance?"
@@ -591,9 +622,9 @@ if (currentRound >= maxRounds) {
   </div>
 </div>
 
-<p><strong>The verdict: start with a monolith.</strong> 30 out of 32 speaking seats opposed microservices, 2 were mixed, 0 supported them. That's 94% agreement — a rare near-consensus in a system designed to surface disagreement.</p>
+<p data-i18n="case2"><strong>The verdict: start with a monolith.</strong> 30 out of 32 speaking seats opposed microservices, 2 were mixed, 0 supported them. That's 94% agreement — a rare near-consensus in a system designed to surface disagreement.</p>
 
-<p>But the number that matters isn't the vote count. It's <em>why</em> they opposed, and how differently each seat framed the same conclusion. Here are six highlights from the debate transcript:</p>
+<p data-i18n="case3">But the number that matters isn't the vote count. It's <em>why</em> they opposed, and how differently each seat framed the same conclusion. Here are six highlights from the debate transcript:</p>
 
 <div class="seat-card">
   <div class="seat-name">DijkstraSeat <span class="seat-stance">oppose &middot; confidence 5/5</span></div>
@@ -628,7 +659,7 @@ if (currentRound >= maxRounds) {
   <div class="seat-text">"This question reveals the herd's obsession with architectural fashion over fundamental values. <strong>The microservices movement is largely driven by engineering ressentiment</strong> — developers who feel inadequate building simple things well, so they create complexity to justify their existence and salaries."</div>
 </div>
 
-<p>You saw this quote in the opening. Here's why it matters beyond shock value: NietzscheSeat reframed a technical architecture question as a <em>psychological</em> one. No other seat thought to question the motivation behind the question itself. That's not something you get from a single agent, no matter how good — it requires a persona whose entire job is to challenge the premise.</p>
+<p data-i18n="case4">You saw this quote in the opening. Here's why it matters beyond shock value: NietzscheSeat reframed a technical architecture question as a <em>psychological</em> one. No other seat thought to question the motivation behind the question itself. That's not something you get from a single agent, no matter how good — it requires a persona whose entire job is to challenge the premise.</p>
 
 <details>
   <summary>View the minority report</summary>
@@ -660,9 +691,9 @@ if (currentRound >= maxRounds) {
   </div>
 </details>
 
-<h3>The Side-by-Side Test</h3>
+<h3 data-i18n="h_sidebyside">The Side-by-Side Test</h3>
 
-<p>The parliament's own self-review demanded this: <em>"Run the same hard question through a single agent and Parliagent. Show the outputs side by side. Let readers judge."</em> Fair enough.</p>
+<p data-i18n="sbs1">The parliament's own self-review demanded this: <em>"Run the same hard question through a single agent and Parliagent. Show the outputs side by side. Let readers judge."</em> Fair enough.</p>
 
 <table>
   <thead>
@@ -679,13 +710,13 @@ if (currentRound >= maxRounds) {
   </tbody>
 </table>
 
-<p>The single agent gives you a diplomatic non-answer. The parliament gives you a clear position, explicit dissent, 33 risk flags, and one genuinely novel reframing — for a dollar fifty more and ten extra seconds. You decide which is worth more for a decision that will shape your company's next two years.</p>
+<p data-i18n="sbs2">The single agent gives you a diplomatic non-answer. The parliament gives you a clear position, explicit dissent, 33 risk flags, and one genuinely novel reframing — for a dollar fifty more and ten extra seconds. You decide which is worth more for a decision that will shape your company's next two years.</p>
 
 <hr>
 
 <!-- ========== SECTION 5: Cost/Benchmark Data ========== -->
 
-<h2>What It Costs</h2>
+<h2 data-i18n="h_cost">What It Costs</h2>
 
 <p>Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All four providers (Anthropic, OpenAI, Google/Gemini, FLOCK) have been live-validated individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
 
@@ -715,23 +746,23 @@ if (currentRound >= maxRounds) {
 
 <!-- ========== SECTION 6: What We Got Wrong ========== -->
 
-<h2>What We Got Wrong (and What We're Honest About)</h2>
+<h2 data-i18n="h_wrong">What We Got Wrong (and What We're Honest About)</h2>
 
-<p>This section matters more than the architecture section. If we're going to ask you to trust a system that claims to surface hidden disagreements, we should surface our own.</p>
+<p data-i18n="wrong1">This section matters more than the architecture section. If we're going to ask you to trust a system that claims to surface hidden disagreements, we should surface our own.</p>
 
-<h3>Convergence rarely triggers</h3>
+<h3 data-i18n="h_conv_rare">Convergence rarely triggers</h3>
 
 <p>In 30 parliament runs across our benchmark suite, only 1 reached the convergence threshold early. The other 29 hit the round limit. This means either our convergence thresholds are too strict, or these debates genuinely don't converge when you have personas with different priors.</p>
 
 <p>We think it's the latter — and it's by design. Parliagent is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
 
-<h3>Writing tasks don't benefit from debate</h3>
+<h3 data-i18n="h_writing">Writing tasks don't benefit from debate</h3>
 
 <p>A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
 
 <p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
 
-<h3>Four providers, all tested</h3>
+<h3 data-i18n="h_providers">Four providers, all tested</h3>
 
 <p>Parliagent ships adapters for four LLM providers. All four are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations:</p>
 
@@ -751,11 +782,11 @@ if (currentRound >= maxRounds) {
 
 <p>The federated execution profile — where OpenAISeat runs on OpenAI, ClaudeSeat runs on Anthropic, and other seats use whichever provider is primary — has been validated with both Anthropic+OpenAI and FLOCK+Anthropic combinations. We can confirm that cross-provider debates work; whether they produce <em>meaningfully different</em> disagreements than single-provider runs is a question we're still investigating.</p>
 
-<h3>Security detection is coarse</h3>
+<h3 data-i18n="h_security">Security detection is coarse</h3>
 
 <p>The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a limitation we intend to improve.</p>
 
-<h3>The meta-critique (and the critique of the critique)</h3>
+<h3 data-i18n="h_meta">The meta-critique (and the critique of the critique)</h3>
 
 <p>We used Parliagent to write this article. Then we used Parliagent to review this article. The review was brutal.</p>
 
@@ -799,15 +830,15 @@ if (currentRound >= maxRounds) {
   <strong>The circularity problem:</strong> "Using multi-agent deliberation to evaluate multi-agent deliberation invalidates core claims without resolution." — flagged by 5 separate seats across both reviews.
 </div>
 
-<p>This is the uncomfortable truth at the center of the project: <strong>we can't use Parliagent to prove Parliagent works.</strong> The tool can surface disagreements, flag risks, and force you to consider perspectives you hadn't thought of. But it can't be its own ground truth. That requires external validation — human expert panels, outcome tracking, controlled experiments — which we haven't done yet.</p>
+<p data-i18n="meta1">This is the uncomfortable truth at the center of the project: <strong>we can't use Parliagent to prove Parliagent works.</strong> The tool can surface disagreements, flag risks, and force you to consider perspectives you hadn't thought of. But it can't be its own ground truth. That requires external validation — human expert panels, outcome tracking, controlled experiments — which we haven't done yet.</p>
 
-<p>We're including all of this — the parliament's critique of itself, unedited — because hiding it would prove exactly the self-leniency problem the system is designed to solve. If 33 seats tell you the article has problems, and you publish the article anyway without mentioning what they said, you've defeated the purpose.</p>
+<p data-i18n="meta2">We're including all of this — the parliament's critique of itself, unedited — because hiding it would prove exactly the self-leniency problem the system is designed to solve. If 33 seats tell you the article has problems, and you publish the article anyway without mentioning what they said, you've defeated the purpose.</p>
 
 <hr>
 
 <!-- ========== SECTION 7: When to Use ========== -->
 
-<h2>When to Use It (and When Not To)</h2>
+<h2 data-i18n="h_when">When to Use It (and When Not To)</h2>
 
 <p>Parliagent ships with a <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
 
@@ -831,7 +862,7 @@ graph TD
 
 <!-- ========== SECTION 8: Try It ========== -->
 
-<h2>Try It Yourself</h2>
+<h2 data-i18n="h_try">Try It Yourself</h2>
 
 <pre><code class="language-bash">npm install parliagent</code></pre>
 
@@ -883,7 +914,7 @@ if (result.warnings?.length) {
 
 <!-- ========== SECTION 9: What Comes Next ========== -->
 
-<h2>What Comes Next</h2>
+<h2 data-i18n="h_next">What Comes Next</h2>
 
 <p>Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (all live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
 
@@ -900,9 +931,9 @@ if (result.warnings?.length) {
 
 <p>The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much. When we asked 33 seats to review this very article, every single one gave "mixed" — not "support." They found the architecture compelling but the evidence insufficient. They liked the honesty but wanted ground-truth validation. They thought the Nietzsche quote was memorable but worried it was gimmicky.</p>
 
-<p>We're publishing their critique alongside our claims because that's the whole point: <strong>the tool that suppresses its own dissent has already failed.</strong></p>
+<p data-i18n="close1">We're publishing their critique alongside our claims because that's the whole point: <strong>the tool that suppresses its own dissent has already failed.</strong></p>
 
-<p>Maybe structured disagreement isn't the final answer to AI reasoning. But it's a better starting question than confident agreement. Not every tool needs to be an oracle. Sometimes it just needs to be the one that asks what the oracle missed.</p>
+<p data-i18n="close2">Maybe structured disagreement isn't the final answer to AI reasoning. But it's a better starting question than confident agreement. Not every tool needs to be an oracle. Sometimes it just needs to be the one that asks what the oracle missed.</p>
 
 <hr>
 
@@ -943,6 +974,147 @@ if (result.warnings?.length) {
     theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
     flowchart: { useMaxWidth: true, htmlLabels: true }
   });
+
+  // ========== i18n ==========
+  const T = {
+    zh: {
+      title: "别再问一个AI了。<br>开一场辩论吧。",
+      subtitle: "当33个AI专家角色就你的架构决策展开辩论——为什么分歧本身才是价值所在。",
+      readtime: "阅读约21分钟",
+      open1: '我们问Claude：一个金融科技创业公司是否应该采用微服务。它给了一个深思熟虑的中庸回答："这取决于你的团队规模、扩展需求和合规要求。" 合理。礼貌。没用。',
+      open2: "我们把同样的问题交给Parliagent。32个AI专家角色辩论了24秒。结果：94%反对微服务，33条关于PCI DSS违规和监管审计碎片化的具体警告，以及NietzscheSeat说的这句话：",
+      open3: "这就是\"问一个AI\"和\"开一场辩论\"的区别。单个agent在和稀泥。议会则表态、争论、对你没问到的事情发出警告，偶尔还会说出一些令人不安的话，让你重新审视整个问题。",
+      open4: '向LLM提一个棘手的架构问题，你会得到一个自信、结构清晰的答案。听起来很权威，会引用最佳实践，语气令人安心。问题是——这只有一个声音。一组偏见，一组盲区，一组嵌入单次前向传播的先验。异见的声音、令人不安的警告、"但是监管合规怎么办？"的反对意见？都淹没在模棱两可的措辞里。',
+      open5: '这就是<strong>一个人的回音室</strong>。这是当今大多数人使用AI的默认模式。',
+      open6: '我们构建了<a href="https://github.com/sjhddh/parliagent">Parliagent</a>来解决这个问题。这是一个多智能体审议引擎，在专家角色之间运行结构化的议会辩论——具有分歧追踪、少数派报告和预算控制。一次函数调用。多重视角。结构化的异议。',
+      open7: '写这篇文章时我们做了一件递归的事：<strong>我们让Parliagent写关于自己的文章。</strong>然后让它审查自己写的东西。然后它标记了自己的循环论证。后面会详细讲。',
+      h_single: "为什么单一Agent不够用",
+      single1: 'Anthropic的工程团队<a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">最近记录了</a>他们在构建长时间运行的编码Agent时遇到的一个关键失败模式：<strong>自我评估不起作用。</strong>',
+      single2: "他们的解决方案是将生成器和评估器分离——一个专门持怀疑态度的独立agent。这对代码有效，因为有可验证的结果。但对于那些没有单元测试的决策呢？架构权衡。安全设计。战略转型。不确定性下的规划。",
+      single3: "对于这些问题，你不仅仅需要一个怀疑者——你需要一个<em>议会</em>。多个具有不同领域、不同先验、不同盲区的专家，在结构上被激励去表达异议。",
+      single4: "数据说明了一切。我们针对单一agent基线对Parliagent进行了基准测试，涵盖编码、规划、写作、策略、安全和分析六个类别的10个提示：",
+      single5: "基线产生零分歧。不是因为没什么可争论的——而是因为没有人可以<em>争论</em>。单个agent被问到安全问题会提到安全关切。但它不会有SecurityPrivacySeat专门指出PCI DSS违规，同时KahnemanSeat指出你正在锚定微服务炒作周期。",
+      single6: "<strong>分歧就是价值。</strong>Micro模式仅用1.6倍成本和2秒额外延迟就增加了3.4个分歧。Fast模式浮现10.6个分歧——6倍成本换来3倍冲突。那不是开销，那是你本来会忽略的东西的表面积。",
+      h_arch: "架构",
+      arch1: "Parliagent是一个TypeScript库（<code>npm install parliagent</code>），只有一个入口：",
+      arch2: "这一行代码背后发生了什么：",
+      h_speaker: "1. 议长（Speaker）",
+      speaker1: "议长是中立的主持人——它从不采取实质性立场。它将问题路由到合适的席位，管理辩论轮次，并从成员贡献中综合最终答案。把它想象成程序性的骨架。",
+      h_routing: "2. 席位路由",
+      routing1: "当请求到达时，系统通过关键词评分对任务类型（编码、规划、策略、分析、伦理、写作、通用）进行分类，然后选择适合当前模式的席位组合：",
+      routing2: "路由故意采用基于规则的方式（而非LLM驱动），因为它在每个请求上运行，需要快速、确定性和可检查。你可以不花一分钱预览路由结果：",
+      h_seats: "3. 33个席位",
+      seats1: "每个席位都有一个角色，包含系统提示、领域专长、优势、盲区和发言风格。它们不是随机的——它们被选择来创造建设性的张力：",
+      seats2: '席位并行发言。每个席位产生一个结构化JSON声明，包含立场（<code>support</code> / <code>mixed</code> / <code>oppose</code> / <code>uncertain</code>）、主张、反对意见、信心水平和可选的警告。在后续轮次中，它们阅读彼此的立场，可以转变——也可以坚持。',
+      h_convergence: "4. 收敛",
+      conv1: "每轮之后，系统计算一致性比率，使用Jaccard相似度对不同主张进行聚类，统计反对意见，并决定是否停止：",
+      conv2: '一个重要的设计决策：<strong>辩论内部始终使用英语</strong>，即使用户请求其他语言的输出。英语是LLM推理能力最强的语言。只有最终的综合步骤才以目标语言呈现（<code>outputLanguage: "zh"</code>）。这意味着中文用户可以享受英语审议的质量，而不会损失推理能力。',
+      h_synthesis: "5. 综合",
+      synth1: '议长阅读所有席位声明、分歧和警告，然后产出反映辩论实际状态的综合——包括异议。如果决策类型是<code>split</code>或<code>uncertain</code>，响应会如实说明。它不会用虚假的信心掩盖分歧。',
+      h_case: "实战案例：33位专家争论微服务",
+      case1: "理论再好不如实战。我们向Parliagent的全部33个席位提问：",
+      case2: "<strong>裁决：从单体开始。</strong>32个发言席位中有30个反对微服务，2个持混合态度，0个支持。94%一致——在一个专为暴露分歧而设计的系统中，这是罕见的近乎共识。",
+      case3: "但重要的不是票数。而是<em>为什么</em>他们反对，以及每个席位如何以不同方式框定相同的结论。以下是辩论记录中的六个亮点：",
+      case4: "你在开头就看到了这句话。它的价值不仅是震撼效果：NietzscheSeat把一个技术架构问题重新框定为<em>心理学</em>问题。没有其他席位想到质疑问题本身的动机。这不是你从单个agent那里能得到的——它需要一个专门挑战前提的角色。",
+      h_sidebyside: "并排对比测试",
+      sbs1: '议会的自我审查要求做这个测试：<em>"把同一个难题分别交给单个agent和Parliagent。并排展示输出。让读者判断。"</em>好的。',
+      sbs2: "单个agent给你一个外交辞令式的无回答。议会给你一个明确的立场、显式的异议、33个风险标记，和一个全新的问题重构——多花一块五，多等十秒。你来决定，对于一个将影响你公司未来两年的决策，哪个更值。",
+      h_cost: "费用",
+      h_wrong: "我们做错了什么（以及我们的坦诚）",
+      wrong1: "这一节比架构那节更重要。如果我们要求你信任一个声称能暴露隐藏分歧的系统，我们就应该先暴露自己的。",
+      h_conv_rare: "收敛很少触发",
+      h_writing: "写作任务不受益于辩论",
+      h_providers: "四个提供商，全部已测试",
+      h_security: "安全检测仍然粗糙",
+      h_meta: "元批评（以及对批评的批评）",
+      meta1: '这是项目核心的不舒服真相：<strong>我们无法用Parliagent来证明Parliagent有效。</strong>这个工具可以暴露分歧、标记风险、迫使你考虑未曾想到的视角。但它不能作为自己的真相基准。这需要外部验证——人类专家小组、结果追踪、对照实验——我们还没做到。',
+      meta2: "我们完整收录了这一切——议会对自身的批评，未经编辑——因为隐藏它恰恰证明了这个系统想要解决的自我宽容问题。如果33个席位告诉你文章有问题，你发表时却只字不提他们说的话，你就违背了初衷。",
+      h_when: "何时使用（何时不用）",
+      h_try: "自己试试",
+      h_next: "下一步",
+      close1: '我们把他们的批评和我们的主张并列发表，因为这就是重点：<strong>压制自身异议的工具已经失败了。</strong>',
+      close2: "也许结构化分歧不是AI推理的终极答案。但它是一个比盲目一致更好的起点。不是每个工具都需要成为神谕。有时它只需要成为那个追问神谕遗漏了什么的人。",
+    },
+    ko: {
+      title: "AI 하나에게 묻지 마세요.<br>토론을 열어보세요.",
+      subtitle: "33명의 AI 전문가 페르소나가 당신의 아키텍처 결정을 놓고 논쟁할 때 — 왜 의견 불일치 자체가 핵심인지.",
+      readtime: "읽기 약 21분",
+      open1: '우리는 Claude에게 핀테크 스타트업이 마이크로서비스를 사용해야 하는지 물었습니다. "팀 규모, 확장 요구사항, 컴플라이언스 필요에 따라 다릅니다"라는 신중한 답변을 받았습니다. 합리적. 예의 바른. 쓸모없는.',
+      open2: "같은 질문을 Parliagent에 던졌습니다. 32명의 AI 전문가 페르소나가 24초간 논쟁했습니다. 결과: 94%가 마이크로서비스에 반대, PCI DSS 위반 및 규제 감사 분절화에 대한 33개 경고, 그리고 NietzscheSeat의 이 발언:",
+      open3: "이것이 AI 하나에게 묻는 것과 토론을 여는 것의 차이입니다. 단일 에이전트는 모호하게 답합니다. 의회는 입장을 취하고, 반대하고, 물어보지 않은 것에 대해 경고하며, 때때로 전체 질문을 재구성할 만큼 불편한 말을 합니다.",
+      open4: 'LLM에게 어려운 아키텍처 질문을 하면 자신감 있고 잘 구조화된 답변을 얻습니다. 권위 있어 보이고, 모범 사례를 인용하며, 고개를 끄덕이게 만드는 안심시키는 톤입니다. 문제는 — 하나의 목소리라는 것입니다. 하나의 편향, 하나의 맹점, 단일 순전파에 내장된 하나의 선험적 판단. 반대 의견, 불편한 경고, "규제 컴플라이언스는요?"라는 이의? 모호한 표현 속에 묻혀버립니다.',
+      open5: '이것이 <strong>1인 에코 챔버</strong>입니다. 오늘날 대부분의 사람들이 AI를 사용하는 기본 모드입니다.',
+      open6: '이 문제를 해결하기 위해 <a href="https://github.com/sjhddh/parliagent">Parliagent</a>를 만들었습니다. 전문가 페르소나 간 구조화된 의회 토론을 실행하는 다중 에이전트 심의 엔진입니다 — 의견 불일치 추적, 소수 의견 보고서, 예산 제어를 갖추고 있습니다. 함수 호출 한 번. 다양한 관점. 구조화된 이의.',
+      open7: '이 글을 쓸 때 재귀적인 일을 했습니다: <strong>Parliagent에게 자기 자신에 대해 쓰라고 했습니다.</strong> 그런 다음 자기가 쓴 것을 검토하라고 했습니다. 그랬더니 자체 순환 논리를 지적했습니다. 자세한 내용은 뒤에서.',
+      h_single: "왜 단일 에이전트로는 부족한가",
+      single1: 'Anthropic 엔지니어링 팀이 장기 실행 코딩 에이전트를 구축하면서 겪은 핵심 실패 모드를 <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">최근 문서화했습니다</a>: <strong>자기 평가는 작동하지 않습니다.</strong>',
+      single2: "그들의 해결책은 생성기와 평가자를 분리하는 것이었습니다 — 회의적 역할을 맡는 별도의 에이전트. 검증 가능한 결과가 있는 코드에는 효과적입니다. 하지만 단위 테스트가 없는 결정은? 아키텍처 트레이드오프. 보안 설계. 전략적 전환. 불확실성 하의 계획.",
+      single3: "이런 문제에는 회의론자 한 명만으로는 부족합니다 — <em>의회</em>가 필요합니다. 서로 다른 영역, 서로 다른 선험적 판단, 서로 다른 맹점을 가진 다수의 전문가가 구조적으로 의견 불일치를 표현하도록 설계된 시스템.",
+      single4: "데이터가 말해줍니다. 코딩, 계획, 글쓰기, 전략, 보안, 분석 6개 카테고리의 프롬프트 10개로 Parliagent를 단일 에이전트 기준선과 벤치마크했습니다:",
+      single5: "기준선은 의견 불일치 제로를 생성합니다. 논쟁할 것이 없어서가 아니라 — 논쟁할 <em>상대가</em> 없기 때문입니다. 보안에 대해 물으면 단일 에이전트도 보안 우려를 언급합니다. 하지만 SecurityPrivacySeat가 PCI DSS 위반을 구체적으로 지적하면서 KahnemanSeat가 마이크로서비스 과대광고에 앵커링되고 있다고 지적하지는 않습니다.",
+      single6: "<strong>의견 불일치가 가치입니다.</strong> Micro 모드는 1.6배의 비용과 2초의 추가 지연으로 3.4개의 의견 불일치를 추가합니다. Fast 모드는 10.6개를 드러냅니다 — 6배 비용으로 3배의 갈등. 그건 오버헤드가 아닙니다. 놓칠 뻔한 것들의 표면적입니다.",
+      h_arch: "아키텍처",
+      arch1: "Parliagent는 TypeScript 라이브러리(<code>npm install parliagent</code>)이며 단일 진입점을 가집니다:",
+      arch2: "이 한 줄 뒤에서 일어나는 일:",
+      h_speaker: "1. 의장 (Speaker)",
+      speaker1: "의장은 중립적인 사회자입니다 — 실질적 입장을 취하지 않습니다. 질문을 적절한 좌석으로 라우팅하고, 토론 라운드를 관리하며, 구성원 기여에서 최종 답변을 종합합니다. 절차적 백본이라고 생각하세요.",
+      h_routing: "2. 좌석 라우팅",
+      routing1: "요청이 도착하면 시스템은 키워드 점수로 작업 유형(코딩, 계획, 전략, 분석, 윤리, 글쓰기, 일반)을 분류한 후 모드에 적합한 좌석 조합을 선택합니다:",
+      routing2: "라우팅은 의도적으로 규칙 기반(LLM 기반이 아님)입니다. 모든 요청에서 실행되므로 빠르고, 결정적이며, 검사 가능해야 하기 때문입니다. 토큰 하나 안 쓰고 라우팅을 미리 볼 수 있습니다:",
+      h_seats: "3. 33개 좌석",
+      seats1: "각 좌석에는 시스템 프롬프트, 도메인 전문성, 강점, 맹점, 발언 스타일이 있는 페르소나가 있습니다. 무작위가 아닙니다 — 생산적 긴장을 만들도록 선택되었습니다:",
+      seats2: '좌석들은 병렬로 발언합니다. 각각 입장(<code>support</code> / <code>mixed</code> / <code>oppose</code> / <code>uncertain</code>), 주장, 반대, 신뢰도, 선택적 경고를 포함한 구조화된 JSON 성명을 생성합니다. 후속 라운드에서 서로의 입장을 읽고 전환하거나 고수할 수 있습니다.',
+      h_convergence: "4. 수렴",
+      conv1: "각 라운드 후 시스템은 합의율을 계산하고, Jaccard 유사도로 고유 주장을 클러스터링하며, 반대 수를 세고 중단 여부를 결정합니다:",
+      conv2: '중요한 설계 결정: <strong>토론 내부는 항상 영어로 진행됩니다</strong>, 사용자가 다른 언어 출력을 요청해도. 영어는 LLM 추론이 가장 강한 언어입니다. 최종 종합 단계에서만 대상 언어로 렌더링됩니다(<code>outputLanguage: "zh"</code>). 한국어 사용자도 영어 심의의 품질 혜택을 추론 손실 없이 받을 수 있습니다.',
+      h_synthesis: "5. 종합",
+      synth1: '의장은 모든 좌석 성명, 의견 불일치, 경고를 읽은 후 토론의 실제 상태를 반영하는 종합을 생성합니다 — 이견 포함. 결정 유형이 <code>split</code>이나 <code>uncertain</code>이면 그렇게 표시합니다. 거짓 자신감으로 불일치를 숨기지 않습니다.',
+      h_case: "실전 사례: 33명의 전문가가 마이크로서비스를 논쟁하다",
+      case1: "이론보다 실전. Parliagent의 33개 좌석 전체에 물었습니다:",
+      case2: "<strong>판결: 모놀리스로 시작하세요.</strong> 발언 좌석 32석 중 30석이 마이크로서비스에 반대, 2석 혼합, 0석 지지. 94% 합의 — 의견 불일치를 드러내도록 설계된 시스템에서 보기 드문 근(近)합의.",
+      case3: "중요한 건 투표 수가 아닙니다. <em>왜</em> 반대했는지, 각 좌석이 같은 결론을 얼마나 다르게 프레이밍했는지입니다. 토론 기록에서 여섯 가지 하이라이트:",
+      case4: "오프닝에서 이 인용을 보셨습니다. 충격 효과를 넘어 중요한 이유: NietzscheSeat는 기술 아키텍처 질문을 <em>심리학적</em> 질문으로 재구성했습니다. 다른 좌석은 질문 자체의 동기를 의문시할 생각을 하지 못했습니다. 아무리 좋은 단일 에이전트에서도 얻을 수 없는 것입니다 — 전제에 도전하는 것이 유일한 임무인 페르소나가 필요합니다.",
+      h_sidebyside: "나란히 비교 테스트",
+      sbs1: '의회의 자체 리뷰가 이것을 요구했습니다: <em>"같은 어려운 질문을 단일 에이전트와 Parliagent에 각각 던지세요. 나란히 보여주세요. 독자가 판단하게 하세요."</em> 좋습니다.',
+      sbs2: "단일 에이전트는 외교적 비(非)답변을 줍니다. 의회는 명확한 입장, 명시적 이견, 33개 리스크 플래그, 진정으로 새로운 재구성 하나를 줍니다 — 1.5달러 더, 10초 더. 회사의 향후 2년을 결정할 결정에 어느 쪽이 더 가치 있는지 판단하세요.",
+      h_cost: "비용",
+      h_wrong: "우리가 잘못한 것 (그리고 솔직한 고백)",
+      wrong1: "이 섹션은 아키텍처 섹션보다 중요합니다. 숨겨진 의견 불일치를 드러낸다고 주장하는 시스템을 신뢰해달라면, 먼저 우리 자신의 것을 드러내야 합니다.",
+      h_conv_rare: "수렴은 거의 발생하지 않음",
+      h_writing: "글쓰기 작업은 토론의 혜택을 받지 못함",
+      h_providers: "4개 제공자, 모두 테스트 완료",
+      h_security: "보안 감지는 아직 거침",
+      h_meta: "메타 비평 (그리고 비평에 대한 비평)",
+      meta1: '이것이 프로젝트 핵심의 불편한 진실입니다: <strong>Parliagent로 Parliagent가 작동한다는 것을 증명할 수 없습니다.</strong> 이 도구는 의견 불일치를 드러내고, 리스크를 표시하며, 생각하지 못한 관점을 고려하도록 강제할 수 있습니다. 하지만 자체 검증 기준이 될 수는 없습니다. 외부 검증 — 인간 전문가 패널, 결과 추적, 대조 실험 — 이 필요하며, 아직 하지 못했습니다.',
+      meta2: "이 모든 것 — 의회의 자기 비평을 편집 없이 — 포함합니다. 숨기는 것은 이 시스템이 해결하려는 자기 관대함 문제를 정확히 증명하는 것이기 때문입니다. 33개 좌석이 기사에 문제가 있다고 말하는데 그것을 언급하지 않고 발행한다면, 목적을 배반하는 것입니다.",
+      h_when: "언제 사용하고 (언제 사용하지 않을까)",
+      h_try: "직접 해보세요",
+      h_next: "다음 단계",
+      close1: '그들의 비평을 우리의 주장과 나란히 게시합니다. 이것이 핵심이기 때문입니다: <strong>자체 이견을 억압하는 도구는 이미 실패한 것입니다.</strong>',
+      close2: "구조화된 의견 불일치가 AI 추론의 최종 답이 아닐 수도 있습니다. 하지만 자신감 넘치는 합의보다 더 나은 시작 질문입니다. 모든 도구가 신탁이 될 필요는 없습니다. 때로는 신탁이 놓친 것을 물어보는 존재만 되면 됩니다.",
+    }
+  };
+
+  const enCache = {};
+  function setLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (!enCache[key]) enCache[key] = el.innerHTML;
+      if (lang === 'en') {
+        el.innerHTML = enCache[key];
+      } else if (T[lang] && T[lang][key]) {
+        el.innerHTML = T[lang][key];
+      }
+    });
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'ko' ? 'ko' : 'en';
+    localStorage.setItem('lang', lang);
+    document.getElementById('lang-picker').value = lang;
+  }
+
+  (function() {
+    const saved = localStorage.getItem('lang');
+    if (saved && saved !== 'en') setLanguage(saved);
+  })();
 </script>
 
 <!-- Prism.js -->
