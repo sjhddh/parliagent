@@ -1,4 +1,4 @@
-# Sun Parliament
+# Parliagent
 
 Multi-agent deliberation engine. One call gets you a structured debate among expert personas — with disagreement tracking, minority reports, and budget controls.
 
@@ -7,12 +7,12 @@ Designed as a **skill**: invoke it from an agent workflow, import it as a librar
 ## Installation
 
 ```bash
-npm install sun-parliament
+npm install parliagent
 ```
 
 Requires Node >= 18 and at least one LLM provider API key.
 
-## When to Use Sun Parliament
+## When to Use Parliagent
 
 **Use it** when you need multiple perspectives before deciding — architecture choices, risk reviews, planning under uncertainty, security-sensitive designs.
 
@@ -23,7 +23,7 @@ Requires Node >= 18 and at least one LLM provider API key.
 ### SDK
 
 ```typescript
-import { debate } from "sun-parliament";
+import { debate } from "parliagent";
 
 const response = await debate({
   prompt: "Should we use microservices or a monolith?",
@@ -42,19 +42,19 @@ console.log(response.warnings);        // safety/security concerns raised during
 
 ```bash
 # Quick question — micro mode, 2-3 seats, 1 round
-sun-parliament ask "What's the best approach to rate limiting?"
+parliagent ask "What's the best approach to rate limiting?"
 
 # Planning — fast mode, structured steps
-sun-parliament plan "Migration plan from monolith to microservices"
+parliagent plan "Migration plan from monolith to microservices"
 
 # Critical review — find problems and risks
-sun-parliament review "Our proposed auth schema" --mode balanced
+parliagent review "Our proposed auth schema" --mode balanced
 
 # Full debate with trace
-sun-parliament debate "Should we pivot?" --mode fast --trace full --json
+parliagent debate "Should we pivot?" --mode fast --trace full --json
 
 # See what seats would be selected without running a debate
-sun-parliament inspect "How to handle API key rotation?" --mode fast
+parliagent inspect "How to handle API key rotation?" --mode fast
 ```
 
 ## Defaults and Mode Selection
@@ -99,7 +99,7 @@ FLOCK_BASE_URL=https://api.flock.io/v1    # default, can be overridden
 To force a specific primary provider:
 
 ```bash
-SUN_PARLIAMENT_PRIMARY_PROVIDER=openai
+PARLIAGENT_PRIMARY_PROVIDER=openai
 ```
 
 ## Output Language
@@ -108,7 +108,7 @@ Internal debate is always in English for reasoning quality. Output language is c
 
 ```bash
 # CLI
-sun-parliament ask "What is the best database for this use case?" --language zh
+parliagent ask "What is the best database for this use case?" --language zh
 
 # SDK
 debate({ prompt, outputLanguage: "zh" })
@@ -128,11 +128,11 @@ Mode controls **how many seats debate**. Profile controls **which models they us
 |---------|----------|-------------|
 | `available` | Seats follow their fallback chain with whatever providers exist | Default. Works with any single provider. |
 | `federated` | OpenAISeat/ClaudeSeat/GeminiSeat prefer their native family; others use primary | When you have multiple API keys and want provider-native seat diversity |
-| `supreme` | All debate seats + synthesis run on one operator-designated provider (`SUN_PARLIAMENT_SUPREME_PROVIDER`, defaults to primary) | When you want all seats on one provider for uniform quality |
+| `supreme` | All debate seats + synthesis run on one operator-designated provider (`PARLIAGENT_SUPREME_PROVIDER`, defaults to primary) | When you want all seats on one provider for uniform quality |
 
 ```bash
 # CLI
-sun-parliament ask "question" --profile supreme
+parliagent ask "question" --profile supreme
 
 # SDK
 debate({ prompt, mode: "fast", executionProfile: "supreme" })
@@ -150,19 +150,19 @@ OPENAI_API_KEY=sk-...
 FLOCK_API_KEY=sk-...                                 # FLOCK provider key
 FLOCK_MODEL=your-model-name                          # FLOCK model (required, no default)
 FLOCK_BASE_URL=https://api.flock.io/v1               # FLOCK base URL (default shown)
-SUN_PARLIAMENT_PRIMARY_PROVIDER=anthropic            # Force primary provider
-SUN_PARLIAMENT_SUPREME_PROVIDER=flock                # Override supreme model selection
-SUN_PARLIAMENT_EXECUTION_PROFILE=available           # Default profile
-SUN_PARLIAMENT_DEFAULT_MODE=fast                     # Override default mode
-SUN_PARLIAMENT_DEFAULT_TRACE=summary                 # none | summary | full
-SUN_PARLIAMENT_DEFAULT_OUTPUT_LANGUAGE=en             # Output language (e.g. zh, ja, es)
-SUN_PARLIAMENT_MAX_TOKENS=15000                      # Global token budget cap
-SUN_PARLIAMENT_MAX_LATENCY_MS=20000                  # Global latency cap
+PARLIAGENT_PRIMARY_PROVIDER=anthropic            # Force primary provider
+PARLIAGENT_SUPREME_PROVIDER=flock                # Override supreme model selection
+PARLIAGENT_EXECUTION_PROFILE=available           # Default profile
+PARLIAGENT_DEFAULT_MODE=fast                     # Override default mode
+PARLIAGENT_DEFAULT_TRACE=summary                 # none | summary | full
+PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE=en             # Output language (e.g. zh, ja, es)
+PARLIAGENT_MAX_TOKENS=15000                      # Global token budget cap
+PARLIAGENT_MAX_LATENCY_MS=20000                  # Global latency cap
 ```
 
 ### Config File
 
-Optional `sun-parliament.config.json` in your working directory:
+Optional `parliagent.config.json` in your working directory:
 
 ```json
 {
@@ -177,7 +177,7 @@ Environment variables take priority over file config.
 
 ## Response Structure
 
-Every call returns a `ParliamentResponse`:
+Every call returns a `ParliagentResponse`:
 
 | Field | Type | Always Present | Description |
 |-------|------|---------------|-------------|
@@ -206,18 +206,18 @@ Control the synthesis format with `answerMode`:
 ## Serverless Deployment
 
 ```typescript
-import { handleRequest } from "sun-parliament";
+import { handleRequest } from "parliagent";
 
 export default async function handler(req) {
   return handleRequest({ method: req.method, body: await req.json() });
 }
 ```
 
-POST a `ParliamentRequest` JSON body, get back a `ParliamentResponse`. Includes CORS headers, input validation, and structured error responses.
+POST a `ParliagentRequest` JSON body, get back a `ParliagentResponse`. Includes CORS headers, input validation, and structured error responses.
 
-## Full Parliament (33 seats)
+## Full Parliagent (33 seats)
 
-All 33 seats are production-grade and invokable. Default modes select a subset; full parliament is explicit opt-in.
+All 33 seats are production-grade and invokable. Default modes select a subset; full parliagent is explicit opt-in.
 
 | Category | Seats |
 |----------|-------|
@@ -233,19 +233,19 @@ All 33 seats are production-grade and invokable. Default modes select a subset; 
 | **Product & Operations** | ProductStrategySeat, OperatorSeat, DesignCommunicationSeat |
 | **Civic & Ethics** | LawGovernanceSeat, EthicsHumanImpactSeat, CitizenPragmatistSeat |
 
-### Full Parliament Mode
+### Full Parliagent Mode
 
 Activate all 33 seats for maximum deliberation breadth:
 
 ```bash
-sun-parliament debate "question" --full-parliament
+parliagent debate "question" --full-parliagent
 ```
 
 ```typescript
-debate({ prompt, fullParliament: true, trace: "full" })
+debate({ prompt, fullParliagent: true, trace: "full" })
 ```
 
-| Metric | Full Parliament (measured) |
+| Metric | Full Parliagent (measured) |
 |--------|--------------------------|
 | Seats | 32 (+ Speaker) |
 | Rounds | 1 (default) |
@@ -255,7 +255,7 @@ debate({ prompt, fullParliament: true, trace: "full" })
 | Estimated cost | ~$1.50/run |
 | Budget cap | 300k tokens / 120s |
 
-Full parliament runs 1 round by default — 32 voices in a single round already produce 100+ disagreements. Budget limits apply between rounds; a single parallel round may use the full cap.
+Full parliagent runs 1 round by default — 32 voices in a single round already produce 100+ disagreements. Budget limits apply between rounds; a single parallel round may use the full cap.
 
 **When to use:** Consequential decisions where you want every disciplinary angle — architecture with compliance implications, strategic pivots, security-critical designs.
 
@@ -264,16 +264,16 @@ Full parliament runs 1 round by default — 32 voices in a single round already 
 ## CLI Reference
 
 ```
-sun-parliament ask <prompt>       Quick deliberation (micro)
-sun-parliament debate <prompt>    Full debate with trace (balanced)
-sun-parliament plan <prompt>      Planning-biased (fast)
-sun-parliament review <prompt>    Critical review (fast)
-sun-parliament seats              List available seats
-sun-parliament inspect <prompt>   Show routing without running debate
+parliagent ask <prompt>       Quick deliberation (micro)
+parliagent debate <prompt>    Full debate with trace (balanced)
+parliagent plan <prompt>      Planning-biased (fast)
+parliagent review <prompt>    Critical review (fast)
+parliagent seats              List available seats
+parliagent inspect <prompt>   Show routing without running debate
 
 Options:
   --mode <mode>           micro | fast | balanced | deep
-  --full-parliament       Activate all 33 seats (high cost, explicit opt-in)
+  --full-parliagent       Activate all 33 seats (high cost, explicit opt-in)
   --profile <profile>     available | federated | supreme
   --language <code>       Output language (e.g. zh, ja, es). Internal debate stays English.
   --task <type>           general | writing | planning | analysis | coding | strategy | ethics

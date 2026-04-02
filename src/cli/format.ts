@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import type { ParliamentResponse } from "../contracts/response.js";
+import type { ParliagentResponse } from "../contracts/response.js";
 
 export function formatResponse(
-  response: ParliamentResponse,
+  response: ParliagentResponse,
   json: boolean,
 ): string {
   if (json) {
@@ -11,7 +11,7 @@ export function formatResponse(
 
   const lines: string[] = [];
 
-  lines.push(chalk.bold.cyan("\n━━━ Sun Parliament ━━━\n"));
+  lines.push(chalk.bold.cyan("\n━━━ Parliagent ━━━\n"));
 
   lines.push(chalk.bold("Answer:"));
   lines.push(response.finalAnswer);

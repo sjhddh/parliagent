@@ -9,7 +9,7 @@ export const DecisionType = z.enum([
 ]);
 export type DecisionType = z.infer<typeof DecisionType>;
 
-export const ParliamentResponse = z.object({
+export const ParliagentResponse = z.object({
   finalAnswer: z.string(),
   decisionType: DecisionType,
   activatedSeats: z.array(z.string()),
@@ -20,4 +20,4 @@ export const ParliamentResponse = z.object({
   debateSummary: z.string().optional(),
   traceArtifact: DeliberationTrace.optional(),
 });
-export type ParliamentResponse = z.infer<typeof ParliamentResponse>;
+export type ParliagentResponse = z.infer<typeof ParliagentResponse>;

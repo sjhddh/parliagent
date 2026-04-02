@@ -1,4 +1,4 @@
-# Code Review — Sun Parliament v0.1.0 (Round 3: Final Release Check)
+# Code Review — Parliagent v0.2.0 (Round 3: Final Release Check)
 
 ## Verdict: PASS — Ship It
 
@@ -23,11 +23,11 @@ This round adds one feature (output language support) and resolves all three iss
 Clean implementation that keeps internal debate in English for reasoning quality while rendering the final synthesis in the requested language.
 
 **What was added:**
-- `outputLanguage: z.string().optional()` in `ParliamentRequest` schema
+- `outputLanguage: z.string().optional()` in `ParliagentRequest` schema
 - `resolveOutputLanguage()` in `synthesis.ts` — returns undefined for English (no extra instruction), returns the code for non-English
 - `buildLanguageInstruction()` appends an explicit "write the entire output in {lang}" directive to the synthesis prompt
 - 1.3x token multiplier for non-English output in `getSynthesisMaxTokens()` — reasonable for CJK and other high-token-per-character languages
-- `--language <code>` / `--lang <code>` CLI flags with config file and env var support (`SUN_PARLIAMENT_DEFAULT_OUTPUT_LANGUAGE`)
+- `--language <code>` / `--lang <code>` CLI flags with config file and env var support (`PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE`)
 - `outputLanguage` field threaded through `Speaker.synthesize()` to the synthesis prompt and max tokens
 - 13 tests in `tests/language.test.ts` covering resolver logic, prompt injection, token multiplier, and schema validation
 - README updated with "Output Language" section, CLI and SDK examples, and clear explanation of what gets translated vs stays English
@@ -50,8 +50,8 @@ Clean implementation that keeps internal debate in English for reasoning quality
 
 - **Severity**: Cosmetic (does not block publish)
 - **Location**: `PUBLISH_CHECKLIST.md:77`
-- **Problem**: Post-publish verification step says `npx sun-parliament seats --starter`. The `--starter` flag was removed — the command is now just `npx sun-parliament seats`.
-- **Suggested fix**: Change to `npx sun-parliament seats`.
+- **Problem**: Post-publish verification step says `npx parliagent seats --starter`. The `--starter` flag was removed — the command is now just `npx parliagent seats`.
+- **Suggested fix**: Change to `npx parliagent seats`.
 
 ---
 

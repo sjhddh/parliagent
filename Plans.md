@@ -1,8 +1,8 @@
-# Sun Parliament — Plans.md
+# Parliagent — Plans.md
 
 ## Overview
 
-Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker receives a user problem, routes it to selected parliamentary seats, manages debate rounds, and converges on a final answer with traceable reasoning. V1 ships as an npm package with CLI (`sun-parliament`) and programmatic SDK.
+Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives a user problem, routes it to selected parliamentary seats, manages debate rounds, and converges on a final answer with traceable reasoning. V1 ships as an npm package with CLI (`parliagent`) and programmatic SDK.
 
 ## Features
 
@@ -83,13 +83,13 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 - Deterministic + fixture-based tests
 
 **Exit Criteria:**
-- [x] Draft TS interfaces exist for ParliamentRequest, ParliamentResponse, SeatProfile, SeatStatement, DisagreementRecord, DeliberationTrace
+- [x] Draft TS interfaces exist for ParliagentRequest, ParliagentResponse, SeatProfile, SeatStatement, DisagreementRecord, DeliberationTrace
 - [x] Convergence heuristic, routing decision tree, and circuit breaker thresholds implemented
-- [x] System produces valid ParliamentResponse JSON for benchmark prompts
+- [x] System produces valid ParliagentResponse JSON for benchmark prompts
 - [x] At least 2 seats produce materially distinct opening statements per prompt
 - [x] Circuit breakers, round limits, stop reasons observable in trace
 - [x] Hello World milestone: 1 prompt, Speaker+2 seats, 1 round, valid JSON
-- [x] `sun-parliament ask` returns valid response in micro mode
+- [x] `parliagent ask` returns valid response in micro mode
 - [x] `--json` output validates against response schema
 - [x] Deterministic tests pass for routing, convergence, budget, schema validation
 
@@ -100,15 +100,15 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 - [x] Presets for common tasks (plan→planning taskType+plan answerMode, review→analysis+review answerMode)
 - [x] Progressive output during debate (callbacks on seat selection, round start, speaking, completion)
 - [x] JSON output for scripting (`--json` on all commands)
-- [x] Configuration file / env-var contract (`sun-parliament.config.json`, `SUN_PARLIAMENT_*` env vars)
+- [x] Configuration file / env-var contract (`parliagent.config.json`, `PARLIAGENT_*` env vars)
 - [x] Handler adapter for serverless (`src/handler.ts` — Vercel/Lambda/Workers compatible)
 
 ### Phase 2.7: Language Support
 
-**Goal:** Make Sun Parliament language-stable across different host agents while preserving English as the fixed internal debate language and exposing an explicit output-language control.
+**Goal:** Make Parliagent language-stable across different host agents while preserving English as the fixed internal debate language and exposing an explicit output-language control.
 
 **Exit Criteria:**
-- [ ] `ParliamentRequest` supports `outputLanguage`
+- [ ] `ParliagentRequest` supports `outputLanguage`
 - [ ] CLI supports `--language` / `--lang` as an alias for output language
 - [ ] Config supports a default output language
 - [ ] Seat prompts and debate trace generation remain in English internally
@@ -117,7 +117,7 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 
 ### Phase 2.6: Full Parliament Completion
 
-**Goal:** Ship Sun Parliament as a genuine 33-seat parliament, not a 12-seat starter plus deferred expansion pack.
+**Goal:** Ship Parliagent as a genuine 33-seat parliament, not a 12-seat starter plus deferred expansion pack.
 
 **Exit Criteria:**
 - [ ] All 33 seats have complete production-grade profiles, not placeholder constitutional definitions
@@ -144,7 +144,7 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 **Goal:** Prove the engine works outside mocks with real provider behavior, real latency, and real failure surfaces.
 
 **Exit Criteria:**
-- [x] `sun-parliament ask` succeeds in `micro` mode against at least one real provider (Anthropic, 2026-04-02)
+- [x] `parliagent ask` succeeds in `micro` mode against at least one real provider (Anthropic, 2026-04-02)
 - [x] At least one multi-seat run completes with real provider responses and valid JSON output
 - [x] Budget circuit breaker verified with real tokens (stopReason=budget at 1885 tokens)
 - [x] Provider validation scope documented in README and PUBLISH_CHECKLIST
@@ -172,7 +172,7 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 
 ### Phase 3B: Benchmarking and Evaluation ✓
 
-**Goal:** Measure whether Sun Parliament is actually better than a flat assistant for the intended task classes.
+**Goal:** Measure whether Parliagent is actually better than a flat assistant for the intended task classes.
 
 **Exit Criteria:**
 - [x] Benchmark fixtures committed and repeatable (`benchmarks/prompts.json`, 10 prompts)
@@ -376,8 +376,8 @@ Add support for:
 - `FLOCK_API_KEY`
 - `FLOCK_BASE_URL` with default `https://api.flock.io/v1`
 - `FLOCK_MODEL`
-- `SUN_PARLIAMENT_PRIMARY_PROVIDER=flock`
-- `SUN_PARLIAMENT_SUPREME_PROVIDER=flock`
+- `PARLIAGENT_PRIMARY_PROVIDER=flock`
+- `PARLIAGENT_SUPREME_PROVIDER=flock`
 
 Config file equivalents should also exist.
 
@@ -510,7 +510,7 @@ This is cheaper and more reliable than:
 
 ### Agent-Native Behavior
 
-Different agent hosts may speak different default languages. Sun Parliament should therefore expose a clear override rather than relying on host behavior.
+Different agent hosts may speak different default languages. Parliagent should therefore expose a clear override rather than relying on host behavior.
 
 Recommended priority order:
 
@@ -527,7 +527,7 @@ Add:
 - CLI:
   `--language <code>` and alias `--lang <code>`
 - config:
-  `SUN_PARLIAMENT_DEFAULT_OUTPUT_LANGUAGE`
+  `PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE`
   `defaults.outputLanguage`
 
 ### Documentation Sync Requirement
@@ -581,13 +581,13 @@ Required behavior:
 
 Resolution rule:
 
-1. If `SUN_PARLIAMENT_SUPREME_PROVIDER` is set, use that provider
+1. If `PARLIAGENT_SUPREME_PROVIDER` is set, use that provider
 2. Otherwise, fall back to the configured primary provider
 3. If only one provider is configured, `supreme` collapses to that provider (same as `available`)
 
 Config surface:
 
-- `SUN_PARLIAMENT_SUPREME_PROVIDER` — env var, explicit provider ID
+- `PARLIAGENT_SUPREME_PROVIDER` — env var, explicit provider ID
 - `supremeProvider` — config file field
 - Model override within the supreme provider follows that provider's `defaultModel` config
 

@@ -1,12 +1,12 @@
 {
-  "name": "sun-parliament",
-  "version": "0.1.3",
-  "description": "A skill-first multi-agent deliberation engine that simulates a parliament of expert personas",
+  "name": "parliagent",
+  "version": "0.2.0",
+  "description": "Parliagent — A skill-first multi-agent deliberation engine that simulates a parliament of expert personas",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "sun-parliament": "dist/cli/index.js"
+    "parliagent": "dist/cli/index.js"
   },
   "exports": {
     ".": {
@@ -30,6 +30,7 @@
     "deliberation",
     "multi-agent",
     "parliament",
+    "parliagent",
     "debate",
     "llm",
     "skill"

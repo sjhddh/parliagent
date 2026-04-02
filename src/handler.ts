@@ -1,5 +1,5 @@
-import { ParliamentRequest } from "./contracts/request.js";
-import type { ParliamentResponse } from "./contracts/response.js";
+import { ParliagentRequest } from "./contracts/request.js";
+import type { ParliagentResponse } from "./contracts/response.js";
 import { Speaker } from "./core/speaker.js";
 import { loadConfig, toRuntimeConfig } from "./config.js";
 
@@ -45,7 +45,7 @@ export async function handleRequest(
   }
 
   try {
-    const parseResult = ParliamentRequest.safeParse(req.body);
+    const parseResult = ParliagentRequest.safeParse(req.body);
     if (!parseResult.success) {
       return {
         status: 400,
@@ -59,7 +59,7 @@ export async function handleRequest(
 
     const config = loadConfig();
     const speaker = new Speaker(toRuntimeConfig(config));
-    const response: ParliamentResponse = await speaker.debate(parseResult.data);
+    const response: ParliagentResponse = await speaker.debate(parseResult.data);
 
     return {
       status: 200,

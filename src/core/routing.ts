@@ -10,7 +10,7 @@ export interface RoutingDecision {
   selectedSeatIds: string[];
   routingReason: string;
   classifiedTaskType: TaskType;
-  isFullParliament: boolean;
+  isFullParliagent: boolean;
 }
 
 /**
@@ -72,9 +72,9 @@ export function classifyTask(prompt: string): TaskType {
 }
 
 /**
- * Select chamber for full parliament mode: all seats except Speaker as chair.
+ * Select chamber for full parliagent mode: all seats except Speaker as chair.
  */
-export function selectFullParliament(
+export function selectFullParliagent(
   prompt: string,
   taskType?: TaskType,
   excludeSeats?: string[],
@@ -92,9 +92,9 @@ export function selectFullParliament(
 
   return {
     selectedSeatIds: selected,
-    routingReason: `Full parliament: all ${selected.length - 1} debate seats activated. Task classified as "${classified}".`,
+    routingReason: `Full parliagent: all ${selected.length - 1} debate seats activated. Task classified as "${classified}".`,
     classifiedTaskType: classified,
-    isFullParliament: true,
+    isFullParliagent: true,
   };
 }
 
@@ -169,6 +169,6 @@ export function selectChamber(
     selectedSeatIds: selected,
     routingReason: reasons.join(". "),
     classifiedTaskType: classified,
-    isFullParliament: false,
+    isFullParliagent: false,
   };
 }

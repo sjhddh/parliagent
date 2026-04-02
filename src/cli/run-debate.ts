@@ -1,5 +1,5 @@
 import { Speaker } from "../core/speaker.js";
-import type { ParliamentRequest } from "../contracts/request.js";
+import type { ParliagentRequest } from "../contracts/request.js";
 import type {
   DebateMode,
   TaskType,
@@ -30,13 +30,13 @@ export async function runDebate(
     (opts.lang as string | undefined) ??
     config.defaults?.outputLanguage;
 
-  const request: ParliamentRequest = {
+  const request: ParliagentRequest = {
     prompt,
     executionProfile:
       (opts.profile as ExecutionProfile | undefined) ??
       config.defaults?.executionProfile ??
       "available",
-    fullParliament: !!opts.fullParliament,
+    fullParliagent: !!opts.fullParliagent,
     mode: (opts.mode as DebateMode) ?? config.defaults?.mode ?? defaults.mode,
     ...(outputLanguage ? { outputLanguage } : {}),
     taskType: (opts.task as TaskType | undefined) ?? defaults.taskType,
@@ -106,7 +106,7 @@ export function addCommonOptions(cmd: import("commander").Command) {
   return cmd
     .option("--language <code>", "Output language (e.g. zh, ja, es). Internal debate stays English.")
     .option("--lang <code>", "Alias for --language")
-    .option("--full-parliament", "Activate all 33 seats (high cost, explicit opt-in)", false)
+    .option("--full-parliagent", "Activate all 33 seats (high cost, explicit opt-in)", false)
     .option("--profile <profile>", "Execution profile: available, federated, supreme", "available")
     .option("--seat <seats...>", "Preferred seats to include")
     .option("--exclude-seat <seats...>", "Seats to exclude")

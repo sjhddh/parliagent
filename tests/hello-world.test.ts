@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { Speaker } from "../src/core/speaker.js";
 import { SeatRegistry } from "../src/seats/registry.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 import type { ModelAdapter, ChatMessage, CompletionResult } from "../src/runtime/adapter.js";
 
 function createMockAdapter(responses: Record<string, string>): ModelAdapter {
@@ -34,7 +34,7 @@ function createMockAdapter(responses: Record<string, string>): ModelAdapter {
 }
 
 describe("Hello World Milestone", () => {
-  it("produces valid ParliamentResponse from Speaker + 2 seats in 1 round", async () => {
+  it("produces valid ParliagentResponse from Speaker + 2 seats in 1 round", async () => {
     const mockResponses: Record<string, string> = {
       default: JSON.stringify({
         stance: "support",
@@ -134,7 +134,7 @@ describe("Hello World Milestone", () => {
     expect(response.whyTheseSeats).toBeTruthy();
     expect(response.whyTheseSeats).toContain("coding");
 
-    const validationResult = ParliamentResponse.safeParse(response);
+    const validationResult = ParliagentResponse.safeParse(response);
     expect(validationResult.success).toBe(true);
 
     expect(response.traceArtifact).toBeDefined();

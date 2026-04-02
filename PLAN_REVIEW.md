@@ -1,4 +1,4 @@
-# Plan Review — Sun Parliament v1
+# Plan Review — Parliagent v1
 
 ## Verdict: CONDITIONAL PASS
 
@@ -34,7 +34,7 @@ The plan demonstrates strong product vision, well-considered constitutional desi
 - **Location**: Skill Contract section (lines 617-666), npm Package Plan (lines 668-696)
 - **Problem**: The plan lists field names (`prompt`, `mode`, `finalAnswer`, `decisionType`, etc.) but provides no TypeScript interfaces, JSON Schema definitions, or structural validation rules. The `traceArtifact` field — arguably the most complex data structure in the system — is mentioned once and never defined.
 - **Impact**: Without a schema, the "one input schema, one deliberation trace schema, and one output schema" promise (line 34) is aspirational, not specified. Phase 0 exit criteria ("the input/output contract is agreed") cannot be verified.
-- **Suggested fix**: Define draft TypeScript interfaces for `ParliamentRequest`, `ParliamentResponse`, `DeliberationTrace`, `SeatStatement`, and `DisagreementObject`. These do not need to be final, but they need to exist.
+- **Suggested fix**: Define draft TypeScript interfaces for `ParliagentRequest`, `ParliagentResponse`, `DeliberationTrace`, `SeatStatement`, and `DisagreementObject`. These do not need to be final, but they need to exist.
 
 ### Issue 3: Multi-provider integration is assumed but not designed
 
@@ -54,7 +54,7 @@ The plan demonstrates strong product vision, well-considered constitutional desi
 - **Location**: Phases section (lines 496-547)
 - **Problem**: Phase 0 exits when "the roster is stable enough" and "the input/output contract is agreed." Phase 1 exits when the system "can run end-to-end on sample questions." Phase 2 exits when "an agent or CLI user can invoke the parliament in one step." These are directionally correct but not testable. What is "stable enough"? Which sample questions? What does "one step" mean technically?
 - **Impact**: Without crisp exit criteria, phases will either never end or be declared done prematurely. This is the most common failure mode in multi-phase projects.
-- **Suggested fix**: Define 3-5 concrete, binary pass/fail checks per phase. Example for Phase 1: "The system produces a valid `ParliamentResponse` JSON for the 5 benchmark prompts listed in `benchmarks/v1.json`, with at least 2 seats producing materially distinct opening statements per prompt."
+- **Suggested fix**: Define 3-5 concrete, binary pass/fail checks per phase. Example for Phase 1: "The system produces a valid `ParliagentResponse` JSON for the 5 benchmark prompts listed in `benchmarks/v1.json`, with at least 2 seats producing materially distinct opening statements per prompt."
 
 ### Issue 5: No testing strategy
 
@@ -135,7 +135,7 @@ These are genuine strengths, not participation trophies:
 
 ## Recommendations Before Implementation
 
-1. **Write the TypeScript interfaces now.** Define `ParliamentRequest`, `ParliamentResponse`, `SeatProfile`, `DeliberationTrace`, `RoundOutput`, and `DisagreementRecord` as concrete types. This will expose ambiguities the prose hides.
+1. **Write the TypeScript interfaces now.** Define `ParliagentRequest`, `ParliagentResponse`, `SeatProfile`, `DeliberationTrace`, `RoundOutput`, and `DisagreementRecord` as concrete types. This will expose ambiguities the prose hides.
 
 2. **Define the convergence algorithm.** Even a naive version (e.g., "extract top-3 claims per seat, check pairwise overlap, stop if overlap > 70%") is better than leaving this undefined.
 

@@ -9,7 +9,7 @@ const ExecutionProfileEnum = z.enum(["available", "federated", "supreme"]);
 
 const ProviderEnum = z.enum(["openai", "anthropic", "google", "flock"]);
 
-export const SunParliamentConfig = z.object({
+export const ParliagentConfig = z.object({
   primaryProvider: ProviderEnum.optional(),
   supremeProvider: ProviderEnum.optional(),
   openai: z
@@ -55,11 +55,11 @@ export const SunParliamentConfig = z.object({
     })
     .optional(),
 });
-export type SunParliamentConfig = z.infer<typeof SunParliamentConfig>;
+export type ParliagentConfig = z.infer<typeof ParliagentConfig>;
 
 const CONFIG_FILENAMES = [
-  "sun-parliament.config.json",
-  ".sun-parliament.json",
+  "parliagent.config.json",
+  ".parliagent.json",
 ];
 
 /**
@@ -68,21 +68,21 @@ const CONFIG_FILENAMES = [
  * 2. Config file in working directory
  * 3. Built-in defaults (lowest priority)
  */
-export function loadConfig(cwd: string = process.cwd()): SunParliamentConfig {
+export function loadConfig(cwd: string = process.cwd()): ParliagentConfig {
   const fileConfig = loadConfigFile(cwd);
   const envConfig = loadEnvConfig();
 
   return mergeConfigs(fileConfig, envConfig);
 }
 
-function loadConfigFile(cwd: string): SunParliamentConfig {
+function loadConfigFile(cwd: string): ParliagentConfig {
   for (const filename of CONFIG_FILENAMES) {
     const filepath = resolve(cwd, filename);
     if (existsSync(filepath)) {
       try {
         const raw = readFileSync(filepath, "utf-8");
         const parsed = JSON.parse(raw);
-        const result = SunParliamentConfig.safeParse(parsed);
+        const result = ParliagentConfig.safeParse(parsed);
         if (result.success) return result.data;
         console.warn(`Warning: ${filepath} exists but failed schema validation`);
       } catch {
@@ -93,25 +93,25 @@ function loadConfigFile(cwd: string): SunParliamentConfig {
   return {};
 }
 
-function loadEnvConfig(): SunParliamentConfig {
-  const config: SunParliamentConfig = {};
+function loadEnvConfig(): ParliagentConfig {
+  const config: ParliagentConfig = {};
 
-  if (process.env.SUN_PARLIAMENT_PRIMARY_PROVIDER) {
-    const parsed = ProviderEnum.safeParse(process.env.SUN_PARLIAMENT_PRIMARY_PROVIDER);
+  if (process.env.PARLIAGENT_PRIMARY_PROVIDER) {
+    const parsed = ProviderEnum.safeParse(process.env.PARLIAGENT_PRIMARY_PROVIDER);
     if (parsed.success) {
       config.primaryProvider = parsed.data;
     }
   }
 
-  if (process.env.SUN_PARLIAMENT_SUPREME_PROVIDER) {
-    const parsed = ProviderEnum.safeParse(process.env.SUN_PARLIAMENT_SUPREME_PROVIDER);
+  if (process.env.PARLIAGENT_SUPREME_PROVIDER) {
+    const parsed = ProviderEnum.safeParse(process.env.PARLIAGENT_SUPREME_PROVIDER);
     if (parsed.success) {
       config.supremeProvider = parsed.data;
     }
   }
 
-  if (process.env.SUN_PARLIAMENT_EXECUTION_PROFILE) {
-    const parsed = ExecutionProfileEnum.safeParse(process.env.SUN_PARLIAMENT_EXECUTION_PROFILE);
+  if (process.env.PARLIAGENT_EXECUTION_PROFILE) {
+    const parsed = ExecutionProfileEnum.safeParse(process.env.PARLIAGENT_EXECUTION_PROFILE);
     if (parsed.success) {
       config.defaults = { ...config.defaults, executionProfile: parsed.data };
     }
@@ -151,42 +151,42 @@ function loadEnvConfig(): SunParliamentConfig {
     config.flock = { ...config.flock, defaultModel: process.env.FLOCK_MODEL };
   }
 
-  if (process.env.SUN_PARLIAMENT_DEFAULT_MODE) {
-    const parsed = DebateModeEnum.safeParse(process.env.SUN_PARLIAMENT_DEFAULT_MODE);
+  if (process.env.PARLIAGENT_DEFAULT_MODE) {
+    const parsed = DebateModeEnum.safeParse(process.env.PARLIAGENT_DEFAULT_MODE);
     if (parsed.success) {
       config.defaults = { ...config.defaults, mode: parsed.data };
     } else {
-      console.warn(`Warning: SUN_PARLIAMENT_DEFAULT_MODE="${process.env.SUN_PARLIAMENT_DEFAULT_MODE}" is not a valid mode`);
+      console.warn(`Warning: PARLIAGENT_DEFAULT_MODE="${process.env.PARLIAGENT_DEFAULT_MODE}" is not a valid mode`);
     }
   }
 
-  if (process.env.SUN_PARLIAMENT_DEFAULT_TRACE) {
-    const parsed = TraceLevelEnum.safeParse(process.env.SUN_PARLIAMENT_DEFAULT_TRACE);
+  if (process.env.PARLIAGENT_DEFAULT_TRACE) {
+    const parsed = TraceLevelEnum.safeParse(process.env.PARLIAGENT_DEFAULT_TRACE);
     if (parsed.success) {
       config.defaults = { ...config.defaults, trace: parsed.data };
     } else {
-      console.warn(`Warning: SUN_PARLIAMENT_DEFAULT_TRACE="${process.env.SUN_PARLIAMENT_DEFAULT_TRACE}" is not a valid trace level`);
+      console.warn(`Warning: PARLIAGENT_DEFAULT_TRACE="${process.env.PARLIAGENT_DEFAULT_TRACE}" is not a valid trace level`);
     }
   }
 
-  if (process.env.SUN_PARLIAMENT_DEFAULT_OUTPUT_LANGUAGE) {
+  if (process.env.PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE) {
     config.defaults = {
       ...config.defaults,
-      outputLanguage: process.env.SUN_PARLIAMENT_DEFAULT_OUTPUT_LANGUAGE,
+      outputLanguage: process.env.PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE,
     };
   }
 
-  if (process.env.SUN_PARLIAMENT_MAX_TOKENS) {
+  if (process.env.PARLIAGENT_MAX_TOKENS) {
     config.budgetOverrides = {
       ...config.budgetOverrides,
-      maxTokens: parseInt(process.env.SUN_PARLIAMENT_MAX_TOKENS, 10),
+      maxTokens: parseInt(process.env.PARLIAGENT_MAX_TOKENS, 10),
     };
   }
 
-  if (process.env.SUN_PARLIAMENT_MAX_LATENCY_MS) {
+  if (process.env.PARLIAGENT_MAX_LATENCY_MS) {
     config.budgetOverrides = {
       ...config.budgetOverrides,
-      maxLatencyMs: parseInt(process.env.SUN_PARLIAMENT_MAX_LATENCY_MS, 10),
+      maxLatencyMs: parseInt(process.env.PARLIAGENT_MAX_LATENCY_MS, 10),
     };
   }
 
@@ -194,9 +194,9 @@ function loadEnvConfig(): SunParliamentConfig {
 }
 
 function mergeConfigs(
-  fileConfig: SunParliamentConfig,
-  envConfig: SunParliamentConfig,
-): SunParliamentConfig {
+  fileConfig: ParliagentConfig,
+  envConfig: ParliagentConfig,
+): ParliagentConfig {
   return {
     primaryProvider: envConfig.primaryProvider ?? fileConfig.primaryProvider,
     supremeProvider: envConfig.supremeProvider ?? fileConfig.supremeProvider,
@@ -228,9 +228,9 @@ function mergeConfigs(
 }
 
 /**
- * Convert SunParliamentConfig into RuntimeConfig for ModelPolicy.
+ * Convert ParliagentConfig into RuntimeConfig for ModelPolicy.
  */
-export function toRuntimeConfig(config: SunParliamentConfig) {
+export function toRuntimeConfig(config: ParliagentConfig) {
   return {
     primaryProvider: config.primaryProvider,
     supremeProvider: config.supremeProvider,

@@ -1,4 +1,4 @@
-# Publish Checklist — sun-parliament v0.1.0
+# Publish Checklist — parliagent v0.2.0
 
 ## Pre-publish Verification
 
@@ -75,8 +75,8 @@ npm run typecheck && npm test && npm run build && npm pack --dry-run
 npm publish
 
 # 3. Post-publish verification
-npm install sun-parliament
-npx sun-parliament seats
+npm install parliagent
+npx parliagent seats
 ```
 
 ## Post-publish

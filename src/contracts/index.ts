@@ -6,8 +6,8 @@ export {
   OutputLength,
   SafetyMode,
   ExecutionProfile,
-  ParliamentConstraints,
-  ParliamentRequest,
+  ParliagentConstraints,
+  ParliagentRequest,
 } from "./request.js";
 
 export {
@@ -32,5 +32,5 @@ export {
 
 export {
   DecisionType,
-  ParliamentResponse,
+  ParliagentResponse,
 } from "./response.js";

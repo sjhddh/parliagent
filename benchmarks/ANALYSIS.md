@@ -1,4 +1,4 @@
-# Benchmark Analysis — Sun Parliament v0.1.0
+# Benchmark Analysis — Parliagent v0.2.0
 
 **Date**: 2026-04-02
 **Provider**: Anthropic (Claude)

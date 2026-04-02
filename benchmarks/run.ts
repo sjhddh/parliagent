@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Sun Parliament Benchmark Runner
+ * Parliagent Benchmark Runner
  *
  * Usage:
  *   ANTHROPIC_API_KEY=sk-... npx tsx benchmarks/run.ts
@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 import { Speaker } from "../src/core/speaker.js";
 import { ModelPolicy } from "../src/runtime/policy.js";
 import type { DebateMode } from "../src/contracts/request.js";
-import type { ParliamentResponse } from "../src/contracts/response.js";
+import type { ParliagentResponse } from "../src/contracts/response.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -133,7 +133,7 @@ async function runBaseline(prompt: BenchmarkPrompt): Promise<BaselineResult> {
 
 // --- Parliament run ---
 
-async function runParliament(
+async function runParliagent(
   prompt: BenchmarkPrompt,
   mode: DebateMode,
 ): Promise<RunResult> {
@@ -141,7 +141,7 @@ async function runParliament(
   const start = Date.now();
 
   try {
-    const response: ParliamentResponse = await speaker.debate({
+    const response: ParliagentResponse = await speaker.debate({
       prompt: prompt.prompt,
       mode,
       trace: "full",
@@ -215,7 +215,7 @@ async function main() {
       console.log(`\n=== MODE: ${mode} ===\n`);
       for (const prompt of selectedPrompts) {
         process.stdout.write(`  ${prompt.id} [${mode}]...`);
-        const result = await runParliament(prompt, mode);
+        const result = await runParliagent(prompt, mode);
         results.push(result);
 
         if (result.error) {

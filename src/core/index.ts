@@ -1,6 +1,6 @@
 export { Speaker } from "./speaker.js";
 export type { SpeakerCallbacks } from "./speaker.js";
-export { selectChamber, selectFullParliament, classifyTask } from "./routing.js";
+export { selectChamber, selectFullParliagent, classifyTask } from "./routing.js";
 export type { RoutingDecision } from "./routing.js";
 export {
   evaluateConvergence,
@@ -15,7 +15,7 @@ export {
   checkBudget,
 } from "./budget.js";
 export type { BudgetState, BudgetCheck } from "./budget.js";
-export { MODE_CONFIGS, FULL_PARLIAMENT_CONFIG, CHAMBER_PRESETS, shouldUpgradeSecurity } from "./config.js";
+export { MODE_CONFIGS, FULL_PARLIAGENT_CONFIG, CHAMBER_PRESETS, shouldUpgradeSecurity } from "./config.js";
 export type { ModeConfig, ChamberPreset } from "./config.js";
 export { buildSynthesisPrompt, getSynthesisMaxTokens, buildTraceText, resolveOutputLanguage } from "./synthesis.js";
 export type { SynthesisContext } from "./synthesis.js";

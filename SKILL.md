@@ -1,4 +1,4 @@
-# Sun Parliament — Agent Skill
+# Parliagent — Agent Skill
 
 Multi-agent deliberation. One call runs a structured debate among expert personas and returns a synthesized answer with disagreement tracking.
 
@@ -6,7 +6,7 @@ This file is intentionally plain Markdown with stable headings so agent runtimes
 
 ## Agent Summary
 
-- **Entrypoint:** `debate({...})` from `sun-parliament`
+- **Entrypoint:** `debate({...})` from `parliagent`
 - **Default mode:** `micro` (~16s, ~$0.01) — controls chamber size
 - **Default profile:** `available` — controls model backend selection
 - **Good for:** architecture tradeoffs, planning, risk review, security-sensitive decisions, strategy under uncertainty
@@ -20,12 +20,12 @@ This file is intentionally plain Markdown with stable headings so agent runtimes
 ## Canonical Invocation Contract
 
 ```typescript
-import { debate } from "sun-parliament";
+import { debate } from "parliagent";
 
 const response = await debate({
   prompt,                    // string (required)
   mode?,                     // "micro" | "fast" | "balanced" | "deep"        — chamber size
-  fullParliament?,           // boolean — activate all 33 seats (explicit opt-in, ~$1.50/run)
+  fullParliagent?,           // boolean — activate all 33 seats (explicit opt-in, ~$1.50/run)
   executionProfile?,         // "available" | "federated" | "supreme"         — model backend
   taskType?,                 // "general" | "writing" | "planning" | "analysis" | "coding" | "strategy" | "ethics"
   answerMode?,               // "answer" | "memo" | "plan" | "review" | "transcript"
@@ -36,7 +36,7 @@ const response = await debate({
 
 **Four independent controls:**
 - `mode` = how many seats and rounds (chamber shape)
-- `fullParliament` = override mode and activate all 33 seats
+- `fullParliagent` = override mode and activate all 33 seats
 - `executionProfile` = which models run behind those seats (substrate)
 - `outputLanguage` = final output language (internal debate is always English)
 
@@ -48,7 +48,7 @@ const response = await debate({
 
 ## When to Invoke
 
-Call Sun Parliament when a problem has **genuine tradeoffs, competing concerns, or risk surfaces** that benefit from multiple expert perspectives.
+Call Parliagent when a problem has **genuine tradeoffs, competing concerns, or risk surfaces** that benefit from multiple expert perspectives.
 
 **Good triggers:**
 - Architecture decisions with >1 viable path
@@ -69,7 +69,7 @@ Call Sun Parliament when a problem has **genuine tradeoffs, competing concerns, 
 
 ```
 Is the question trivial or factual?
-  → Don't call Sun Parliament. Answer directly.
+  → Don't call Parliagent. Answer directly.
 
 Does it involve security, auth, credentials, or data privacy?
   → mode: "fast", taskType: "coding"
@@ -82,7 +82,7 @@ Is the user asking for a critique, review, or risk assessment?
 
 Is this a high-stakes decision with significant consequences?
   → mode: "balanced"
-  → If it spans multiple disciplines (tech + legal + ethics + business): fullParliament: true
+  → If it spans multiple disciplines (tech + legal + ethics + business): fullParliagent: true
 
 Is this a routine technical or strategy question with real tradeoffs?
   → mode: "micro"
@@ -96,7 +96,7 @@ Default:
 - `fast` — ~34s, ~$0.04, 10 disagreements avg
 - `balanced` — ~37s, ~$0.08, high cost with diminishing returns vs fast
 - `deep` — not benchmarked in v0.1.0, budget cap 60k tokens / 60s
-- `fullParliament` — ~44s, ~$1.50, 133 disagreements avg, 32 speaking seats, 1 round — only for consequential multi-disciplinary decisions
+- `fullParliagent` — ~44s, ~$1.50, 133 disagreements avg, 32 speaking seats, 1 round — only for consequential multi-disciplinary decisions
 
 ## Execution Profile Selection
 
@@ -110,7 +110,7 @@ Do you have multiple keys and want model-family diversity (OpenAI vs Claude vs G
   → executionProfile: "federated"
 
 Do you want all seats on one operator-designated provider, ignoring provider diversity?
-  → executionProfile: "supreme" (uses SUN_PARLIAMENT_SUPREME_PROVIDER, defaults to primary)
+  → executionProfile: "supreme" (uses PARLIAGENT_SUPREME_PROVIDER, defaults to primary)
 
 Default:
   → executionProfile: "available" (seats follow their fallback chain)

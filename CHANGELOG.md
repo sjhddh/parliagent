@@ -5,7 +5,7 @@
 ### Parliament
 - All 33 constitutional seats are production-grade with detailed system prompts, substrate policies, and structured profiles
 - No expansion-only or deferred seats — every seat is first-class invokable
-- `--full-parliament` flag activates all 33 seats (explicit opt-in, ~$1.50/run)
+- `--full-parliagent` flag activates all 33 seats (explicit opt-in, ~$1.50/run)
 - Full parliament benchmarked: 3 prompts, ~247k tokens, ~44s, 133 avg disagreements
 
 ### Debate Modes
@@ -26,13 +26,13 @@
 ### CLI
 - 6 commands: `ask`, `debate`, `plan`, `review`, `seats`, `inspect`
 - `--profile available|federated|supreme` for execution profile selection
-- `--full-parliament` for 33-seat invocation
+- `--full-parliagent` for 33-seat invocation
 - `--json`, `--short`, `--long`, `--seed`, `--mode`, `--trace` flags
 
 ### SDK
 - `debate()` one-call entry point
 - `Speaker` class with `Speaker.withPolicy()` test factory
-- Zod-validated contracts: ParliamentRequest, ParliamentResponse, DeliberationTrace
+- Zod-validated contracts: ParliagentRequest, ParliagentResponse, DeliberationTrace
 - Per-seat substrate policies with deterministic fallback chains
 
 ### Provider Support
@@ -46,8 +46,8 @@
 - Anti-collapse: phrase overlap scoring, lazy consensus detection
 
 ### Configuration
-- File config (`sun-parliament.config.json`) + environment variables
-- `SUN_PARLIAMENT_SUPREME_PROVIDER`, `SUN_PARLIAMENT_EXECUTION_PROFILE`
+- File config (`parliagent.config.json`) + environment variables
+- `PARLIAGENT_SUPREME_PROVIDER`, `PARLIAGENT_EXECUTION_PROFILE`
 - Zod-validated env values with warnings on invalid input
 
 ### Serverless

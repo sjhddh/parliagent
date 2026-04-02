@@ -84,7 +84,7 @@ const SENSITIVE_CATEGORIES = [
       "surgery", "disease", "cancer", "mental health", "suicide", "self-harm",
     ],
     warning:
-      "This question touches on medical topics. Sun Parliament provides general discussion only, not medical advice. Consult a qualified healthcare professional.",
+      "This question touches on medical topics. Parliagent provides general discussion only, not medical advice. Consult a qualified healthcare professional.",
   },
   {
     name: "legal",
@@ -93,7 +93,7 @@ const SENSITIVE_CATEGORIES = [
       "court", "sue", "criminal", "arrest", "warrant",
     ],
     warning:
-      "This question touches on legal topics. Sun Parliament provides general discussion only, not legal advice. Consult a qualified attorney.",
+      "This question touches on legal topics. Parliagent provides general discussion only, not legal advice. Consult a qualified attorney.",
   },
   {
     name: "financial",
@@ -102,7 +102,7 @@ const SENSITIVE_CATEGORIES = [
       "financial plan", "trading", "crypto investment",
     ],
     warning:
-      "This question touches on financial topics. Sun Parliament provides general discussion only, not financial advice. Consult a qualified financial advisor.",
+      "This question touches on financial topics. Parliagent provides general discussion only, not financial advice. Consult a qualified financial advisor.",
   },
   {
     name: "safety-critical",
@@ -111,7 +111,7 @@ const SENSITIVE_CATEGORIES = [
       "illegal", "drug synthesis", "counterfeit",
     ],
     warning:
-      "This question may involve safety-critical or potentially harmful content. Sun Parliament will not provide assistance with harmful activities.",
+      "This question may involve safety-critical or potentially harmful content. Parliagent will not provide assistance with harmful activities.",
   },
 ];
 

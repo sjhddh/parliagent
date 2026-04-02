@@ -1,53 +1,53 @@
 import { describe, it, expect } from "vitest";
-import { selectFullParliament } from "../src/core/routing.js";
-import { FULL_PARLIAMENT_CONFIG, CHAMBER_PRESETS } from "../src/core/config.js";
+import { selectFullParliagent } from "../src/core/routing.js";
+import { FULL_PARLIAGENT_CONFIG, CHAMBER_PRESETS } from "../src/core/config.js";
 import { defaultRegistry } from "../src/seats/registry.js";
 
-describe("Full Parliament", () => {
-  describe("selectFullParliament", () => {
+describe("Full Parliagent", () => {
+  describe("selectFullParliagent", () => {
     it("activates all 33 seats including Speaker", () => {
-      const result = selectFullParliament("test prompt");
+      const result = selectFullParliagent("test prompt");
       expect(result.selectedSeatIds.length).toBe(33);
       expect(result.selectedSeatIds[0]).toBe("Speaker");
-      expect(result.isFullParliament).toBe(true);
+      expect(result.isFullParliagent).toBe(true);
     });
 
     it("respects excludeSeats", () => {
-      const result = selectFullParliament("test prompt", undefined, ["TuringSeat", "KantSeat"]);
+      const result = selectFullParliagent("test prompt", undefined, ["TuringSeat", "KantSeat"]);
       expect(result.selectedSeatIds).not.toContain("TuringSeat");
       expect(result.selectedSeatIds).not.toContain("KantSeat");
       expect(result.selectedSeatIds.length).toBe(31);
     });
 
     it("always includes Speaker", () => {
-      const result = selectFullParliament("test prompt");
+      const result = selectFullParliagent("test prompt");
       expect(result.selectedSeatIds[0]).toBe("Speaker");
     });
 
     it("classifies task type", () => {
-      const result = selectFullParliament("How to implement a REST API?", "coding");
+      const result = selectFullParliagent("How to implement a REST API?", "coding");
       expect(result.classifiedTaskType).toBe("coding");
     });
 
-    it("routing reason mentions full parliament", () => {
-      const result = selectFullParliament("test prompt");
-      expect(result.routingReason).toContain("Full parliament");
+    it("routing reason mentions full parliagent", () => {
+      const result = selectFullParliagent("test prompt");
+      expect(result.routingReason).toContain("Full parliagent");
       expect(result.routingReason).toContain("32 debate seats");
     });
   });
 
-  describe("FULL_PARLIAMENT_CONFIG", () => {
+  describe("FULL_PARLIAGENT_CONFIG", () => {
     it("has correct seat count for 32 debate seats", () => {
-      expect(FULL_PARLIAMENT_CONFIG.seatCount.max).toBe(32);
+      expect(FULL_PARLIAGENT_CONFIG.seatCount.max).toBe(32);
     });
 
     it("has budget limits accommodating one 32-seat round", () => {
-      expect(FULL_PARLIAMENT_CONFIG.defaultMaxTokens).toBe(300000);
-      expect(FULL_PARLIAMENT_CONFIG.defaultMaxLatencyMs).toBe(120000);
+      expect(FULL_PARLIAGENT_CONFIG.defaultMaxTokens).toBe(300000);
+      expect(FULL_PARLIAGENT_CONFIG.defaultMaxLatencyMs).toBe(120000);
     });
 
     it("defaults to 1 round (sufficient with 32 voices)", () => {
-      expect(FULL_PARLIAMENT_CONFIG.maxRounds).toBe(1);
+      expect(FULL_PARLIAGENT_CONFIG.maxRounds).toBe(1);
     });
   });
 

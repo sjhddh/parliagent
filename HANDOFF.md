@@ -22,7 +22,7 @@ This is no longer a "starter" release. All 33 constitutional seats are productio
 - 21 seats upgraded from stub profiles to full production quality (system prompts, strengths, blind spots, substrate policies)
 - All seats are `isStarter: true` — no expansion-only designation
 - Chamber presets expanded to draw from full 33-seat roster
-- `--full-parliament` flag added for explicit 33-seat invocation
+- `--full-parliagent` flag added for explicit 33-seat invocation
 - Full parliament benchmarked with real provider data
 
 ### Full Parliament Benchmark (Anthropic Claude, 2026-04-02)
@@ -34,7 +34,7 @@ This is no longer a "starter" release. All 33 constitutional seats are productio
 | Healthcare data governance | 262,796 | 47s | 32 | 119 | 46 |
 | **Average** | **246,826** | **44s** | **32** | **133** | **32** |
 
-Estimated cost: ~$1.50/run. All runs produced valid ParliamentResponse JSON.
+Estimated cost: ~$1.50/run. All runs produced valid ParliagentResponse JSON.
 
 ### Default Recommendations (unchanged)
 
@@ -44,7 +44,7 @@ Estimated cost: ~$1.50/run. All runs produced valid ParliamentResponse JSON.
 | `plan` | fast (3-5 seats) | No |
 | `review` | fast (3-5 seats) | No |
 | `debate` | balanced (5-9 seats) | No |
-| explicit `--full-parliament` | all 33 seats, 1 round | **Yes** — opt-in only |
+| explicit `--full-parliagent` | all 33 seats, 1 round | **Yes** — opt-in only |
 
 Full parliament does NOT change default behavior. It is a separate, explicit flag for consequential multi-disciplinary decisions. Budget cap is 300k tokens / 120s. Budget limits apply between rounds; with 32 seats in parallel, a single round uses ~240-260k tokens.
 

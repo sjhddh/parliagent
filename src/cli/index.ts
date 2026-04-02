@@ -11,11 +11,11 @@ import { inspectCommand } from "./commands/inspect.js";
 const program = new Command();
 
 program
-  .name("sun-parliament")
+  .name("parliagent")
   .description(
-    "A skill-first multi-agent deliberation engine that simulates a parliament of expert personas",
+    "Parliagent — A skill-first multi-agent deliberation engine that simulates a parliament of expert personas",
   )
-  .version("0.1.0");
+  .version("0.2.0");
 
 program.addCommand(askCommand);
 program.addCommand(debateCommand);

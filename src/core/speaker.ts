@@ -1,13 +1,13 @@
-import type { ParliamentRequest, OutputLength, AnswerMode, ExecutionProfile } from "../contracts/request.js";
-import type { ParliamentResponse, DecisionType } from "../contracts/response.js";
+import type { ParliagentRequest, OutputLength, AnswerMode, ExecutionProfile } from "../contracts/request.js";
+import type { ParliagentResponse, DecisionType } from "../contracts/response.js";
 import type { SeatStatement, StopReason, RoundResult } from "../contracts/trace.js";
 import type { SeatProfile } from "../contracts/seats.js";
 import type { ModelAssignment } from "../runtime/policy.js";
 import { ModelPolicy } from "../runtime/policy.js";
 import type { RuntimeConfig } from "../runtime/policy.js";
 import { SeatRegistry, defaultRegistry } from "../seats/registry.js";
-import { selectChamber, selectFullParliament } from "./routing.js";
-import { MODE_CONFIGS, FULL_PARLIAMENT_CONFIG } from "./config.js";
+import { selectChamber, selectFullParliagent } from "./routing.js";
+import { MODE_CONFIGS, FULL_PARLIAGENT_CONFIG } from "./config.js";
 import { evaluateConvergence } from "./convergence.js";
 import { createBudget, addTokens, advanceRound, checkBudget } from "./budget.js";
 import { buildSynthesisPrompt, getSynthesisMaxTokens, buildTraceText } from "./synthesis.js";
@@ -77,7 +77,7 @@ export class Speaker {
     return instance;
   }
 
-  async debate(request: ParliamentRequest): Promise<ParliamentResponse> {
+  async debate(request: ParliagentRequest): Promise<ParliagentResponse> {
     if (!this.modelPolicy.isReady()) {
       throw new Error(
         "No model provider configured. Set at least one of: ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, FLOCK_API_KEY",
@@ -89,7 +89,7 @@ export class Speaker {
     if (isHardBlocked(request.prompt, safetyMode)) {
       return {
         finalAnswer:
-          "This request has been blocked by Sun Parliament's safety policy. The prompt appears to involve content that the system is not designed to assist with.",
+          "This request has been blocked by Parliagent's safety policy. The prompt appears to involve content that the system is not designed to assist with.",
         decisionType: "uncertain",
         activatedSeats: [],
         whyTheseSeats: "Debate was not initiated — prompt blocked by safety policy.",
@@ -103,13 +103,13 @@ export class Speaker {
     if (mode === "micro" && shouldUpgradeSecurity(request.prompt)) {
       mode = "fast";
     }
-    const isFullParliament = request.fullParliament ?? false;
-    const modeConfig = isFullParliament ? FULL_PARLIAMENT_CONFIG : MODE_CONFIGS[mode];
+    const isFullParliagent = request.fullParliagent ?? false;
+    const modeConfig = isFullParliagent ? FULL_PARLIAGENT_CONFIG : MODE_CONFIGS[mode];
 
     const safetyWarnings = checkSafetyBoundaries(request.prompt, safetyMode);
 
-    const routing = isFullParliament
-      ? selectFullParliament(
+    const routing = isFullParliagent
+      ? selectFullParliagent(
           request.prompt,
           request.taskType,
           request.excludeSeats,
@@ -218,7 +218,7 @@ export class Speaker {
       ...collapseWarnings,
     ];
 
-    const response: ParliamentResponse = {
+    const response: ParliagentResponse = {
       finalAnswer,
       decisionType,
       activatedSeats: routing.selectedSeatIds,

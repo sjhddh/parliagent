@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stop Asking One AI. Start Running a Debate. | Sun Parliament</title>
-<meta name="description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Sun Parliament, a multi-agent deliberation engine with disagreement tracking.">
+<title>Stop Asking One AI. Start Running a Debate. | Parliagent</title>
+<meta name="description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Parliagent, a multi-agent deliberation engine with disagreement tracking.">
 
 <!-- OpenGraph -->
 <meta property="og:title" content="Stop Asking One AI. Start Running a Debate.">
-<meta property="og:description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Sun Parliament.">
+<meta property="og:description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Parliagent.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://sjhddh.github.io/sun-parliament/">
-<meta property="og:image" content="https://sjhddh.github.io/sun-parliament/og-image.png">
+<meta property="og:url" content="https://sjhddh.github.io/parliagent/">
+<meta property="og:image" content="https://sjhddh.github.io/parliagent/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 
 <!-- Prism.js for syntax highlighting -->
@@ -384,7 +384,7 @@ hr {
 <article class="container">
 
 <header class="article-header">
-  <div class="meta">Sun Parliament &middot; Engineering</div>
+  <div class="meta">Parliagent &middot; Engineering</div>
   <h1>Stop Asking One AI.<br>Start Running a Debate.</h1>
   <p class="subtitle">What happens when 33 AI expert personas argue about your architecture decision &mdash; and why the disagreements are the point.</p>
   <span class="read-time">18 min read</span>
@@ -398,9 +398,9 @@ hr {
 
 <p>This is the <strong>echo chamber of one</strong>. And it's the default mode for how most people use AI today.</p>
 
-<p>We built <a href="https://github.com/sjhddh/sun-parliament">Sun Parliament</a> to fix this. It's a multi-agent deliberation engine that runs a structured parliamentary debate among expert personas — with disagreement tracking, minority reports, and budget controls. One function call. Multiple perspectives. Structured dissent.</p>
+<p>We built <a href="https://github.com/sjhddh/parliagent">Parliagent</a> to fix this. It's a multi-agent deliberation engine that runs a structured parliamentary debate among expert personas — with disagreement tracking, minority reports, and budget controls. One function call. Multiple perspectives. Structured dissent.</p>
 
-<p>To write this article, we did something recursive: <strong>we asked Sun Parliament how to write about itself.</strong> We ran four debates — one on article structure, one on the core thesis, one comparing approaches, and one full parliament with all 33 seats arguing about a real architecture decision. What you're reading is shaped by that output. The meta-debate produced minority reports we hadn't considered, warnings about our own framing, and one seat that accused us of "engineering ressentiment." More on that later.</p>
+<p>To write this article, we did something recursive: <strong>we asked Parliagent how to write about itself.</strong> We ran four debates — one on article structure, one on the core thesis, one comparing approaches, and one full parliament with all 33 seats arguing about a real architecture decision. What you're reading is shaped by that output. The meta-debate produced minority reports we hadn't considered, warnings about our own framing, and one seat that accused us of "engineering ressentiment." More on that later.</p>
 
 <hr>
 
@@ -418,7 +418,7 @@ hr {
 
 <p>For these problems, you don't just need a skeptic — you need a <em>parliament</em>. Multiple experts with different domains, different priors, different blind spots, structurally incentivized to disagree.</p>
 
-<p>Here's what the data shows. We benchmarked Sun Parliament against a single-agent baseline across 10 prompts spanning coding, planning, writing, strategy, security, and analysis:</p>
+<p>Here's what the data shows. We benchmarked Parliagent against a single-agent baseline across 10 prompts spanning coding, planning, writing, strategy, security, and analysis:</p>
 
 <table>
   <thead>
@@ -442,9 +442,9 @@ hr {
 
 <h2>The Architecture</h2>
 
-<p>Sun Parliament is a TypeScript library (<code>npm install sun-parliament</code>) with a single entry point:</p>
+<p>Parliagent is a TypeScript library (<code>npm install parliagent</code>) with a single entry point:</p>
 
-<pre><code class="language-typescript">import { debate } from "sun-parliament";
+<pre><code class="language-typescript">import { debate } from "parliagent";
 
 const response = await debate({
   prompt: "Should we use microservices or a monolith?",
@@ -470,7 +470,7 @@ graph LR
     F --> G["Convergence Check"]
     G -->|"not converged"| F
     G -->|"converged / round limit"| H["Synthesis"]
-    H --> I["ParliamentResponse"]
+    H --> I["ParliagentResponse"]
 </div>
 
 <h3>1. The Speaker</h3>
@@ -494,7 +494,7 @@ export function classifyTask(prompt: string): TaskType {
 
 <p>The routing is deliberately rule-based (not LLM-powered) because it runs on every request and needs to be fast, deterministic, and inspectable. You can preview routing without spending a token:</p>
 
-<pre><code class="language-bash">$ sun-parliament inspect "How to handle API key rotation?" --mode fast
+<pre><code class="language-bash">$ parliagent inspect "How to handle API key rotation?" --mode fast
 
 Selected Chamber:
   • OpenAISeat — Strongest OpenAI-family generalist representative
@@ -555,7 +555,7 @@ if (currentRound >= maxRounds) {
 
 <h2>Live Case Study: 33 Experts Argue About Microservices</h2>
 
-<p>Theory is nice. Let's see it work. We asked all 33 seats of Sun Parliament:</p>
+<p>Theory is nice. Let's see it work. We asked all 33 seats of Parliagent:</p>
 
 <blockquote>
   "Should a startup use microservices or a monolith for their fintech platform that needs to handle payments, KYC, and regulatory compliance?"
@@ -633,7 +633,7 @@ if (currentRound >= maxRounds) {
       <div class="seat-name">KantSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
       <div class="seat-text">"The choice must be determined by which architecture better enables the startup to treat its duties to customers, regulators, and society as categorical imperatives, not mere technical preferences."</div>
     </div>
-    <p>The minority report exists because Sun Parliament <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
+    <p>The minority report exists because Parliagent <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
   </div>
 </details>
 
@@ -651,7 +651,7 @@ if (currentRound >= maxRounds) {
   </div>
 </details>
 
-<p>A single-agent response to this question would have given you a balanced "it depends." Sun Parliament gave you 33 expert opinions, 62 specific disagreements, 33 actionable warnings, and a clear majority decision — all in one call.</p>
+<p>A single-agent response to this question would have given you a balanced "it depends." Parliagent gave you 33 expert opinions, 62 specific disagreements, 33 actionable warnings, and a clear majority decision — all in one call.</p>
 
 <hr>
 
@@ -691,11 +691,11 @@ if (currentRound >= maxRounds) {
 
 <p>In 30 parliament runs across our benchmark suite, only 1 reached the convergence threshold early. The other 29 hit the round limit. This means either our convergence thresholds are too strict, or these debates genuinely don't converge when you have personas with different priors.</p>
 
-<p>We think it's the latter — and it's by design. Sun Parliament is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
+<p>We think it's the latter — and it's by design. Parliagent is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
 
 <h3>Writing tasks don't benefit from debate</h3>
 
-<p>A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/sun-parliament/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
+<p>A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
 
 <p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
 
@@ -730,11 +730,11 @@ if (currentRound >= maxRounds) {
 
 <h2>When to Use It (and When Not To)</h2>
 
-<p>Sun Parliament ships with a <a href="https://github.com/sjhddh/sun-parliament/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
+<p>Parliagent ships with a <a href="https://github.com/sjhddh/parliagent/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
 
 <div class="mermaid">
 graph TD
-    A["Is the question trivial or factual?"] -->|"Yes"| B["Don't call Sun Parliament"]
+    A["Is the question trivial or factual?"] -->|"Yes"| B["Don't call Parliagent"]
     A -->|"No"| C["Does it involve security/auth/credentials?"]
     C -->|"Yes"| D["mode: fast, taskType: coding"]
     C -->|"No"| E["Is it a plan/roadmap question?"]
@@ -742,7 +742,7 @@ graph TD
     E -->|"No"| G["Is it a review or risk assessment?"]
     G -->|"Yes"| H["mode: fast, answerMode: review"]
     G -->|"No"| I["Is it high-stakes/multi-disciplinary?"]
-    I -->|"Yes"| J["mode: balanced or fullParliament"]
+    I -->|"Yes"| J["mode: balanced or fullParliagent"]
     I -->|"No"| K["mode: micro"]
 </div>
 
@@ -754,27 +754,27 @@ graph TD
 
 <h2>Try It Yourself</h2>
 
-<pre><code class="language-bash">npm install sun-parliament</code></pre>
+<pre><code class="language-bash">npm install parliagent</code></pre>
 
 <pre><code class="language-bash"># Quick question — 2 seats, 1 round, ~16 seconds
 export ANTHROPIC_API_KEY=sk-ant-...
-sun-parliament ask "What's the best approach to rate limiting?"
+parliagent ask "What's the best approach to rate limiting?"
 
 # See which seats would be selected (free, no API call)
-sun-parliament inspect "How to handle API key rotation?" --mode fast
+parliagent inspect "How to handle API key rotation?" --mode fast
 
 # Full debate with trace
-sun-parliament debate "Should we pivot to a platform model?" --mode fast --trace full
+parliagent debate "Should we pivot to a platform model?" --mode fast --trace full
 
 # Planning mode
-sun-parliament plan "Migration plan from monolith to microservices"
+parliagent plan "Migration plan from monolith to microservices"
 
 # All 33 seats — the board meeting
-sun-parliament debate "Should we open-source our core?" --full-parliament</code></pre>
+parliagent debate "Should we open-source our core?" --full-parliagent</code></pre>
 
 <p>Or from code:</p>
 
-<pre><code class="language-typescript">import { debate } from "sun-parliament";
+<pre><code class="language-typescript">import { debate } from "parliagent";
 
 const result = await debate({
   prompt: "Should we use Redis or Memcached for our session store?",
@@ -801,7 +801,7 @@ if (result.warnings?.length) {
 
 <h2>What Comes Next</h2>
 
-<p>Sun Parliament v0.1.0 ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, a CLI, an SDK, and a serverless adapter. It works. The benchmarks are real. The limitations are documented.</p>
+<p>Parliagent v0.1.0 ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, a CLI, an SDK, and a serverless adapter. It works. The benchmarks are real. The limitations are documented.</p>
 
 <p>Here are the genuine open questions we're still working through:</p>
 
@@ -819,8 +819,8 @@ if (result.warnings?.length) {
 <hr>
 
 <div class="article-footer">
-  <p><strong>Sun Parliament</strong> is open-source under MIT. <a href="https://github.com/sjhddh/sun-parliament">GitHub</a> &middot; <a href="https://www.npmjs.com/package/sun-parliament">npm</a></p>
-  <p>This article was shaped by four Sun Parliament debates: one on article structure (<code>mode: fast</code>), one on the core thesis (<code>mode: balanced</code>, 5 seats), one comparative review (<code>mode: fast</code>), and one full parliament with all 33 seats. Total cost for the content generation debates: approximately $1.70.</p>
+  <p><strong>Parliagent</strong> is open-source under MIT. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a></p>
+  <p>This article was shaped by four Parliagent debates: one on article structure (<code>mode: fast</code>), one on the core thesis (<code>mode: balanced</code>, 5 seats), one comparative review (<code>mode: fast</code>), and one full parliament with all 33 seats. Total cost for the content generation debates: approximately $1.70.</p>
   <p>Published April 2026.</p>
 </div>
 

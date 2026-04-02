@@ -35,27 +35,27 @@ export type SafetyMode = z.infer<typeof SafetyMode>;
 export const ExecutionProfile = z.enum(["available", "federated", "supreme"]);
 export type ExecutionProfile = z.infer<typeof ExecutionProfile>;
 
-export const ParliamentConstraints = z.object({
+export const ParliagentConstraints = z.object({
   maxTokens: z.number().positive().optional(),
   maxLatencyMs: z.number().positive().optional(),
   maxRounds: z.number().int().min(1).max(5).optional(),
   outputLength: OutputLength.optional(),
   safetyMode: SafetyMode.optional(),
 });
-export type ParliamentConstraints = z.infer<typeof ParliamentConstraints>;
+export type ParliagentConstraints = z.infer<typeof ParliagentConstraints>;
 
-export const ParliamentRequest = z.object({
+export const ParliagentRequest = z.object({
   prompt: z.string().min(1),
   mode: DebateMode.optional().default("micro"),
   executionProfile: ExecutionProfile.optional().default("available"),
-  fullParliament: z.boolean().optional().default(false),
+  fullParliagent: z.boolean().optional().default(false),
   taskType: TaskType.optional(),
   answerMode: AnswerMode.optional().default("answer"),
   outputLanguage: z.string().optional(),
   seatHints: z.array(z.string()).optional(),
   excludeSeats: z.array(z.string()).optional(),
-  constraints: ParliamentConstraints.optional(),
+  constraints: ParliagentConstraints.optional(),
   seed: z.string().optional(),
   trace: TraceLevel.optional().default("summary"),
 });
-export type ParliamentRequest = z.infer<typeof ParliamentRequest>;
+export type ParliagentRequest = z.infer<typeof ParliagentRequest>;

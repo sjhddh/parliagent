@@ -61,7 +61,7 @@ export const inspectCommand = new Command("inspect")
       return;
     }
 
-    console.log(chalk.bold.cyan("\n━━━ Sun Parliament — Inspect ━━━\n"));
+    console.log(chalk.bold.cyan("\n━━━ Parliagent — Inspect ━━━\n"));
     console.log(chalk.bold("Prompt: ") + chalk.dim(prompt.slice(0, 120) + (prompt.length > 120 ? "..." : "")));
     console.log(chalk.bold("Classified as: ") + chalk.yellow(classifiedType));
     console.log(chalk.bold("Mode: ") + `${mode} (${modeConfig.seatCount.min}-${modeConfig.seatCount.max} seats, max ${modeConfig.maxRounds} rounds)`);

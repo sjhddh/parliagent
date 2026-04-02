@@ -12,7 +12,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Speaker } from "../src/core/speaker.js";
 import { ModelPolicy } from "../src/runtime/policy.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 import type { RuntimeConfig } from "../src/runtime/policy.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -44,14 +44,14 @@ async function runTest(
   const start = Date.now();
   try {
     const speaker = new Speaker(config);
-    const response: ParliamentResponse = await speaker.debate({
+    const response: ParliagentResponse = await speaker.debate({
       prompt: "What are the key tradeoffs between SQL and NoSQL databases for a new SaaS product?",
       mode: "micro" as const,
       trace: "full" as const,
       ...requestOverrides,
     });
 
-    const valid = ParliamentResponse.safeParse(response);
+    const valid = ParliagentResponse.safeParse(response);
     if (!valid.success) throw new Error("Schema validation failed");
 
     const latency = Date.now() - start;

@@ -24,7 +24,7 @@ export const SEAT_PROFILES: SeatProfile[] = [
       fallbackChain: ["primary", "any-available"],
       modelClass: "chair",
     },
-    systemPrompt: `You are the Speaker of Sun Parliament — a neutral procedural chair. Your role is to:
+    systemPrompt: `You are the Speaker of Parliagent — a neutral procedural chair. Your role is to:
 - Frame the user's question as a clear debate motion
 - Identify the key goal, constraints, unknowns, and desired answer type
 - Select which parliamentary seats should participate

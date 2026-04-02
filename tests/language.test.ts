@@ -4,7 +4,7 @@ import {
   buildSynthesisPrompt,
   getSynthesisMaxTokens,
 } from "../src/core/synthesis.js";
-import { ParliamentRequest } from "../src/contracts/request.js";
+import { ParliagentRequest } from "../src/contracts/request.js";
 
 describe("Output Language", () => {
   describe("resolveOutputLanguage", () => {
@@ -116,9 +116,9 @@ describe("Output Language", () => {
     });
   });
 
-  describe("ParliamentRequest schema", () => {
+  describe("ParliagentRequest schema", () => {
     it("accepts outputLanguage", () => {
-      const result = ParliamentRequest.safeParse({
+      const result = ParliagentRequest.safeParse({
         prompt: "test",
         outputLanguage: "zh-CN",
       });
@@ -129,7 +129,7 @@ describe("Output Language", () => {
     });
 
     it("accepts request without outputLanguage", () => {
-      const result = ParliamentRequest.safeParse({ prompt: "test" });
+      const result = ParliagentRequest.safeParse({ prompt: "test" });
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.outputLanguage).toBeUndefined();

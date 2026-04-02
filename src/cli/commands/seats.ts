@@ -37,7 +37,7 @@ export const seatsCommand = new Command("seats")
 
     console.log(
       chalk.bold.cyan(
-        `\n━━━ Sun Parliament — ${seats.length} Seats ━━━\n`,
+        `\n━━━ Parliagent — ${seats.length} Seats ━━━\n`,
       ),
     );
 

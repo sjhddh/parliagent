@@ -4,7 +4,7 @@ import { SeatRegistry } from "../src/seats/registry.js";
 import { selectChamber } from "../src/core/routing.js";
 import { extractDisagreements } from "../src/core/convergence.js";
 import { DeliberationTrace, DisagreementRecord } from "../src/contracts/trace.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 import { isHardBlocked, checkSafetyBoundaries } from "../src/core/safety.js";
 import type { SeatStatement } from "../src/contracts/trace.js";
 import type { ModelAdapter, ChatMessage, CompletionResult } from "../src/runtime/adapter.js";

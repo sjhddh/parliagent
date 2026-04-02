@@ -40,7 +40,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
 };
 
 /**
- * Full parliament: 32 debate seats, 1 round.
+ * Full parliagent: 32 debate seats, 1 round.
  *
  * Budget semantics: the token cap is checked between rounds, not mid-round.
  * With 32 seats executing in parallel, a single round consumes ~230-260k tokens.
@@ -48,7 +48,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
  * comprehensive deliberation (100+ disagreements on average). The token cap is
  * set to 300k to accommodate the round with headroom for synthesis.
  */
-export const FULL_PARLIAMENT_CONFIG: ModeConfig = {
+export const FULL_PARLIAGENT_CONFIG: ModeConfig = {
   maxRounds: 1,
   targetAgreementRatio: 0.5,
   seatCount: { min: 32, max: 32 },

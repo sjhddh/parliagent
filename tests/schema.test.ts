@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { ParliamentRequest } from "../src/contracts/request.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentRequest } from "../src/contracts/request.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 import { SeatStatement } from "../src/contracts/trace.js";
 import { SeatProfile } from "../src/contracts/seats.js";
 
-describe("ParliamentRequest schema", () => {
+describe("ParliagentRequest schema", () => {
   it("accepts minimal request", () => {
-    const result = ParliamentRequest.safeParse({ prompt: "test" });
+    const result = ParliagentRequest.safeParse({ prompt: "test" });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.mode).toBe("micro");
@@ -15,7 +15,7 @@ describe("ParliamentRequest schema", () => {
   });
 
   it("accepts full request", () => {
-    const result = ParliamentRequest.safeParse({
+    const result = ParliagentRequest.safeParse({
       prompt: "What is the best architecture?",
       mode: "balanced",
       taskType: "coding",
@@ -35,12 +35,12 @@ describe("ParliamentRequest schema", () => {
   });
 
   it("rejects empty prompt", () => {
-    const result = ParliamentRequest.safeParse({ prompt: "" });
+    const result = ParliagentRequest.safeParse({ prompt: "" });
     expect(result.success).toBe(false);
   });
 
   it("rejects invalid mode", () => {
-    const result = ParliamentRequest.safeParse({
+    const result = ParliagentRequest.safeParse({
       prompt: "test",
       mode: "turbo",
     });
@@ -48,9 +48,9 @@ describe("ParliamentRequest schema", () => {
   });
 });
 
-describe("ParliamentResponse schema", () => {
+describe("ParliagentResponse schema", () => {
   it("validates a complete response", () => {
-    const result = ParliamentResponse.safeParse({
+    const result = ParliagentResponse.safeParse({
       finalAnswer: "The recommended approach is...",
       decisionType: "consensus",
       activatedSeats: ["Speaker", "DijkstraSeat", "ClaudeSeat"],
@@ -61,7 +61,7 @@ describe("ParliamentResponse schema", () => {
   });
 
   it("validates response with minority report", () => {
-    const result = ParliamentResponse.safeParse({
+    const result = ParliagentResponse.safeParse({
       finalAnswer: "Use microservices",
       decisionType: "split",
       activatedSeats: ["Speaker", "DijkstraSeat", "OperatorSeat"],
@@ -73,7 +73,7 @@ describe("ParliamentResponse schema", () => {
   });
 
   it("rejects missing required fields", () => {
-    const result = ParliamentResponse.safeParse({
+    const result = ParliagentResponse.safeParse({
       finalAnswer: "test",
     });
     expect(result.success).toBe(false);

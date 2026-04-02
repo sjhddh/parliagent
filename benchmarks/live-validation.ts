@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Sun Parliament — Phase 3A: Live Provider Validation
+ * Parliagent — Phase 3A: Live Provider Validation
  *
  * Usage:
  *   ANTHROPIC_API_KEY=sk-... npx tsx benchmarks/live-validation.ts
@@ -17,7 +17,7 @@ import { debate } from "../src/index.js";
 import { handleRequest } from "../src/handler.js";
 import { Speaker } from "../src/core/speaker.js";
 import { ModelPolicy } from "../src/runtime/policy.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -86,7 +86,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`\n=== Sun Parliament Live Validation ===`);
+  console.log(`\n=== Parliagent Live Validation ===`);
   console.log(`Provider(s): ${policy.availableProviders.join(", ")}`);
   console.log(`Primary: ${policy.primaryAdapter?.providerId}\n`);
 
@@ -100,7 +100,7 @@ async function main() {
       mode: "micro",
       trace: "summary",
     });
-    const valid = ParliamentResponse.safeParse(response);
+    const valid = ParliagentResponse.safeParse(response);
     if (!valid.success) throw new Error("Response failed schema validation");
     return {
       details: `${response.decisionType}, ${response.activatedSeats.length} seats`,
@@ -148,7 +148,7 @@ async function main() {
       mode: "micro",
       trace: "full",
     });
-    const valid = ParliamentResponse.safeParse(response);
+    const valid = ParliagentResponse.safeParse(response);
     if (!valid.success) throw new Error(`Schema validation failed: ${JSON.stringify(valid.error.issues.slice(0, 2))}`);
     if (!response.traceArtifact) throw new Error("Missing trace artifact");
     if (response.traceArtifact.rounds.length === 0) throw new Error("No rounds in trace");
@@ -206,7 +206,7 @@ async function main() {
     });
     if (res.status !== 200) throw new Error(`HTTP ${res.status}: ${res.body.slice(0, 200)}`);
     const parsed = JSON.parse(res.body);
-    const valid = ParliamentResponse.safeParse(parsed);
+    const valid = ParliagentResponse.safeParse(parsed);
     if (!valid.success) throw new Error("Handler response failed schema validation");
     return {
       details: `HTTP 200, ${parsed.decisionType}, ${parsed.activatedSeats.length} seats`,

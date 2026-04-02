@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Full Parliament Validation — 3 high-value prompts with all 33 seats.
+ * Full Parliagent Validation — 3 high-value prompts with all 33 seats.
  *
  * Usage: ANTHROPIC_API_KEY=sk-... npx tsx benchmarks/full-parliament-validation.ts
  */
@@ -10,7 +10,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { debate } from "../src/index.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -33,7 +33,7 @@ const PROMPTS = [
 ];
 
 async function main() {
-  console.log("=== Full Parliament Validation (33 seats) ===\n");
+  console.log("=== Full Parliagent Validation (33 seats) ===\n");
 
   const results: Array<{
     id: string;
@@ -54,9 +54,9 @@ async function main() {
     const start = Date.now();
 
     try {
-      const response: ParliamentResponse = await debate({
+      const response: ParliagentResponse = await debate({
         prompt: p.prompt,
-        fullParliament: true,
+        fullParliagent: true,
         trace: "full",
       });
 
@@ -85,7 +85,7 @@ async function main() {
         ` ${result.tokensUsed} tokens, ${result.latencyMs}ms, ${result.seatCount} seats, ${result.disagreementCount} disagreements, ${result.decisionType}`,
       );
 
-      const valid = ParliamentResponse.safeParse(response);
+      const valid = ParliagentResponse.safeParse(response);
       if (!valid.success) {
         console.log("  ⚠ Schema validation FAILED");
       }

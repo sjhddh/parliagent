@@ -8,7 +8,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Speaker } from "../src/core/speaker.js";
-import { ParliamentResponse } from "../src/contracts/response.js";
+import { ParliagentResponse } from "../src/contracts/response.js";
 import type { RuntimeConfig } from "../src/runtime/policy.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -41,7 +41,7 @@ async function test(
       ...overrides,
     });
 
-    const valid = ParliamentResponse.safeParse(response);
+    const valid = ParliagentResponse.safeParse(response);
     if (!valid.success) throw new Error("Schema validation failed");
 
     const latency = Date.now() - start;
