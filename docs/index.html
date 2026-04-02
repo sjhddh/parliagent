@@ -429,7 +429,7 @@ hr {
 
 <div class="seat-card" style="border-left-color: #7c3aed;">
   <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"The microservices movement is largely driven by <strong>engineering ressentiment</strong> &mdash; developers who feel inadequate building simple things well, so they create complexity to justify their existence."</div>
+  <div class="seat-text" data-i18n="sq_nietzsche_open">"The microservices movement is largely driven by <strong>engineering ressentiment</strong> &mdash; developers who feel inadequate building simple things well, so they create complexity to justify their existence."</div>
 </div>
 
 <p data-i18n="open3">That's the difference between asking one AI and running a debate. The single agent hedges. The parliament takes positions, disagrees, warns you about things you didn't ask about, and occasionally says something so uncomfortable it reframes the entire question.</p>
@@ -628,35 +628,35 @@ if (currentRound >= maxRounds) {
 
 <div class="seat-card">
   <div class="seat-name">DijkstraSeat <span class="seat-stance">oppose &middot; confidence 5/5</span></div>
-  <div class="seat-text">"A startup should begin with a monolith. Microservices introduce distributed system complexity that will overwhelm a small team before they understand their domain boundaries."</div>
-  <div class="seat-warning">&#9888; Financial systems require strong consistency guarantees — distributed transactions across microservices introduce significant complexity in maintaining data integrity for regulatory compliance.</div>
+  <div class="seat-text" data-i18n="sq_dijkstra">"A startup should begin with a monolith. Microservices introduce distributed system complexity that will overwhelm a small team before they understand their domain boundaries."</div>
+  <div class="seat-warning" data-i18n="sw_dijkstra">&#9888; Financial systems require strong consistency guarantees — distributed transactions across microservices introduce significant complexity in maintaining data integrity for regulatory compliance.</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">SecurityPrivacySeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"Microservices exponentially increase attack surface with multiple network boundaries, API endpoints, and inter-service authentication points that can be compromised."</div>
-  <div class="seat-warning">&#9888; Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade controls.</div>
+  <div class="seat-text" data-i18n="sq_security">"Microservices exponentially increase attack surface with multiple network boundaries, API endpoints, and inter-service authentication points that can be compromised."</div>
+  <div class="seat-warning" data-i18n="sw_security">&#9888; Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade controls.</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">KahnemanSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"A startup should begin with a monolith due to systematic overconfidence in microservices benefits and underestimation of complexity costs. The planning fallacy suggests microservices will take longer and cost more than anticipated."</div>
-  <div class="seat-warning">&#9888; The availability heuristic makes recent successful microservices stories more salient than the base rate of startups that failed due to premature architectural complexity.</div>
+  <div class="seat-text" data-i18n="sq_kahneman">"A startup should begin with a monolith due to systematic overconfidence in microservices benefits and underestimation of complexity costs. The planning fallacy suggests microservices will take longer and cost more than anticipated."</div>
+  <div class="seat-warning" data-i18n="sw_kahneman">&#9888; The availability heuristic makes recent successful microservices stories more salient than the base rate of startups that failed due to premature architectural complexity.</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">LawGovernanceSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"Regulatory compliance requires clear audit trails and data lineage — microservices create distributed transaction logs that complicate regulatory reporting and make it harder to demonstrate compliance during examinations."</div>
+  <div class="seat-text" data-i18n="sq_law">"Regulatory compliance requires clear audit trails and data lineage — microservices create distributed transaction logs that complicate regulatory reporting and make it harder to demonstrate compliance during examinations."</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">FeynmanSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"You don't yet know where the real boundaries in your system should be — premature microservice splits will force you into awkward data flows and make simple changes require coordinating multiple services."</div>
+  <div class="seat-text" data-i18n="sq_feynman">"You don't yet know where the real boundaries in your system should be — premature microservice splits will force you into awkward data flows and make simple changes require coordinating multiple services."</div>
 </div>
 
 <div class="seat-card" style="border-left-color: #7c3aed;">
   <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text">"This question reveals the herd's obsession with architectural fashion over fundamental values. <strong>The microservices movement is largely driven by engineering ressentiment</strong> — developers who feel inadequate building simple things well, so they create complexity to justify their existence and salaries."</div>
+  <div class="seat-text" data-i18n="sq_nietzsche">"This question reveals the herd's obsession with architectural fashion over fundamental values. <strong>The microservices movement is largely driven by engineering ressentiment</strong> — developers who feel inadequate building simple things well, so they create complexity to justify their existence and salaries."</div>
 </div>
 
 <p data-i18n="case4">You saw this quote in the opening. Here's why it matters beyond shock value: NietzscheSeat reframed a technical architecture question as a <em>psychological</em> one. No other seat thought to question the motivation behind the question itself. That's not something you get from a single agent, no matter how good — it requires a persona whose entire job is to challenge the premise.</p>
@@ -667,11 +667,11 @@ if (currentRound >= maxRounds) {
     <p data-i18n="minority1">Even in a 94% consensus, two seats held back:</p>
     <div class="seat-card">
       <div class="seat-name">OpenAISeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-      <div class="seat-text">"Both microservices and monoliths have distinct advantages; the choice depends on the startup's specific needs and resources. Microservices offer scalability and flexibility. Monolithic architectures can lead to faster initial development."</div>
+      <div class="seat-text" data-i18n="sq_openai">"Both microservices and monoliths have distinct advantages; the choice depends on the startup's specific needs and resources. Microservices offer scalability and flexibility. Monolithic architectures can lead to faster initial development."</div>
     </div>
     <div class="seat-card">
       <div class="seat-name">KantSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-      <div class="seat-text">"The choice must be determined by which architecture better enables the startup to treat its duties to customers, regulators, and society as categorical imperatives, not mere technical preferences."</div>
+      <div class="seat-text" data-i18n="sq_kant">"The choice must be determined by which architecture better enables the startup to treat its duties to customers, regulators, and society as categorical imperatives, not mere technical preferences."</div>
     </div>
     <p data-i18n="minority2">The minority report exists because Parliagent <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
   </div>
@@ -794,36 +794,36 @@ if (currentRound >= maxRounds) {
 
 <div class="seat-card">
   <div class="seat-name">Parliament Verdict <span class="seat-stance">majority &middot; 7 seats</span></div>
-  <div class="seat-text">"This article showcases impressive technical execution and refreshing intellectual honesty, but undermines its own credibility through circular validation, scientifically inadequate benchmarks, and conflation of artificial disagreement with genuine insight."</div>
+  <div class="seat-text" data-i18n="sq_verdict_bal">"This article showcases impressive technical execution and refreshing intellectual honesty, but undermines its own credibility through circular validation, scientifically inadequate benchmarks, and conflation of artificial disagreement with genuine insight."</div>
 </div>
 
 <p data-i18n="meta_full">In a full parliament review (33 seats, 79 disagreements, 29 warnings), the verdict was sharper:</p>
 
 <div class="seat-card">
   <div class="seat-name">Full Parliament Verdict <span class="seat-stance">majority &middot; 33 seats</span></div>
-  <div class="seat-text">"This is a technically impressive article with a compelling core insight about structured disagreement, but it's trapped between being product documentation and paradigm manifesto — it needs to pick one lane and commit fully."</div>
+  <div class="seat-text" data-i18n="sq_verdict_full">"This is a technically impressive article with a compelling core insight about structured disagreement, but it's trapped between being product documentation and paradigm manifesto — it needs to pick one lane and commit fully."</div>
 </div>
 
 <p data-i18n="meta_pointed">Individual seats were even more pointed:</p>
 
 <div class="seat-card">
   <div class="seat-name">KahnemanSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-  <div class="seat-text">"The article demonstrates genuine innovation but suffers from overconfidence in limited benchmarks. Measuring disagreement counts without tracking decision quality could lead to systematically worse decisions disguised as thoroughness."</div>
+  <div class="seat-text" data-i18n="sq_kahneman_meta">"The article demonstrates genuine innovation but suffers from overconfidence in limited benchmarks. Measuring disagreement counts without tracking decision quality could lead to systematically worse decisions disguised as thoroughness."</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">ShannonSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-  <div class="seat-text">"The core insight about structured disagreement is mathematically elegant, but the execution obscures rather than amplifies this signal. The article has a signal-to-noise ratio problem."</div>
+  <div class="seat-text" data-i18n="sq_shannon_meta">"The core insight about structured disagreement is mathematically elegant, but the execution obscures rather than amplifies this signal. The article has a signal-to-noise ratio problem."</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">NietzscheSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-  <div class="seat-text">"This article suffers from self-congratulatory framing and lacks the philosophical rigor to match its ambitious claims about truth-seeking and structured dissent."</div>
+  <div class="seat-text" data-i18n="sq_nietzsche_meta">"This article suffers from self-congratulatory framing and lacks the philosophical rigor to match its ambitious claims about truth-seeking and structured dissent."</div>
 </div>
 
 <div class="seat-card">
   <div class="seat-name">KantSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
-  <div class="seat-text">"The article violates the categorical imperative by using manipulative framing and theatrical personas rather than principled argumentation."</div>
+  <div class="seat-text" data-i18n="sq_kant_meta">"The article violates the categorical imperative by using manipulative framing and theatrical personas rather than principled argumentation."</div>
 </div>
 
 <div class="warning-box">
@@ -1066,6 +1066,24 @@ if (result.warnings?.length) {
       footer1: '<strong>Parliagent</strong>是MIT许可的开源项目。<a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
       footer2: "这篇文章由六次Parliagent辩论塑造：四次用于内容生成（文章结构、核心论点、对比、全议会案例研究），加上两次自我审查（balanced模式 + 全议会，79个分歧，29条警告）。辩论总成本：约$3.30。议会对本文提出的每一条批评都未经编辑地收录在上面。",
       footer3: "发布于2026年4月。",
+      sq_nietzsche_open: '"微服务运动很大程度上源于<strong>工程ressentiment（怨恨）</strong>——那些觉得自己无法把简单的东西做好的开发者，于是制造复杂性来证明自己存在的价值。"',
+      sq_dijkstra: '"创业公司应该从单体开始。微服务引入的分布式系统复杂性会在小团队理解领域边界之前就把他们压垮。"',
+      sw_dijkstra: '&#9888; 金融系统需要强一致性保证——微服务间的分布式事务在维护监管合规所需的数据完整性方面引入了巨大复杂性。',
+      sq_security: '"微服务通过多个网络边界、API端点和服务间认证点成倍增加了攻击面，这些都可能被攻破。"',
+      sw_security: '&#9888; 如果不采用企业级控制，微服务架构可能违反PCI DSS关于网络分段和数据流监控的要求。',
+      sq_kahneman: '"创业公司应该从单体开始，因为对微服务好处的系统性过度自信和对复杂性成本的低估。规划谬误表明微服务会比预期花费更长时间和更多成本。"',
+      sw_kahneman: '&#9888; 可得性启发式使最近成功的微服务故事比因过早架构复杂性而失败的创业公司基准率更加突出。',
+      sq_law: '"监管合规需要清晰的审计追踪和数据血缘——微服务创建的分布式事务日志使监管报告复杂化，并使在检查中证明合规变得更加困难。"',
+      sq_feynman: '"你还不知道系统中真正的边界应该在哪里——过早的微服务拆分会迫使你进入笨拙的数据流，使简单的变更需要协调多个服务。"',
+      sq_nietzsche: '"这个问题揭示了从众者对架构时尚的痴迷，而非对基本价值的追求。<strong>微服务运动很大程度上源于工程ressentiment（怨恨）</strong>——那些觉得自己无法把简单的东西做好的开发者，于是制造复杂性来证明自己的存在和薪资。"',
+      sq_openai: '"微服务和单体各有明显优势；选择取决于创业公司的具体需求和资源。微服务提供可扩展性和灵活性。单体架构可以带来更快的初始开发。"',
+      sq_kant: '"选择必须由哪种架构更能使创业公司把对客户、监管者和社会的义务视为绝对命令——而非仅仅是技术偏好——来决定。"',
+      sq_verdict_bal: '"这篇文章展示了令人印象深刻的技术执行力和令人耳目一新的知性诚实，但通过循环验证、科学上不充分的基准测试、以及将人造分歧与真正洞见混为一谈，削弱了自身的可信度。"',
+      sq_verdict_full: '"这是一篇技术上令人印象深刻的文章，关于结构化分歧有一个引人注目的核心洞见，但它被困在产品文档和范式宣言之间——需要选择一条路线并全力投入。"',
+      sq_kahneman_meta: '"文章展示了真正的创新，但对有限基准测试过于自信。衡量分歧数量而不追踪决策质量，可能导致系统性地更差的决策被伪装成全面性。"',
+      sq_shannon_meta: '"关于结构化分歧的核心洞见在数学上是优雅的，但执行方式遮蔽而非放大了这个信号。文章存在信噪比问题。"',
+      sq_nietzsche_meta: '"这篇文章有自我祝贺的框架问题，缺乏与其关于追求真理和结构化异议的宏大主张相匹配的哲学严谨性。"',
+      sq_kant_meta: '"文章通过使用操纵性框架和戏剧性角色而非原则性论证，违反了绝对命令。"',
     },
     ko: {
       title: "AI 하나에게 묻지 마세요.<br>토론을 열어보세요.",
@@ -1156,6 +1174,24 @@ if (result.warnings?.length) {
       footer1: '<strong>Parliagent</strong>는 MIT 라이선스 오픈소스입니다. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
       footer2: "이 글은 6번의 Parliagent 토론으로 만들어졌습니다: 콘텐츠 생성용 4회(글 구조, 핵심 논지, 비교, 전체 의회 사례 연구) + 의회가 이 글을 비평한 자체 리뷰 2회(balanced + 전체 의회, 79개 의견 불일치, 29개 경고). 총 토론 비용: 약 $3.30. 의회가 이 글에 대해 제기한 모든 비평이 위에 편집 없이 수록되어 있습니다.",
       footer3: "2026년 4월 게시.",
+      sq_nietzsche_open: '"마이크로서비스 운동은 대체로 <strong>엔지니어링 르상티망(ressentiment)</strong>에 의해 추동됩니다 — 단순한 것을 잘 만드는 데 부족함을 느끼는 개발자들이 자신의 존재를 정당화하기 위해 복잡성을 만들어내는 것입니다."',
+      sq_dijkstra: '"스타트업은 모놀리스로 시작해야 합니다. 마이크로서비스는 소규모 팀이 도메인 경계를 이해하기 전에 압도할 분산 시스템 복잡성을 도입합니다."',
+      sw_dijkstra: '&#9888; 금융 시스템은 강력한 일관성 보장이 필요합니다 — 마이크로서비스 간 분산 트랜잭션은 규제 컴플라이언스를 위한 데이터 무결성 유지에 상당한 복잡성을 초래합니다.',
+      sq_security: '"마이크로서비스는 여러 네트워크 경계, API 엔드포인트, 서비스 간 인증 포인트로 공격 표면을 기하급수적으로 증가시키며, 이 모두가 침해될 수 있습니다."',
+      sw_security: '&#9888; 엔터프라이즈급 제어 없이 구현하면 마이크로서비스 아키텍처가 네트워크 분할 및 데이터 흐름 모니터링에 대한 PCI DSS 요구사항을 위반할 수 있습니다.',
+      sq_kahneman: '"스타트업은 마이크로서비스의 이점에 대한 체계적 과신과 복잡성 비용의 과소평가로 인해 모놀리스로 시작해야 합니다. 계획 오류는 마이크로서비스가 예상보다 오래 걸리고 비용이 더 들 것임을 시사합니다."',
+      sw_kahneman: '&#9888; 가용성 휴리스틱은 최근 성공적인 마이크로서비스 사례를 조기 아키텍처 복잡성으로 실패한 스타트업의 기본 비율보다 더 두드러지게 만듭니다.',
+      sq_law: '"규제 컴플라이언스는 명확한 감사 추적과 데이터 계보를 요구합니다 — 마이크로서비스는 규제 보고를 복잡하게 만드는 분산 트랜잭션 로그를 생성하고 심사 시 컴플라이언스 입증을 더 어렵게 만듭니다."',
+      sq_feynman: '"시스템의 실제 경계가 어디여야 하는지 아직 모릅니다 — 성급한 마이크로서비스 분할은 어색한 데이터 흐름으로 내몰고 간단한 변경도 여러 서비스 조율을 요구하게 됩니다."',
+      sq_nietzsche: '"이 질문은 기본적 가치보다 아키텍처 유행에 대한 군중의 집착을 드러냅니다. <strong>마이크로서비스 운동은 대체로 엔지니어링 르상티망에 의해 추동됩니다</strong> — 단순한 것을 잘 만드는 데 부족함을 느끼는 개발자들이 자신의 존재와 급여를 정당화하기 위해 복잡성을 만들어내는 것입니다."',
+      sq_openai: '"마이크로서비스와 모놀리스 모두 뚜렷한 장점이 있습니다; 선택은 스타트업의 구체적 필요와 자원에 달려 있습니다. 마이크로서비스는 확장성과 유연성을 제공합니다. 모놀리식 아키텍처는 더 빠른 초기 개발로 이어질 수 있습니다."',
+      sq_kant: '"선택은 어떤 아키텍처가 고객, 규제 기관, 사회에 대한 의무를 단순한 기술적 선호가 아닌 정언명령으로 더 잘 이행할 수 있게 하는지에 의해 결정되어야 합니다."',
+      sq_verdict_bal: '"이 글은 인상적인 기술 실행력과 상쾌한 지적 정직성을 보여주지만, 순환 검증, 과학적으로 불충분한 벤치마크, 인위적 의견 불일치와 진정한 통찰의 혼동을 통해 자체 신뢰성을 약화시킵니다."',
+      sq_verdict_full: '"기술적으로 인상적인 글이며 구조화된 의견 불일치에 대한 설득력 있는 핵심 통찰을 가지고 있지만, 제품 문서와 패러다임 선언 사이에 끼여 있습니다 — 하나를 선택하고 전력 투구해야 합니다."',
+      sq_kahneman_meta: '"글은 진정한 혁신을 보여주지만 제한된 벤치마크에 대한 과신에 시달립니다. 의사결정 품질을 추적하지 않고 의견 불일치 수를 측정하면 체계적으로 더 나쁜 결정을 철저함으로 위장할 수 있습니다."',
+      sq_shannon_meta: '"구조화된 의견 불일치에 대한 핵심 통찰은 수학적으로 우아하지만, 실행이 이 신호를 증폭시키기보다 가립니다. 글에 신호 대 잡음비 문제가 있습니다."',
+      sq_nietzsche_meta: '"이 글은 자기 축하적 프레이밍으로 고통받으며, 진실 추구와 구조화된 이의에 대한 야심찬 주장에 맞는 철학적 엄밀성이 부족합니다."',
+      sq_kant_meta: '"글은 원칙적 논증이 아닌 조작적 프레이밍과 연극적 페르소나를 사용하여 정언명령을 위반합니다."',
     }
   };
 
