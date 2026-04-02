@@ -6,6 +6,7 @@ export {
   evaluateConvergence,
   computeRoundResult,
   extractDisagreements,
+  getDisputeParticipants,
 } from "./convergence.js";
 export type { ConvergenceInput, ConvergenceResult } from "./convergence.js";
 export {

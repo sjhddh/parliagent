@@ -1,80 +1,96 @@
-# Code Review — Parliagent v0.2.0 (Round 3: Final Release Check)
+# Review — Parliagent Upgrade (v0.3)
 
-## Verdict: PASS — Ship It
+## Verdict: FAIL
 
-151 tests pass across 14 files. Typecheck clean. All prior review issues resolved. New output language feature is well-implemented with 13 dedicated tests. Two minor doc count updates remain — they do not block publish.
-
----
-
-## Delta from Prior Review
-
-This round adds one feature (output language support) and resolves all three issues from the prior review.
-
-### Prior Issues Resolved
-
-| Issue | Fix |
-|-------|-----|
-| `review` command defaulted to `balanced` instead of `fast` | **Fixed.** `src/cli/commands/review.ts` now defaults to `"fast"` on both the option (line 8) and the fallback (line 12). |
-| CHANGELOG.md referenced "12 starter, 21 expansion" and "108 tests" | **Fixed.** Rewritten to "Complete 33-Seat Parliament", 138 tests, execution profiles, full parliament mode. |
-| PUBLISH_CHECKLIST.md had stale counts and `--starter` reference | **Partially fixed.** Test count updated to 138, `seats --starter --json` changed to `seats --json` on line 24. One stale `--starter` reference remains on line 77 (see Issue 2 below). |
-
-### New Feature: Output Language (`outputLanguage`)
-
-Clean implementation that keeps internal debate in English for reasoning quality while rendering the final synthesis in the requested language.
-
-**What was added:**
-- `outputLanguage: z.string().optional()` in `ParliagentRequest` schema
-- `resolveOutputLanguage()` in `synthesis.ts` — returns undefined for English (no extra instruction), returns the code for non-English
-- `buildLanguageInstruction()` appends an explicit "write the entire output in {lang}" directive to the synthesis prompt
-- 1.3x token multiplier for non-English output in `getSynthesisMaxTokens()` — reasonable for CJK and other high-token-per-character languages
-- `--language <code>` / `--lang <code>` CLI flags with config file and env var support (`PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE`)
-- `outputLanguage` field threaded through `Speaker.synthesize()` to the synthesis prompt and max tokens
-- 13 tests in `tests/language.test.ts` covering resolver logic, prompt injection, token multiplier, and schema validation
-- README updated with "Output Language" section, CLI and SDK examples, and clear explanation of what gets translated vs stays English
-- SKILL.md updated with `outputLanguage` in the agent summary
-
-**Assessment:** This is the right architecture. Internal debate stays English (where LLM reasoning is strongest), and only the final synthesis step renders in the target language. The resolver is clean — English is treated as "no translation needed" rather than "translate to English." The 1.3x token multiplier is a practical heuristic. No BCP-47 validation, but that is acceptable — an invalid code will produce English output or best-effort translation, not a crash.
-
----
-
-## Remaining Issues
-
-### Issue 1: Doc counts are stale (138 → 151)
-
-- **Severity**: Cosmetic (does not block publish)
-- **Locations**: `CHANGELOG.md:58`, `PUBLISH_CHECKLIST.md:7`, `HANDOFF.md:7,53`
-- **Problem**: All three files reference "138 tests across 13 files." The actual count after the language feature is 151 tests across 14 files. `HANDOFF.md:7` still says "137 tests" from an even older snapshot.
-- **Suggested fix**: Update all three to "151 tests across 14 files."
-
-### Issue 2: `PUBLISH_CHECKLIST.md` line 77 still references `--starter`
-
-- **Severity**: Cosmetic (does not block publish)
-- **Location**: `PUBLISH_CHECKLIST.md:77`
-- **Problem**: Post-publish verification step says `npx parliagent seats --starter`. The `--starter` flag was removed — the command is now just `npx parliagent seats`.
-- **Suggested fix**: Change to `npx parliagent seats`.
-
----
+This review was performed as a CLI/library code review with shell verification and code inspection. `npm run typecheck` and `npm test` both pass on the current worktree, but the upgraded protocol/evaluation claims in `HANDOFF.md` are not fully supported by the implementation. Two logic bugs are directly reproducible at runtime, and the current package artifact is not aligned with the claimed release state.
 
 ## Scores
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Functionality | 5/5 | All features work. Budget uses real tokens. Seed threaded. 33 seats production-grade. Execution profiles. Full parliament. Output language. |
-| Code quality | 5/5 | Clean modules. No dead code. CLI extracted. Speaker.withPolicy(). resolveOutputLanguage() is clean and well-tested. |
-| Security & robustness | 4/5 | fetchWithRetry. Google key in header. Safety boundaries. Keyword matching still coarse (acceptable for v1). |
-| Test coverage | 5/5 | 151 tests across 14 files. New language feature has 13 dedicated tests covering resolver, prompt injection, token multiplier, schema. |
-| Package readiness | 5/5 | README comprehensive with benchmark data. SKILL.md with decision trees. CHANGELOG reflects reality. Output language documented in README, SKILL.md, and config reference. |
-| Documentation | 5/5 | Honest about provider validation scope. Benchmark-backed defaults. Output language section clear about what gets translated vs stays English. |
+| Functionality | 2/5 | Core upgrade semantics are not reliable: issue-centered convergence can still stop with open disputes, and the new baseline comparison metric is broken. |
+| Design quality | 3/5 | Direction is stronger than v0.2, but the resolution protocol is still only partially realized in code. |
+| Code quality | 3/5 | Modules are tidy and tests are extensive, but several tests are too weak to catch the main regressions. |
+| Security & robustness | 3/5 | No secret leaks or validation failures found in reviewed files, but package/release truth is drifting from the actual artifact. |
+| Accessibility | 3/5 | No web UI changes were part of this review; score held neutral. |
 
----
+## Issues Found
 
-## Release Recommendation
+### Issue 1: Debate can stop as `converged` while disputes remain open
+- **Severity**: Critical
+- **Location**: `src/core/convergence.ts:271-291`
+- **Verification**: Runtime-verified
+- **Expected**: The new issue-centered convergence model should not return a successful convergence stop reason while any dispute is still open.
+- **Actual**: After the `issues_resolved` check, the code still falls through to the old stance-ratio branch and can return `reason: "converged"` even when `unresolvedCount > 0`.
+- **Reproduction**:
+  1. Run:
+     ```bash
+     node --input-type=module -e "import { evaluateConvergence } from './dist/core/convergence.js'; import { MODE_CONFIGS } from './dist/core/config.js'; const statements=[{seatId:'A',round:2,stance:'support',summary:'s',claims:['c'],objections:[],confidence:4,warnings:['warn']},{seatId:'B',round:2,stance:'support',summary:'s',claims:['c'],objections:[],confidence:4}]; const prior=[{id:'D1',topic:'risk',seats:['A'],type:'risk_warning',status:'open'}]; console.log(JSON.stringify(evaluateConvergence({statements,modeConfig:MODE_CONFIGS.fast,currentRound:2,priorDisagreements:prior}), null, 2));"
+     ```
+  2. Observe the result returns `"reason": "converged"` while the round still contains an open `risk_warning`.
+- **Suggested fix**: Gate the stance-based convergence branches on `unresolvedCount === 0`, or only allow them when `roundResult.disagreements.length === 0`.
 
-This is ready to publish. The two remaining issues are cosmetic doc count mismatches that do not affect the package, the CLI, the SDK, or the user experience.
+### Issue 2: `parliamentBeatBaseline` is mathematically inconsistent and gives contradictory results
+- **Severity**: Critical
+- **Location**: `src/evaluation/rubric.ts:57-72`, `src/evaluation/rubric.ts:275-288`
+- **Verification**: Runtime-verified
+- **Expected**: Baseline comparison should use the same unit and rubric scale on both sides, so the flag meaningfully answers whether parliament outperformed baseline.
+- **Actual**: The code compares raw `totalScore` against two incompatible baseline units:
+  - with `baselineResponse`, a rough 0-5 side score
+  - without `baselineResponse`, `percentScore * 0.6` on a 0-60 scale
+  The same response can therefore produce `parliamentBeatBaseline: true` in one branch and `false` in the other.
+- **Reproduction**:
+  1. Run:
+     ```bash
+     npx tsx -e "import { evaluateResponse, EVALUATION_FIXTURES } from './src/evaluation/rubric.ts'; const fixture=EVALUATION_FIXTURES.find(f=>f.id==='arch-tradeoff'); const response={finalAnswer:'Use a modular monolith first, then extract services later. This balances team size, complexity, and scale concerns while preserving delivery speed.',decisionType:'majority',activatedSeats:['Speaker','DijkstraSeat','OperatorSeat'],whyTheseSeats:'Architecture tradeoff',minorityReport:'OperatorSeat: microservices too early',openQuestions:['How fast will the team grow?'],warnings:['Complexity risk for small team'],debateSummary:'Round 1 debate'}; console.log('withBaseline', JSON.stringify(evaluateResponse(fixture,response,'Just use microservices.'), null, 2)); console.log('withoutBaseline', JSON.stringify(evaluateResponse(fixture,response), null, 2));"
+     ```
+  2. Observe the same response yields `parliamentBeatBaseline: true` with a baseline string and `false` without one.
+- **Suggested fix**: Score the baseline with the same five dimensions and compare normalized percentages, or remove the flag until there is a valid apples-to-apples baseline rubric.
 
-```
-[ ] Optional: update test counts in CHANGELOG.md, PUBLISH_CHECKLIST.md, HANDOFF.md (138 → 151, 13 → 14)
-[ ] Optional: fix PUBLISH_CHECKLIST.md line 77 (seats --starter → seats)
-[ ] npm run typecheck && npm test && npm run build
-[ ] npm publish
-```
+### Issue 3: The resolution protocol is still gated away from the common one-dispute case
+- **Severity**: Major
+- **Location**: `src/core/speaker.ts:308-332`
+- **Verification**: Code-inspection-only
+- **Expected**: Once the system advertises a dedicated resolution round, the common case of a single open seat-vs-seat conflict should be eligible for that path.
+- **Actual**: `determineStage()` only upgrades to `resolution` when there are at least 2 open `claim_conflict` records. A normal 2-seat disagreement produces 1 conflict and remains in generic `rebuttal`, which undercuts the stated “procedural parliament protocol” upgrade.
+- **Reproduction**:
+  1. Read the threshold in `determineStage()`.
+  2. Compare it with the upgrade claim in `HANDOFF.md` that resolution rounds are used for dispute resolution and targeted exchange.
+- **Suggested fix**: Trigger `resolution` on any meaningful open `claim_conflict`, or explicitly narrow the product claim and tests to match the current threshold.
+
+### Issue 4: `package-lock.json` still contains the removed self-dependency
+- **Severity**: Major
+- **Location**: `package-lock.json:11-15`, `package-lock.json:210-225`
+- **Verification**: Code-inspection-only
+- **Expected**: After removing the self-dependency from `package.json`, the lockfile root package should no longer list `parliagent`, and there should not be a nested `node_modules/parliagent` entry caused by the old dependency.
+- **Actual**: `package.json` no longer includes `"parliagent": "^0.2.4"`, but `package-lock.json` still does. This directly contradicts `HANDOFF.md`, which claims Track 5 removed the self-dependency cleanly.
+- **Reproduction**:
+  1. Compare `package.json` dependencies with `package-lock.json`.
+  2. Observe the root lock entry still lists `parliagent`, and a nested `node_modules/parliagent` package remains present.
+- **Suggested fix**: Regenerate `package-lock.json` after the dependency removal and verify that the self-reference disappears from the root package entry.
+
+### Issue 5: Current source changes are not reflected in the built artifact
+- **Severity**: Major
+- **Location**: `src/evaluation/rubric.ts`, `dist/`
+- **Verification**: Runtime-verified
+- **Expected**: A handoff that claims final verification and a completed upgrade should have a current build artifact matching the reviewed source tree.
+- **Actual**: The new evaluation source exists, but the built artifact does not contain `dist/evaluation/`. On the current worktree, `ls dist/evaluation` fails.
+- **Reproduction**:
+  1. Run:
+     ```bash
+     ls "/Users/JiahaoRBC/Git/sun-parliament/dist/evaluation"
+     ```
+  2. Observe `No such file or directory`.
+- **Suggested fix**: Rebuild before handoff and verify the packaged artifact, or avoid claiming final verification/package readiness until the artifact matches source.
+
+## Passed Checks
+- Runtime-verified: `npm run typecheck` passes on the current worktree.
+- Runtime-verified: `npm test` passes with `210` tests across `17` files.
+- Code inspection: `fullParliagent` request default is now `false` in `src/contracts/request.ts`, matching the documented “explicit opt-in” behavior.
+- Code inspection: `Speaker` now defaults `executionProfile` to `"federated"`, aligning runtime with the request schema and docs.
+- Code inspection: `claimProvenance`, `AgendaStage`, and dispute lifecycle fields are wired through contracts, synthesis, and tests.
+
+## Recommendations
+- Fix the convergence stop-order first; it invalidates the main protocol claim.
+- Rework `parliamentBeatBaseline` before using it in any benchmark, dashboard, or release narrative.
+- Regenerate the lockfile and rerun build/package verification so the artifact matches the source and handoff claims.

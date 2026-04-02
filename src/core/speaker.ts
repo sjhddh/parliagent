@@ -1,6 +1,6 @@
 import type { ParliagentRequest, OutputLength, AnswerMode, ExecutionProfile } from "../contracts/request.js";
 import type { ParliagentResponse, DecisionType } from "../contracts/response.js";
-import type { SeatStatement, StopReason, RoundResult } from "../contracts/trace.js";
+import type { SeatStatement, StopReason, RoundResult, AgendaStage, DisagreementRecord } from "../contracts/trace.js";
 import type { SeatProfile } from "../contracts/seats.js";
 import type { ModelAssignment } from "../runtime/policy.js";
 import { ModelPolicy } from "../runtime/policy.js";
@@ -8,7 +8,7 @@ import type { RuntimeConfig } from "../runtime/policy.js";
 import { SeatRegistry, defaultRegistry } from "../seats/registry.js";
 import { selectChamber, selectFullParliagent } from "./routing.js";
 import { MODE_CONFIGS, FULL_PARLIAGENT_CONFIG } from "./config.js";
-import { evaluateConvergence } from "./convergence.js";
+import { evaluateConvergence, getDisputeParticipants } from "./convergence.js";
 import { createBudget, addTokens, advanceRound, checkBudget } from "./budget.js";
 import { buildSynthesisPrompt, getSynthesisMaxTokens, buildTraceText } from "./synthesis.js";
 import { detectAntiCollapse, checkSafetyBoundaries, isHardBlocked } from "./safety.js";
@@ -28,6 +28,7 @@ const STATEMENT_PROMPT = `You are participating in a structured parliamentary de
   "stance": "support" | "mixed" | "oppose" | "uncertain",
   "summary": "Your position in 1-2 sentences",
   "claims": ["Claim 1", "Claim 2"],
+  "claimProvenance": ["supported" | "inferred" | "speculative" | "missing_evidence"],
   "objections": ["Objection, if any"],
   "confidence": 1-5,
   "warnings": ["Only if there are safety/security/legal concerns"]
@@ -35,6 +36,7 @@ const STATEMENT_PROMPT = `You are participating in a structured parliamentary de
 
 Rules:
 - "claims" must have 1-3 items — your strongest atomic arguments
+- "claimProvenance" must match claims array length — classify each claim: "supported" (you have concrete evidence), "inferred" (logical deduction), "speculative" (hypothesis), "missing_evidence" (would need verification)
 - "objections" can have 0-2 items — unresolved concerns about the motion or other positions
 - "confidence" is 1 (very uncertain) to 5 (very confident)
 - "warnings" is optional — only include if there are genuine safety, security, legal, or ethical red flags
@@ -47,7 +49,26 @@ const REBUTTAL_PROMPT = `You are in a rebuttal round. Other members have spoken.
 - Raise new objections based on what you've heard
 - Resolve previous objections if addressed
 
+Remember to include "claimProvenance" for each claim.
 Respond with JSON only (no markdown, no code fences).`;
+
+const RESOLUTION_PROMPT_PREFIX = `You are in a dispute resolution round. The Speaker has identified specific unresolved disagreements that need your attention. Focus on THESE SPECIFIC disputes:
+
+`;
+
+const RESOLUTION_PROMPT_SUFFIX = `
+
+For each dispute you are involved in, you must do ONE of:
+1. RESOLVE: Change your position if persuaded — shift your stance
+2. ACCEPT SPLIT: Acknowledge the disagreement is legitimate and both sides have merit — set stance to "mixed"
+3. MAINTAIN: Hold your position but address the other side's strongest argument
+
+Respond with the same JSON schema. Your response should directly address the disputes listed above.
+Respond with JSON only (no markdown, no code fences).`;
+
+function buildResolutionPrompt(disputes: string): string {
+  return RESOLUTION_PROMPT_PREFIX + disputes + RESOLUTION_PROMPT_SUFFIX;
+}
 
 export class Speaker {
   private registry: SeatRegistry;
@@ -64,9 +85,6 @@ export class Speaker {
     this.callbacks = callbacks ?? {};
   }
 
-  /**
-   * Factory for testing — injects a mock ModelPolicy directly.
-   */
   static withPolicy(
     policy: ModelPolicy,
     registry?: SeatRegistry,
@@ -134,7 +152,7 @@ export class Speaker {
       this.registry.getOrThrow(id),
     );
 
-    const execProfile: ExecutionProfile = request.executionProfile ?? "available";
+    const execProfile: ExecutionProfile = request.executionProfile ?? "federated";
 
     const assignments = this.modelPolicy.assignAll(seatProfiles, execProfile);
     const modelAssignments = this.modelPolicy.describeAssignments(seatProfiles, execProfile);
@@ -162,13 +180,35 @@ export class Speaker {
       }
 
       const previousRounds = allRounds.flatMap((r) => r.statements);
+      const priorDisagreements = allRounds.length > 0
+        ? allRounds[allRounds.length - 1].disagreements
+        : undefined;
+
+      const stage = this.determineStage(round, priorDisagreements);
+
+      let roundSeats = seatProfiles;
+      let roundAssignments = assignments;
+      let disputeContext: string | undefined;
+
+      if (stage === "resolution" && priorDisagreements) {
+        const disputeParticipants = getDisputeParticipants(priorDisagreements);
+        if (disputeParticipants.length >= 2) {
+          roundSeats = seatProfiles.filter((s) =>
+            disputeParticipants.includes(s.id),
+          );
+          disputeContext = this.formatDisputeContext(priorDisagreements);
+        }
+      }
+
       const roundResult = await this.runRound(
         round,
         request.prompt,
-        seatProfiles,
-        assignments,
+        roundSeats,
+        roundAssignments,
         previousRounds,
         request.seed,
+        stage,
+        disputeContext,
       );
 
       budget = addTokens(budget, roundResult.tokensUsed);
@@ -178,6 +218,8 @@ export class Speaker {
         statements: roundResult.statements,
         modeConfig,
         currentRound: round,
+        priorDisagreements,
+        stage,
       });
 
       allRounds.push(convergence.roundResult);
@@ -249,6 +291,54 @@ export class Speaker {
     return response;
   }
 
+  private highestStage: AgendaStage = "opening";
+
+  private static readonly STAGE_ORDER: Record<AgendaStage, number> = {
+    opening: 0,
+    rebuttal: 1,
+    resolution: 2,
+  };
+
+  /**
+   * Determine stage for this round. Stages progress monotonically:
+   * opening → rebuttal → resolution. Never regresses.
+   * Resolution triggers on any open claim_conflict — even a single
+   * seat-vs-seat dispute benefits from focused dispute resolution.
+   */
+  private determineStage(
+    round: number,
+    priorDisagreements?: DisagreementRecord[],
+  ): AgendaStage {
+    if (round === 1) {
+      this.highestStage = "opening";
+      return "opening";
+    }
+
+    let candidate: AgendaStage = "rebuttal";
+
+    if (priorDisagreements) {
+      const openDisputes = priorDisagreements.filter((d) => d.status === "open");
+      const claimConflicts = openDisputes.filter((d) => d.type === "claim_conflict");
+      if (claimConflicts.length >= 1) {
+        candidate = "resolution";
+      }
+    }
+
+    if (Speaker.STAGE_ORDER[candidate] < Speaker.STAGE_ORDER[this.highestStage]) {
+      candidate = this.highestStage;
+    }
+    this.highestStage = candidate;
+    return candidate;
+  }
+
+  private formatDisputeContext(disagreements: DisagreementRecord[]): string {
+    const open = disagreements.filter((d) => d.status === "open" && d.type === "claim_conflict");
+    return open
+      .slice(0, 5)
+      .map((d, i) => `${i + 1}. [${d.seats.join(" vs ")}] ${d.topic}`)
+      .join("\n");
+  }
+
   private async runRound(
     round: number,
     prompt: string,
@@ -256,8 +346,11 @@ export class Speaker {
     assignments: Map<string, ModelAssignment>,
     previousStatements: SeatStatement[],
     seed?: string,
+    stage?: AgendaStage,
+    disputeContext?: string,
   ): Promise<{ statements: SeatStatement[]; tokensUsed: number }> {
     const isRebuttal = round > 1 && previousStatements.length > 0;
+    const isResolution = stage === "resolution";
     const numericSeed = seed ? hashSeed(seed) : undefined;
 
     let roundTokens = 0;
@@ -269,11 +362,19 @@ export class Speaker {
         throw new Error(`No model assignment for seat ${seat.id}`);
       }
 
-      const userContent = isRebuttal
-        ? buildRebuttalContext(prompt, seat.id, previousStatements)
-        : `Debate motion: ${prompt}`;
+      let userContent: string;
+      let instructionPrompt: string;
 
-      const instructionPrompt = isRebuttal ? REBUTTAL_PROMPT : STATEMENT_PROMPT;
+      if (isResolution && disputeContext) {
+        instructionPrompt = buildResolutionPrompt(disputeContext);
+        userContent = buildRebuttalContext(prompt, seat.id, previousStatements);
+      } else if (isRebuttal) {
+        instructionPrompt = REBUTTAL_PROMPT;
+        userContent = buildRebuttalContext(prompt, seat.id, previousStatements);
+      } else {
+        instructionPrompt = STATEMENT_PROMPT;
+        userContent = `Debate motion: ${prompt}`;
+      }
 
       try {
         const result = await assignment.adapter.complete(
@@ -359,14 +460,30 @@ function parseStatement(
 
     const parsed = JSON.parse(jsonMatch[0]);
 
+    const claims = Array.isArray(parsed.claims)
+      ? parsed.claims.slice(0, 3).map(String)
+      : ["Position stated without specific claims"];
+
+    const validProvenance = ["supported", "inferred", "speculative", "missing_evidence"] as const;
+    type Provenance = typeof validProvenance[number];
+    let claimProvenance: Provenance[] | undefined;
+    if (Array.isArray(parsed.claimProvenance)) {
+      const rawProv = parsed.claimProvenance.slice(0, claims.length) as unknown[];
+      claimProvenance = rawProv.map((p): Provenance =>
+        validProvenance.includes(String(p) as Provenance) ? String(p) as Provenance : "inferred",
+      );
+      while (claimProvenance.length < claims.length) {
+        claimProvenance.push("missing_evidence");
+      }
+    }
+
     return {
       seatId,
       round,
       stance: validateStance(parsed.stance),
       summary: String(parsed.summary ?? "No summary provided"),
-      claims: Array.isArray(parsed.claims)
-        ? parsed.claims.slice(0, 3).map(String)
-        : ["Position stated without specific claims"],
+      claims,
+      ...(claimProvenance !== undefined ? { claimProvenance } : {}),
       objections: Array.isArray(parsed.objections)
         ? parsed.objections.slice(0, 2).map(String)
         : [],
@@ -432,8 +549,24 @@ function buildRebuttalContext(
   return `Original motion: ${prompt}\n\nOther members' positions:\n${othersText}`;
 }
 
-function determineDecisionType(lastRound?: RoundResult): DecisionType {
+/**
+ * Derive decision type from dispute resolution state, not just stance ratios.
+ * Uses issue lifecycle as primary signal, falls back to stance metrics.
+ */
+export function determineDecisionType(lastRound?: RoundResult): DecisionType {
   if (!lastRound) return "uncertain";
+
+  const total = lastRound.disagreements.length;
+  const resolved = lastRound.resolvedCount ?? 0;
+  const splits = lastRound.acceptedSplitCount ?? 0;
+  const unresolved = lastRound.unresolvedCount ?? 0;
+
+  if (total > 0) {
+    if (unresolved === 0 && splits === 0) return "consensus";
+    if (unresolved === 0 && splits > 0) return "majority";
+    if (resolved + splits > unresolved) return "split";
+    if (unresolved > resolved + splits) return "uncertain";
+  }
 
   if (lastRound.agreementRatio >= 0.8 && lastRound.objectionCount === 0) {
     return "consensus";
@@ -507,7 +640,8 @@ function buildDebateSummary(
   const lines: string[] = [];
 
   for (const round of rounds) {
-    lines.push(`Round ${round.round}:`);
+    const stageLabel = round.stage ? ` [${round.stage}]` : "";
+    lines.push(`Round ${round.round}${stageLabel}:`);
     for (const stmt of round.statements) {
       lines.push(
         `  ${stmt.seatId}: ${stmt.stance} (confidence ${stmt.confidence}/5) — ${stmt.summary}`,
@@ -516,6 +650,11 @@ function buildDebateSummary(
     lines.push(
       `  Agreement: ${Math.round(round.agreementRatio * 100)}%, Objections: ${round.objectionCount}`,
     );
+    if (round.resolvedCount !== undefined) {
+      lines.push(
+        `  Issues: ${round.resolvedCount} resolved, ${round.acceptedSplitCount ?? 0} accepted splits, ${round.unresolvedCount ?? 0} unresolved`,
+      );
+    }
   }
 
   lines.push(`\nStopped: ${stopReason}`);

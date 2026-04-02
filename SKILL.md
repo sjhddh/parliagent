@@ -95,7 +95,7 @@ Default:
 - `micro` — ~16s, ~$0.01, 3 disagreements avg
 - `fast` — ~34s, ~$0.04, 10 disagreements avg
 - `balanced` — ~37s, ~$0.08, high cost with diminishing returns vs fast
-- `deep` — not benchmarked in v0.1.0, budget cap 60k tokens / 60s
+- `deep` — not yet benchmarked, budget cap 60k tokens / 60s
 - `fullParliagent` — ~44s, ~$1.50, 133 disagreements avg, 32 speaking seats, 1 round — only for consequential multi-disciplinary decisions
 
 ## Execution Profile Selection
@@ -113,7 +113,7 @@ Do you want all seats on one operator-designated provider, ignoring provider div
   → executionProfile: "supreme" (uses PARLIAGENT_SUPREME_PROVIDER, defaults to primary)
 
 Default:
-  → executionProfile: "available" (seats follow their fallback chain)
+  → executionProfile: "federated" (each seat uses its preferred provider)
 ```
 
 With a single provider, `available`, `federated`, and `supreme` produce identical assignments.

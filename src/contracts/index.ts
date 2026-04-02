@@ -21,10 +21,12 @@ export {
 
 export {
   Stance,
+  ClaimProvenance,
   SeatStatement,
   DisagreementType,
   DisagreementStatus,
   DisagreementRecord,
+  AgendaStage,
   StopReason,
   RoundResult,
   DeliberationTrace,

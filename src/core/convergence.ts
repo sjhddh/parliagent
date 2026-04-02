@@ -1,24 +1,42 @@
-import type { SeatStatement, DisagreementRecord, RoundResult } from "../contracts/trace.js";
+import type { SeatStatement, DisagreementRecord, RoundResult, AgendaStage } from "../contracts/trace.js";
 import type { ModeConfig } from "./config.js";
+import { randomBytes } from "crypto";
 
 export interface ConvergenceInput {
   statements: SeatStatement[];
   modeConfig: ModeConfig;
   currentRound: number;
+  priorDisagreements?: DisagreementRecord[];
+  stage?: AgendaStage;
 }
 
 export interface ConvergenceResult {
   shouldStop: boolean;
-  reason: "converged" | "round_limit" | "blocking_warning" | null;
+  reason: "converged" | "round_limit" | "blocking_warning" | "issues_resolved" | null;
   roundResult: RoundResult;
 }
 
+function makeDisputeId(): string {
+  return `D-${randomBytes(4).toString("hex")}`;
+}
+
 /**
- * Extract disagreements by comparing claims and stances across seats.
+ * Extract disagreements from current-round statements, then reconcile
+ * with prior-round disputes to track lifecycle transitions.
  */
 export function extractDisagreements(
   statements: SeatStatement[],
+  priorDisagreements?: DisagreementRecord[],
 ): DisagreementRecord[] {
+  const currentRaw = extractRawDisagreements(statements);
+  if (!priorDisagreements || priorDisagreements.length === 0) {
+    return currentRaw.map((d) => ({ ...d, id: d.id ?? makeDisputeId() }));
+  }
+
+  return reconcileDisagreements(currentRaw, priorDisagreements, statements);
+}
+
+function extractRawDisagreements(statements: SeatStatement[]): DisagreementRecord[] {
   const disagreements: DisagreementRecord[] = [];
 
   for (let i = 0; i < statements.length; i++) {
@@ -30,8 +48,9 @@ export function extractDisagreements(
         (a.stance === "support" && b.stance === "oppose") ||
         (a.stance === "oppose" && b.stance === "support")
       ) {
+        const topic = buildConflictTopic(a, b);
         disagreements.push({
-          topic: `Opposing stances on core question`,
+          topic,
           seats: [a.seatId, b.seatId],
           type: "claim_conflict",
           status: "open",
@@ -70,12 +89,99 @@ export function extractDisagreements(
   return deduplicateDisagreements(disagreements);
 }
 
+function buildConflictTopic(a: SeatStatement, b: SeatStatement): string {
+  const aClaims = a.claims.join(", ").slice(0, 60);
+  const bClaims = b.claims.join(", ").slice(0, 60);
+  return `${a.seatId} vs ${b.seatId}: ${aClaims} ↔ ${bClaims}`;
+}
+
+/**
+ * Reconcile current-round raw disputes with prior-round disputes.
+ * Determines lifecycle transitions: open → resolved or accepted_split.
+ */
+function reconcileDisagreements(
+  currentRaw: DisagreementRecord[],
+  priorDisagreements: DisagreementRecord[],
+  statements: SeatStatement[],
+): DisagreementRecord[] {
+  const stanceMap = new Map(statements.map((s) => [s.seatId, s]));
+  const result: DisagreementRecord[] = [];
+
+  for (const prior of priorDisagreements) {
+    if (prior.status === "resolved" || prior.status === "accepted_split") {
+      result.push(prior);
+      continue;
+    }
+
+    const involvedSeats = prior.seats;
+    const involvedStatements = involvedSeats
+      .map((id) => stanceMap.get(id))
+      .filter((s): s is SeatStatement => s !== undefined);
+
+    if (involvedStatements.length < 2 && prior.type === "claim_conflict") {
+      result.push(prior);
+      continue;
+    }
+
+    if (prior.type === "claim_conflict" && involvedStatements.length >= 2) {
+      const stances = new Set(involvedStatements.map((s) => s.stance));
+
+      const allMixed = involvedStatements.every((s) => s.stance === "mixed");
+      if (allMixed) {
+        result.push({ ...prior, status: "accepted_split" });
+        continue;
+      }
+
+      if (stances.size === 1 && !stances.has("uncertain") && !stances.has("mixed")) {
+        result.push({ ...prior, status: "resolved" });
+        continue;
+      }
+
+      const hasOpposing =
+        involvedStatements.some((s) => s.stance === "support") &&
+        involvedStatements.some((s) => s.stance === "oppose");
+
+      if (!hasOpposing) {
+        result.push({ ...prior, status: "accepted_split" });
+        continue;
+      }
+    }
+
+    if (prior.type === "risk_warning") {
+      const warningStmt = stanceMap.get(prior.seats[0]);
+      if (warningStmt && (!warningStmt.warnings || warningStmt.warnings.length === 0)) {
+        result.push({ ...prior, status: "resolved" });
+        continue;
+      }
+    }
+
+    result.push({ ...prior, status: "open" });
+  }
+
+  const priorKeys = new Set(
+    priorDisagreements.map((d) => normalizeDisputeKey(d)),
+  );
+
+  for (const current of currentRaw) {
+    const key = normalizeDisputeKey(current);
+    if (!priorKeys.has(key)) {
+      result.push({ ...current, id: current.id ?? makeDisputeId() });
+    }
+  }
+
+  return result;
+}
+
+function normalizeDisputeKey(d: DisagreementRecord): string {
+  return `${d.type}:${[...d.seats].sort().join(",")}:${d.topic.slice(0, 50)}`;
+}
+
 function deduplicateDisagreements(
   records: DisagreementRecord[],
 ): DisagreementRecord[] {
   const seen = new Set<string>();
   return records.filter((r) => {
-    const key = `${r.type}:${r.seats.sort().join(",")}:${r.topic.slice(0, 50)}`;
+    const key = `${r.type}:${[...r.seats].sort().join(",")}:${r.topic.slice(0, 50)}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -83,13 +189,15 @@ function deduplicateDisagreements(
 }
 
 /**
- * Compute round-level convergence metrics.
+ * Compute round-level convergence metrics including resolution tracking.
  */
 export function computeRoundResult(
   round: number,
   statements: SeatStatement[],
+  priorDisagreements?: DisagreementRecord[],
+  stage?: AgendaStage,
 ): RoundResult {
-  const disagreements = extractDisagreements(statements);
+  const disagreements = extractDisagreements(statements, priorDisagreements);
 
   const stances = statements.map((s) => s.stance);
   const supportCount = stances.filter((s) => s === "support").length;
@@ -116,24 +224,38 @@ export function computeRoundResult(
   const stanceCount = new Set(stances.filter((s) => s !== "uncertain")).size;
   const distinctViewCount = Math.max(1, stanceCount, claimClusters);
 
+  const resolvedCount = disagreements.filter((d) => d.status === "resolved").length;
+  const acceptedSplitCount = disagreements.filter((d) => d.status === "accepted_split").length;
+  const unresolvedCount = disagreements.filter((d) => d.status === "open").length;
+
   return {
     round,
+    ...(stage ? { stage } : {}),
     statements,
     disagreements,
     agreementRatio: Math.round(agreementRatio * 100) / 100,
     objectionCount,
     distinctViewCount,
     blockingWarning,
+    resolvedCount,
+    acceptedSplitCount,
+    unresolvedCount,
   };
 }
 
 /**
- * V1 stopping heuristic — explicit, inspectable, tunable.
+ * Issue-level convergence: stops when disputes are resolved or stabilized,
+ * not just when stance ratios look favorable.
  */
 export function evaluateConvergence(
   input: ConvergenceInput,
 ): ConvergenceResult {
-  const roundResult = computeRoundResult(input.currentRound, input.statements);
+  const roundResult = computeRoundResult(
+    input.currentRound,
+    input.statements,
+    input.priorDisagreements,
+    input.stage,
+  );
 
   if (
     roundResult.blockingWarning &&
@@ -146,26 +268,39 @@ export function evaluateConvergence(
     };
   }
 
-  if (
-    roundResult.agreementRatio >= input.modeConfig.targetAgreementRatio &&
-    roundResult.objectionCount <= 1
-  ) {
+  const totalDisputes = roundResult.disagreements.length;
+  const unresolved = roundResult.unresolvedCount ?? 0;
+
+  if (totalDisputes > 0 && unresolved === 0) {
     return {
       shouldStop: true,
-      reason: "converged",
+      reason: "issues_resolved",
       roundResult,
     };
   }
 
-  if (
-    roundResult.distinctViewCount <= 1 &&
-    roundResult.objectionCount === 0
-  ) {
-    return {
-      shouldStop: true,
-      reason: "converged",
-      roundResult,
-    };
+  if (unresolved === 0) {
+    if (
+      roundResult.agreementRatio >= input.modeConfig.targetAgreementRatio &&
+      roundResult.objectionCount <= 1
+    ) {
+      return {
+        shouldStop: true,
+        reason: "converged",
+        roundResult,
+      };
+    }
+
+    if (
+      roundResult.distinctViewCount <= 1 &&
+      roundResult.objectionCount === 0
+    ) {
+      return {
+        shouldStop: true,
+        reason: "converged",
+        roundResult,
+      };
+    }
   }
 
   if (input.currentRound >= input.modeConfig.maxRounds) {
@@ -184,9 +319,21 @@ export function evaluateConvergence(
 }
 
 /**
- * Naive claim clustering by word overlap.
- * Counts how many materially distinct claim groups exist.
+ * Identify seats involved in the top unresolved disputes for targeted exchange.
  */
+export function getDisputeParticipants(
+  disagreements: DisagreementRecord[],
+  maxDisputes: number = 3,
+): string[] {
+  const open = disagreements.filter((d) => d.status === "open" && d.type === "claim_conflict");
+  const topDisputes = open.slice(0, maxDisputes);
+  const seatSet = new Set<string>();
+  for (const d of topDisputes) {
+    for (const s of d.seats) seatSet.add(s);
+  }
+  return Array.from(seatSet);
+}
+
 function countDistinctClusters(claims: string[]): number {
   if (claims.length === 0) return 0;
 

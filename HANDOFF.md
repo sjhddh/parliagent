@@ -12,45 +12,62 @@
 | Phase 3B: Benchmarking | **complete** | 10 prompts × 3 modes |
 | Phase 3C: Tuning | **complete** | Security auto-upgrade, defaults validated |
 | Phase 4: Release Readiness | **complete** | Package artifact verified |
-| **Phase 5: 33-Seat Complete Parliament** | **complete** | All 33 production-grade, benchmarked |
+| Phase 5: 33-Seat Complete Parliament | **complete** | All 33 production-grade, benchmarked |
+| **Parliagent Upgrade (v0.3)** | **complete** | Protocol + convergence + evidence + evaluation |
 
-## Current Release: Complete 33-Seat Parliament
+## Upgrade Summary (v0.3)
 
-This is no longer a "starter" release. All 33 constitutional seats are production-grade and invokable.
+### Track 5: Product Truth Alignment
+- Fixed `fullParliagent` Zod default (`true` → `false`) to match documented "explicit opt-in" behavior
+- Fixed `executionProfile` drift: Speaker runtime now defaults to `"federated"` (matching Zod and docs)
+- Removed self-dependency `"parliagent": "^0.2.4"` from package.json
+- Fixed version strings in README/SKILL.md deep-mode references
+- Aligned SKILL.md execution profile decision tree (removed `"available"` vs `"federated"` contradiction)
+- Fixed README env comment (`PARLIAGENT_EXECUTION_PROFILE=federated`)
 
-### What changed from starter release
-- 21 seats upgraded from stub profiles to full production quality (system prompts, strengths, blind spots, substrate policies)
-- All seats are `isStarter: true` — no expansion-only designation
-- Chamber presets expanded to draw from full 33-seat roster
-- `--full-parliagent` flag added for explicit 33-seat invocation
-- Full parliament benchmarked with real provider data
+### Track 1: Procedural Parliament Protocol
+- Added agenda stages (`opening`, `rebuttal`, `resolution`) to `RoundResult`
+- Speaker now determines round stage based on dispute state:
+  - Round 1: always `opening` (all seats parallel)
+  - Round 2+: `resolution` if ≥2 open claim_conflicts (targeted exchange), else `rebuttal`
+- Resolution rounds use a dedicated `RESOLUTION_PROMPT` that references specific open disputes
+- Targeted exchanges: resolution rounds only include seats involved in top unresolved disputes
+- `DisagreementRecord` now has optional `id` for lifecycle tracking
 
-### Full Parliament Benchmark (Anthropic Claude, 2026-04-02)
+### Track 3: Issue-Level Convergence
+- Convergence now tracks dispute lifecycle: `open` → `resolved` | `accepted_split`
+- Reconciliation logic: compares current-round stances against prior-round disputes
+  - Both seats agree → `resolved`
+  - Both move to `mixed` → `accepted_split`
+  - No more opposing stances → `accepted_split`
+  - Warning seat drops warnings → `resolved`
+- New `StopReason`: `issues_resolved` (all disputes closed)
+- Resolution metrics added to `RoundResult`: `resolvedCount`, `acceptedSplitCount`, `unresolvedCount`
+- `decisionType` now derived primarily from dispute resolution state, with stance-ratio fallback
 
-| Prompt | Tokens | Latency | Seats | Disagreements | Warnings |
-|--------|--------|---------|-------|---------------|----------|
-| Architecture tradeoff (fintech) | 236,898 | 41s | 32 | 109 | 33 |
-| Strategic pivot (SaaS competitor) | 240,785 | 44s | 32 | 170 | 17 |
-| Healthcare data governance | 262,796 | 47s | 32 | 119 | 46 |
-| **Average** | **246,826** | **44s** | **32** | **133** | **32** |
+### Track 2: Evidence-Grounded Deliberation
+- `SeatStatement` extended with `claimProvenance`: `supported` | `inferred` | `speculative` | `missing_evidence`
+- Statement prompt instructs seats to classify each claim's evidence quality
+- Parser validates and normalizes provenance labels
+- Synthesis prompts updated across all answer modes to distinguish evidenced vs unverified conclusions
+- `buildTraceText` includes provenance labels for each claim
 
-Estimated cost: ~$1.50/run. All runs produced valid ParliagentResponse JSON.
-
-### Default Recommendations (unchanged)
-
-| Command | Default Mode | Full Parliament |
-|---------|-------------|-----------------|
-| `ask` | micro (2-3 seats) | No |
-| `plan` | fast (3-5 seats) | No |
-| `review` | fast (3-5 seats) | No |
-| `debate` | balanced (5-9 seats) | No |
-| explicit `--full-parliagent` | all 33 seats, 1 round | **Yes** — opt-in only |
-
-Full parliament does NOT change default behavior. It is a separate, explicit flag for consequential multi-disciplinary decisions. Budget cap is 300k tokens / 120s. Budget limits apply between rounds; with 32 seats in parallel, a single round uses ~240-260k tokens.
+### Track 4: Outcome-Based Evaluation
+- New `src/evaluation/rubric.ts`: 5-dimension evaluation framework
+  - **Completeness**: answer quality, decision clarity, seat participation, routing rationale
+  - **Tradeoff quality**: disagreement surfacing, minority reports, open questions
+  - **Risk recall**: warning count vs expectations, risk topic coverage
+  - **Calibration**: dispute lifecycle activity, evidence distinction
+  - **Actionability**: structured output, concrete actions, risk-alongside-actions
+- 8 evaluation fixtures covering: factual, tradeoff, risk, calibration, actionability categories
+- `parliamentBeatBaseline` flag compares parliament score vs baseline estimate
 
 ## Test Suite
 
-151 tests across 14 files — all passing. Includes full parliament routing, seat completeness, preset reachability, substrate policy, and output language tests.
+210 tests across 17 files — all passing. Includes:
+- 26 protocol upgrade tests (agenda stages, dispute lifecycle, convergence, evidence)
+- 10 evaluation rubric tests
+- 23 review-fix integration tests (determineDecisionType, Speaker.debate() integration, calibration with trace, all 8 fixtures exercised)
 
 ## Provider Validation Status
 
@@ -61,6 +78,45 @@ Full parliament does NOT change default behavior. It is a separate, explicit fla
 | **Google/Gemini** | Yes | Yes (3/3 single) | No | `provider-validation-*.json` |
 | **FLOCK** | Yes | Yes (6/6: single + federated + supreme) | No | `flock-validation-*.json` |
 | **Federated** (all 4) | Yes | Yes (4/4 with all providers) | No | `provider-validation-*.json` |
+
+## Default Recommendations
+
+| Command | Default Mode | Default Profile | Full Parliament |
+|---------|-------------|-----------------|-----------------|
+| `ask` | micro (2-3 seats) | federated | No |
+| `plan` | fast (3-5 seats) | federated | No |
+| `review` | fast (3-5 seats) | federated | No |
+| `debate` | balanced (5-9 seats) | federated | No |
+| explicit `--full-parliagent` | all 33 seats, 1 round | federated | **Yes** — opt-in only |
+
+## Code Review Fixes Applied
+
+Per staff-level code review, the following issues were fixed:
+
+| Issue | Severity | Fix |
+|-------|----------|-----|
+| T3-1: Global mutable dispute ID counter | High | Replaced with `crypto.randomBytes()` — no shared state |
+| T1-4: No Speaker.debate() integration test | High | Added 5 integration tests proving stages, metrics, provenance in trace |
+| T3-7: determineDecisionType() untested | Medium | Added 8 direct unit tests covering all dispute/fallback branches |
+| X-1: Parse/contract drift | High | `determineDecisionType` exported; shared validation constants |
+| T5-1: CLI version stale | Minor | Reads from `package.json` at runtime |
+| T1-3: Unsafe `String.replace` | Medium | Replaced with safe string concatenation |
+| T1-5: Stage regression possible | Medium | Monotonic stage progression enforced |
+| T2-3: claimProvenance length unchecked | Medium | Zod `.refine()` validates length matches claims |
+| T2-2: Silent provenance padding | Medium | Padding uses `"missing_evidence"` instead of `"inferred"` |
+| T4-2: Free calibration point | High | `maxScore` scales with fixture requirements |
+| T4-4: Risk topic false positives | Medium | Word-boundary regex enforcement |
+| T4-3: Calibration with trace untested | Medium | Integration test with `traceArtifact` dispute lifecycle |
+| T4-5: 5/8 fixtures unexercised | Medium | All 8 fixtures now exercised in tests |
+
+## Key Architecture Changes
+
+- `fullParliagent` defaults to `false` across all entry points (SDK, CLI, handler)
+- `executionProfile` defaults to `"federated"` across all entry points
+- Speaker manages agenda stages per round, not just a flat round loop
+- Convergence is issue-centered: tracks dispute IDs and lifecycle transitions
+- Claims carry provenance metadata for evidence-aware synthesis
+- Evaluation rubric enables outcome-based comparison of modes
 
 ## Result Traceability
 

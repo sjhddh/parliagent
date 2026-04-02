@@ -74,7 +74,7 @@ These defaults are backed by benchmark data (10 prompts × 3 modes: micro/fast/b
 - Use `--mode fast` on `ask` when the question has real tradeoffs
 - Use `--mode micro` on `review` when you want a quick sanity check, not a deep critique
 - Avoid `balanced` unless you specifically want 5+ perspectives — it costs 13x baseline with diminishing returns vs fast
-- `deep` mode is implemented but not benchmarked in v0.1.0. Budget limits (60k tokens / 60s) are enforced. Use at your own cost discretion.
+- `deep` mode is implemented but not yet benchmarked. Budget limits (60k tokens / 60s) are enforced. Use at your own cost discretion.
 
 ## Provider Support
 
@@ -152,7 +152,7 @@ FLOCK_MODEL=your-model-name                          # FLOCK model (required, no
 FLOCK_BASE_URL=https://api.flock.io/v1               # FLOCK base URL (default shown)
 PARLIAGENT_PRIMARY_PROVIDER=anthropic            # Force primary provider
 PARLIAGENT_SUPREME_PROVIDER=flock                # Override supreme model selection
-PARLIAGENT_EXECUTION_PROFILE=available           # Default profile
+PARLIAGENT_EXECUTION_PROFILE=federated          # Default profile
 PARLIAGENT_DEFAULT_MODE=fast                     # Override default mode
 PARLIAGENT_DEFAULT_TRACE=summary                 # none | summary | full
 PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE=en             # Output language (e.g. zh, ja, es)

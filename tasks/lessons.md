@@ -1,5 +1,57 @@
 # Lessons Learned
 
+## Parliagent Upgrade (v0.3)
+
+## Pattern: Zod defaults must match runtime fallback defaults
+
+**Trigger**: `fullParliagent` Zod default was `true` while `speaker.ts` used `?? false`. Handler path (which parses via Zod) and SDK path (which doesn't) produced different behavior for the same omitted field.
+
+**Rule**: When a Zod schema defines `.default(value)`, every runtime `??` fallback for that field must use the same value. Either all paths go through Zod, or the fallback must be explicitly synchronized. Three-way drift (Zod, runtime, docs) is a contract bug.
+
+---
+
+## Pattern: Convergence heuristics should be testable against concrete scenarios
+
+**Trigger**: Stance-ratio convergence couldn't distinguish "seats said similar words" from "issues were actually resolved."
+
+**Rule**: Convergence logic should track identifiable issues with lifecycle states, not just aggregate metrics. If you can't point to a specific dispute that was resolved, "converged" is an assertion without evidence.
+
+---
+
+## Pattern: Lifecycle transitions need prior-state context
+
+**Trigger**: `extractDisagreements` only took current-round statements, so every dispute was always `open`. Resolution requires comparing current state against prior state.
+
+**Rule**: Any function that determines lifecycle transitions (open→resolved→closed) must receive both current state and prior state. Stateless extraction can only produce new records, never transitions.
+
+---
+
+## Pattern: Fallback branches must respect the new model's invariants
+
+**Trigger**: Convergence added issue-level resolution as the primary signal, but left the old stance-ratio fallback branches ungated. The fallback could claim `"converged"` while disputes remained open.
+
+**Rule**: When adding a new decision layer above an existing fallback, the fallback must be gated on the same invariants the new layer requires. If the new model says "convergence requires all issues closed," the fallback cannot bypass that constraint.
+
+**Test**: Add regression tests that assert the invariant directly — not just that the happy path works, but that the specific violation path is blocked.
+
+---
+
+## Pattern: Comparison metrics must use the same scale on both sides
+
+**Trigger**: `parliamentBeatBaseline` compared a 5-dimension rubric total (0–19) against either a 2–5 point estimate or `percentScore * 0.6`, producing contradictory results for the same response.
+
+**Rule**: Any A-vs-B comparison flag must score both A and B through the same rubric function. If the baseline can't be scored through the full rubric, don't ship the comparison flag.
+
+---
+
+## Pattern: Lockfile must be regenerated after dependency changes
+
+**Trigger**: `package.json` had the self-dependency removed, but `package-lock.json` still contained it.
+
+**Rule**: After any dependency add/remove, always run `npm install` to regenerate the lockfile, then verify the lockfile matches `package.json`.
+
+---
+
 ## Review Round 2
 
 ## Pattern: Schema constraints must match all production code paths

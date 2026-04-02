@@ -26,16 +26,19 @@ Requirements:
 - Note any unresolved disagreements honestly
 - If consensus exists, state it clearly
 - If split, present both sides fairly
-- Include any safety warnings that were raised`,
+- Include any safety warnings that were raised
+- Distinguish between claims that are well-evidenced and those that are speculative or unverified
+- For claims marked "missing_evidence", note that verification is needed`,
 
   memo: `You are the Speaker writing an options memo from a parliamentary debate. Structure the output as a decision memo.
 
 Format:
 - **Situation**: One sentence on what was debated
 - **Options**: Enumerate the distinct positions that emerged (label each)
-- **Analysis**: Key tradeoffs and arguments for each option
+- **Analysis**: Key tradeoffs and arguments for each option. Mark speculative claims explicitly.
 - **Recommendation**: The position with strongest support, with caveats
 - **Risks**: Unresolved concerns and minority positions
+- **Evidence gaps**: Claims that need verification before acting
 
 Write for a busy decision-maker who needs to act, not study.`,
 
@@ -48,6 +51,7 @@ Format:
 - **Dependencies**: What must be true or available
 - **Risks & Mitigations**: Concerns raised during debate and how to address them
 - **Open Questions**: Unresolved items requiring further input
+- **Unverified assumptions**: Claims the plan relies on that lack evidence
 
 Be specific and actionable. Each step should be something a person can start doing.`,
 
@@ -60,6 +64,7 @@ Format:
 - **Risks**: Potential failure modes or concerns
 - **Recommendations**: Specific suggestions for improvement
 - **Minority Concerns**: Dissenting views that deserve attention
+- **Evidence quality**: Note where conclusions are well-supported vs speculative
 
 Be honest and specific. A review that finds no issues is probably not a good review.`,
 
@@ -69,6 +74,7 @@ Format:
 - Show each seat's position with their name, stance, and key arguments
 - Highlight where seats agreed and where they clashed
 - Show how positions evolved across rounds (if multiple rounds occurred)
+- Track dispute resolution: which disagreements were resolved, which remain open, which were accepted as legitimate splits
 - Note convergence points and remaining disagreements
 - End with the final outcome and any minority reports
 
@@ -136,22 +142,41 @@ export function getSynthesisMaxTokens(
 export function buildTraceText(rounds: RoundResult[]): string {
   return rounds
     .map(
-      (r) =>
-        `Round ${r.round}:\n` +
-        r.statements
+      (r) => {
+        const stageLabel = r.stage ? ` [${r.stage}]` : "";
+        const header = `Round ${r.round}${stageLabel}:\n`;
+        const statementsText = r.statements
           .map(
-            (s) =>
-              `  ${s.seatId} (${s.stance}, confidence ${s.confidence}/5): ${s.summary}\n` +
-              `    Claims: ${s.claims.join("; ")}\n` +
-              (s.objections.length > 0
-                ? `    Objections: ${s.objections.join("; ")}\n`
-                : "") +
-              (s.warnings?.length
-                ? `    Warnings: ${s.warnings.join("; ")}\n`
-                : ""),
+            (s) => {
+              let claimLines = `    Claims: ${s.claims.join("; ")}`;
+              if (s.claimProvenance && s.claimProvenance.length > 0) {
+                const provenanceLabels = s.claims.map((c, i) => {
+                  const prov = s.claimProvenance?.[i] ?? "inferred";
+                  return `${c} [${prov}]`;
+                });
+                claimLines = `    Claims: ${provenanceLabels.join("; ")}`;
+              }
+              return (
+                `  ${s.seatId} (${s.stance}, confidence ${s.confidence}/5): ${s.summary}\n` +
+                claimLines + "\n" +
+                (s.objections.length > 0
+                  ? `    Objections: ${s.objections.join("; ")}\n`
+                  : "") +
+                (s.warnings?.length
+                  ? `    Warnings: ${s.warnings.join("; ")}\n`
+                  : "")
+              );
+            },
           )
-          .join("") +
-        `  Agreement ratio: ${r.agreementRatio}, Unresolved objections: ${r.objectionCount}`,
+          .join("");
+
+        let metricsLine = `  Agreement ratio: ${r.agreementRatio}, Unresolved objections: ${r.objectionCount}`;
+        if (r.resolvedCount !== undefined) {
+          metricsLine += `\n  Disputes: ${r.resolvedCount} resolved, ${r.acceptedSplitCount ?? 0} accepted splits, ${r.unresolvedCount ?? 0} open`;
+        }
+
+        return header + statementsText + metricsLine;
+      },
     )
     .join("\n\n");
 }

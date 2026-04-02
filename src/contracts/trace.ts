@@ -3,16 +3,28 @@ import { z } from "zod";
 export const Stance = z.enum(["support", "mixed", "oppose", "uncertain"]);
 export type Stance = z.infer<typeof Stance>;
 
+export const ClaimProvenance = z.enum([
+  "supported",
+  "inferred",
+  "speculative",
+  "missing_evidence",
+]);
+export type ClaimProvenance = z.infer<typeof ClaimProvenance>;
+
 export const SeatStatement = z.object({
   seatId: z.string(),
   round: z.number().int().min(1),
   stance: Stance,
   summary: z.string(),
   claims: z.array(z.string()).min(1).max(3),
+  claimProvenance: z.array(ClaimProvenance).optional(),
   objections: z.array(z.string()).max(2),
   confidence: z.number().int().min(1).max(5),
   warnings: z.array(z.string()).optional(),
-});
+}).refine(
+  (data) => !data.claimProvenance || data.claimProvenance.length === data.claims.length,
+  { message: "claimProvenance length must match claims length when present" },
+);
 export type SeatStatement = z.infer<typeof SeatStatement>;
 
 export const DisagreementType = z.enum([
@@ -31,6 +43,7 @@ export const DisagreementStatus = z.enum([
 export type DisagreementStatus = z.infer<typeof DisagreementStatus>;
 
 export const DisagreementRecord = z.object({
+  id: z.string().optional(),
   topic: z.string(),
   seats: z.array(z.string()).min(1),
   type: DisagreementType,
@@ -38,23 +51,31 @@ export const DisagreementRecord = z.object({
 });
 export type DisagreementRecord = z.infer<typeof DisagreementRecord>;
 
+export const AgendaStage = z.enum(["opening", "rebuttal", "resolution"]);
+export type AgendaStage = z.infer<typeof AgendaStage>;
+
 export const StopReason = z.enum([
   "converged",
   "budget",
   "latency",
   "round_limit",
   "blocking_warning",
+  "issues_resolved",
 ]);
 export type StopReason = z.infer<typeof StopReason>;
 
 export const RoundResult = z.object({
   round: z.number().int().min(1),
+  stage: AgendaStage.optional(),
   statements: z.array(SeatStatement),
   disagreements: z.array(DisagreementRecord),
   agreementRatio: z.number().min(0).max(1),
   objectionCount: z.number().int().min(0),
   distinctViewCount: z.number().int().min(1),
   blockingWarning: z.boolean(),
+  resolvedCount: z.number().int().min(0).optional(),
+  acceptedSplitCount: z.number().int().min(0).optional(),
+  unresolvedCount: z.number().int().min(0).optional(),
 });
 export type RoundResult = z.infer<typeof RoundResult>;
 
