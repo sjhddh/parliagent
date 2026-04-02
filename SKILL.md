@@ -211,4 +211,4 @@ A hard-blocked safety prompt returns a response with `activatedSeats: []` and a 
 | FLOCK | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` |
 | Google AI | Implemented, not live-validated | `GOOGLE_API_KEY` |
 
-Anthropic, OpenAI, and FLOCK are all production-validated including federated and supreme scenarios. Google adapter is implemented but untested. FLOCK defaults to `https://api.flock.io/v1`; override with `FLOCK_BASE_URL` and `FLOCK_MODEL`.
+Anthropic, OpenAI, and FLOCK are all production-validated including federated and supreme scenarios. Google adapter is implemented but untested. FLOCK uses `x-litellm-api-key` header auth and requires `FLOCK_MODEL` to be set explicitly (no default model).

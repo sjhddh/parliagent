@@ -7,7 +7,9 @@ import type {
 import { fetchWithRetry } from "../fetch.js";
 
 /**
- * FLOCK adapter — OpenAI-compatible API with FLOCK-specific defaults.
+ * FLOCK adapter — OpenAI-compatible API with FLOCK-specific auth and defaults.
+ * Auth: x-litellm-api-key header (not Bearer token).
+ * Model: must be specified by user via FLOCK_MODEL — no hardcoded default.
  */
 export class FlockAdapter implements ModelAdapter {
   readonly providerId = "flock";
@@ -23,11 +25,11 @@ export class FlockAdapter implements ModelAdapter {
     this.apiKey = config?.apiKey ?? process.env.FLOCK_API_KEY ?? "";
     this.baseUrl =
       config?.baseUrl ?? process.env.FLOCK_BASE_URL ?? "https://api.flock.io/v1";
-    this.defaultModel = config?.defaultModel ?? process.env.FLOCK_MODEL ?? "flock-1";
+    this.defaultModel = config?.defaultModel ?? process.env.FLOCK_MODEL ?? "";
   }
 
   isAvailable(): boolean {
-    return this.apiKey.length > 0;
+    return this.apiKey.length > 0 && this.defaultModel.length > 0;
   }
 
   async complete(
@@ -36,6 +38,9 @@ export class FlockAdapter implements ModelAdapter {
   ): Promise<CompletionResult> {
     const start = Date.now();
     const model = options?.model ?? this.defaultModel;
+    if (!model) {
+      throw new Error("FLOCK_MODEL must be set — no default model for FLOCK provider.");
+    }
 
     const response = await fetchWithRetry(
       `${this.baseUrl}/chat/completions`,
@@ -43,7 +48,7 @@ export class FlockAdapter implements ModelAdapter {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.apiKey}`,
+          "x-litellm-api-key": this.apiKey,
         },
         body: JSON.stringify({
           model,

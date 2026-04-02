@@ -88,12 +88,12 @@ These defaults are backed by benchmark data (10 prompts × 3 modes: micro/fast/b
 
 Set at least one key. The system auto-detects available providers. Anthropic, OpenAI, and FLOCK are all live-validated individually and in federated/supreme combinations. Google adapter is implemented but not live-tested (no key available).
 
-FLOCK uses the OpenAI-compatible API format. Configure with:
+FLOCK uses the OpenAI-compatible API format with `x-litellm-api-key` header auth. Model must be specified explicitly:
 
 ```bash
 FLOCK_API_KEY=sk-...
-FLOCK_BASE_URL=https://api.flock.io/v1   # default, can be overridden
-FLOCK_MODEL=flock-1                       # default model
+FLOCK_MODEL=your-model-name               # required — no default
+FLOCK_BASE_URL=https://api.flock.io/v1    # default, can be overridden
 ```
 
 To force a specific primary provider:
@@ -147,9 +147,9 @@ With only one API key, all three profiles produce the same assignments — every
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...                        # Provider keys (at least one required)
 OPENAI_API_KEY=sk-...
-FLOCK_API_KEY=sk-...
-FLOCK_BASE_URL=https://api.flock.io/v1              # FLOCK base URL (default shown)
-FLOCK_MODEL=flock-1                                 # FLOCK model override
+FLOCK_API_KEY=sk-...                                 # FLOCK provider key
+FLOCK_MODEL=your-model-name                          # FLOCK model (required, no default)
+FLOCK_BASE_URL=https://api.flock.io/v1               # FLOCK base URL (default shown)
 SUN_PARLIAMENT_PRIMARY_PROVIDER=anthropic            # Force primary provider
 SUN_PARLIAMENT_SUPREME_PROVIDER=flock                # Override supreme model selection
 SUN_PARLIAMENT_EXECUTION_PROFILE=available           # Default profile
