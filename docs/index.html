@@ -387,7 +387,7 @@ hr {
   <div class="meta">Parliagent &middot; Engineering</div>
   <h1>Stop Asking One AI.<br>Start Running a Debate.</h1>
   <p class="subtitle">What happens when 33 AI expert personas argue about your architecture decision &mdash; and why the disagreements are the point.</p>
-  <span class="read-time">18 min read</span>
+  <span class="read-time">19 min read</span>
 </header>
 
 <!-- ========== SECTION 1: Cold Open ========== -->
@@ -513,7 +513,7 @@ Routing Reason:
     <tr><th>Category</th><th>Seats</th><th>What They Bring</th></tr>
   </thead>
   <tbody>
-    <tr><td>Model Reps</td><td>OpenAISeat, ClaudeSeat, GeminiSeat</td><td>Cross-family model diversity</td></tr>
+    <tr><td>Model Reps</td><td>OpenAISeat, ClaudeSeat, GeminiSeat</td><td>Cross-family model diversity (4 provider backends)</td></tr>
     <tr><td>Computing</td><td>Dijkstra, Knuth, Shannon, Turing</td><td>Correctness, algorithms, information theory</td></tr>
     <tr><td>Philosophy</td><td>Aristotle, Kant, Nietzsche</td><td>Ethics, duty, uncomfortable truths</td></tr>
     <tr><td>Psychology</td><td>Kahneman, Jung, CognitiveSci</td><td>Bias detection, cognitive framing</td></tr>
@@ -659,7 +659,7 @@ if (currentRound >= maxRounds) {
 
 <h2>What It Costs</h2>
 
-<p>All benchmark data is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026.</p>
+<p>Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All three live-validated providers (Anthropic, OpenAI, FLOCK) have been tested individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
 
 <table>
   <thead>
@@ -699,13 +699,29 @@ if (currentRound >= maxRounds) {
 
 <p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
 
-<h3>Only Anthropic is battle-tested</h3>
+<h3>Four providers, three fully tested</h3>
 
-<p>We ship adapters for OpenAI, Anthropic, and Google AI. Only Anthropic has been live-validated end-to-end. The other two are type-checked, structurally correct, and pass unit tests — but they haven't been run against real provider endpoints in production benchmarks. We say this in the README and we're saying it again here.</p>
+<p>Parliagent ships adapters for four LLM providers. Three are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations. The fourth is implemented but untested due to lack of a key:</p>
+
+<table>
+  <thead>
+    <tr><th>Provider</th><th>Status</th><th>Validated Modes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Anthropic</strong></td><td>Live-validated + benchmarked</td><td>Single, federated, supreme, full parliament</td></tr>
+    <tr><td><strong>OpenAI</strong></td><td>Live-validated</td><td>Single, federated (with Anthropic)</td></tr>
+    <tr><td><strong>FLOCK</strong></td><td>Live-validated</td><td>Single, federated (with Anthropic), supreme</td></tr>
+    <tr><td>Google AI</td><td>Implemented, not tested</td><td>No key available</td></tr>
+  </tbody>
+</table>
+
+<p>FLOCK deserves a note: it uses an OpenAI-compatible API format with <code>x-litellm-api-key</code> header auth, which means any OpenAI-compatible endpoint can plug in through the same adapter. You specify your model explicitly via <code>FLOCK_MODEL</code> — there's no hardcoded default, which keeps it genuinely provider-agnostic.</p>
+
+<p>The federated execution profile — where OpenAISeat runs on OpenAI, ClaudeSeat runs on Anthropic, and other seats use whichever provider is primary — has been validated with both Anthropic+OpenAI and FLOCK+Anthropic combinations. We can confirm that cross-provider debates work; whether they produce <em>meaningfully different</em> disagreements than single-provider runs is a question we're still investigating.</p>
 
 <h3>Security detection is coarse</h3>
 
-<p>The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a v0.1.0 limitation we intend to improve.</p>
+<p>The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a limitation we intend to improve.</p>
 
 <h3>The meta-critique</h3>
 
@@ -756,8 +772,12 @@ graph TD
 
 <pre><code class="language-bash">npm install parliagent</code></pre>
 
-<pre><code class="language-bash"># Quick question — 2 seats, 1 round, ~16 seconds
+<pre><code class="language-bash"># Set at least one provider key (Anthropic, OpenAI, or FLOCK — all live-validated)
 export ANTHROPIC_API_KEY=sk-ant-...
+# export OPENAI_API_KEY=sk-...
+# export FLOCK_API_KEY=sk-...  FLOCK_MODEL=your-model-name
+
+# Quick question — 2 seats, 1 round, ~16 seconds
 parliagent ask "What's the best approach to rate limiting?"
 
 # See which seats would be selected (free, no API call)
@@ -801,15 +821,16 @@ if (result.warnings?.length) {
 
 <h2>What Comes Next</h2>
 
-<p>Parliagent v0.1.0 ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, a CLI, an SDK, and a serverless adapter. It works. The benchmarks are real. The limitations are documented.</p>
+<p>Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (3 live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
 
 <p>Here are the genuine open questions we're still working through:</p>
 
 <ul>
-  <li><strong>Multi-provider diversity:</strong> Does running OpenAISeat on OpenAI, ClaudeSeat on Anthropic, and GeminiSeat on Google actually produce more useful disagreement than running everything on one provider? The <code>federated</code> execution profile is built for this, but we haven't benchmarked it yet.</li>
+  <li><strong>Multi-provider diversity:</strong> Federated mode is live-validated with Anthropic+OpenAI and FLOCK+Anthropic combinations — the plumbing works. The open question is whether cross-provider debates produce <em>meaningfully different</em> disagreements than single-provider runs. We have the infrastructure; we need the comparative benchmarks.</li>
   <li><strong>Convergence tuning:</strong> 29/30 runs hitting the round limit suggests our convergence thresholds need work. Or maybe debates on hard problems <em>shouldn't</em> converge. We need more data to decide.</li>
   <li><strong>Deep mode:</strong> Implemented but not benchmarked. 7-13 seats across 3 rounds with a 60k token budget. We want to understand when this adds value over fast mode before recommending it.</li>
   <li><strong>Better routing:</strong> Keyword-based task classification works but misses subtlety. A security question framed as a business question won't trigger the security auto-upgrade. This needs a smarter classifier.</li>
+  <li><strong>FLOCK as a universal adapter:</strong> The FLOCK provider's OpenAI-compatible interface means any LiteLLM-style proxy or custom endpoint could plug in. We want to explore this as a path to supporting dozens of model backends through a single adapter pattern.</li>
 </ul>
 
 <p>The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much, rating its confidence at 2/5. What we can say is that for decisions with genuine tradeoffs, multiple perspectives surface things that a single voice misses. The disagreements are real. The minority reports contain insight. And the warnings catch risks that no one asked about.</p>
