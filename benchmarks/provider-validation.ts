@@ -131,23 +131,45 @@ async function main() {
   }
 
   // --- Single-provider: Google ---
-  if (process.env.GOOGLE_API_KEY) {
-    console.log("\n--- Google (single-provider) ---\n");
+  const googleKey = process.env.GOOGLE_API_KEY ?? process.env.GEMINI_API_KEY;
+  if (googleKey) {
+    console.log("\n--- Google/Gemini (single-provider) ---\n");
 
     const config: RuntimeConfig = {
-      google: { apiKey: process.env.GOOGLE_API_KEY },
+      google: { apiKey: googleKey },
       primaryProvider: "google",
     };
 
     await runTest("google", "micro mode basic", config);
-    await runTest("google", "fast mode", config, { mode: "fast" });
+    await runTest("google", "fast mode with seed", config, {
+      mode: "fast",
+      seed: "test-seed-789",
+    });
+    await runTest("google", "plan answer mode", config, {
+      answerMode: "plan",
+      taskType: "planning",
+    });
+  }
+
+  // --- Single-provider: FLOCK ---
+  if (process.env.FLOCK_API_KEY && process.env.FLOCK_MODEL) {
+    console.log("\n--- FLOCK (single-provider) ---\n");
+
+    const config: RuntimeConfig = {
+      flock: { apiKey: process.env.FLOCK_API_KEY, defaultModel: process.env.FLOCK_MODEL },
+      primaryProvider: "flock",
+    };
+
+    await runTest("flock", "micro mode basic", config);
+    await runTest("flock", "fast mode", config, { mode: "fast" });
   }
 
   // --- Federated: multi-provider ---
   const multiProviderKeys = [
     process.env.ANTHROPIC_API_KEY ? "anthropic" : null,
     process.env.OPENAI_API_KEY ? "openai" : null,
-    process.env.GOOGLE_API_KEY ? "google" : null,
+    googleKey ? "google" : null,
+    (process.env.FLOCK_API_KEY && process.env.FLOCK_MODEL) ? "flock" : null,
   ].filter(Boolean);
 
   if (multiProviderKeys.length >= 2) {
@@ -160,8 +182,9 @@ async function main() {
       ...(process.env.OPENAI_API_KEY
         ? { openai: { apiKey: process.env.OPENAI_API_KEY } }
         : {}),
-      ...(process.env.GOOGLE_API_KEY
-        ? { google: { apiKey: process.env.GOOGLE_API_KEY } }
+      ...(googleKey ? { google: { apiKey: googleKey } } : {}),
+      ...((process.env.FLOCK_API_KEY && process.env.FLOCK_MODEL)
+        ? { flock: { apiKey: process.env.FLOCK_API_KEY, defaultModel: process.env.FLOCK_MODEL } }
         : {}),
       primaryProvider: "anthropic",
     };

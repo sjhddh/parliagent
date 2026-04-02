@@ -208,7 +208,7 @@ A hard-blocked safety prompt returns a response with `activatedSeats: []` and a 
 |----------|--------|-----|
 | Anthropic | Live-validated + benchmarked | `ANTHROPIC_API_KEY` |
 | OpenAI | Live-validated | `OPENAI_API_KEY` |
-| FLOCK | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` |
-| Google AI | Implemented, not live-validated | `GOOGLE_API_KEY` |
+| Google/Gemini | Live-validated | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
+| FLOCK | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` + `FLOCK_MODEL` |
 
-Anthropic, OpenAI, and FLOCK are all production-validated including federated and supreme scenarios. Google adapter is implemented but untested. FLOCK uses `x-litellm-api-key` header auth and requires `FLOCK_MODEL` to be set explicitly (no default model).
+All four providers are production-validated individually and in federated/supreme combinations. FLOCK uses `x-litellm-api-key` header auth and requires `FLOCK_MODEL` explicitly.

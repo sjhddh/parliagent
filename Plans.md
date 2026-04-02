@@ -150,7 +150,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] Provider validation scope documented in README and PUBLISH_CHECKLIST
 - [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios
 
-**Provider scope:** Anthropic live-validated (10/10 + benchmarked). OpenAI live-validated (3/3). FLOCK live-validated (6/6: single + federated + supreme). Federated validated across multiple provider pairs. Google adapter implemented but not live-tested (no key provided).
+**Provider scope:** All 4 providers live-validated. Anthropic (10/10 + benchmarked). OpenAI (3/3). Google/Gemini (3/3). FLOCK (6/6). Federated (4/4 with all 4 providers).
 
 ### Phase 3A.5: Full Provider Validation
 
@@ -230,8 +230,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 
 **Deferred to future:**
 - `deep` mode benchmarking — implemented but not validated with live data
-- Google live validation — adapter implemented, not tested (no key provided)
-- FLOCK benchmarking — live-validated but not benchmarked at scale
+- FLOCK and Google/Gemini benchmarking — live-validated but not benchmarked at scale
 - Named celebrity overlays — only revisit after core engine proves value
 
 ## Full Parliament Roster (33 seats)

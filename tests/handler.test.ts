@@ -5,7 +5,7 @@ describe("handleRequest", () => {
   const savedEnv: Record<string, string | undefined> = {};
 
   beforeEach(() => {
-    for (const key of ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GOOGLE_API_KEY", "FLOCK_API_KEY"]) {
+    for (const key of ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", "FLOCK_API_KEY", "FLOCK_MODEL"]) {
       savedEnv[key] = process.env[key];
       delete process.env[key];
     }

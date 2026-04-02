@@ -134,8 +134,9 @@ function loadEnvConfig(): ParliagentConfig {
     config.anthropic = { ...config.anthropic, defaultModel: process.env.ANTHROPIC_MODEL };
   }
 
-  if (process.env.GOOGLE_API_KEY) {
-    config.google = { apiKey: process.env.GOOGLE_API_KEY };
+  const googleKey = process.env.GOOGLE_API_KEY ?? process.env.GEMINI_API_KEY;
+  if (googleKey) {
+    config.google = { apiKey: googleKey };
   }
   if (process.env.GOOGLE_MODEL) {
     config.google = { ...config.google, defaultModel: process.env.GOOGLE_MODEL };
