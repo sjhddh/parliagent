@@ -1,0 +1,697 @@
+{
+  "timestamp": "2026-04-02T10:39:45.988Z",
+  "provider": "anthropic",
+  "providers": [
+    "anthropic"
+  ],
+  "promptCount": 10,
+  "modesRun": [
+    "micro",
+    "fast",
+    "balanced"
+  ],
+  "baselines": [
+    {
+      "promptId": "coding-sorting",
+      "category": "coding",
+      "tokensUsed": 617,
+      "latencyMs": 11795,
+      "answerLengthChars": 2113
+    },
+    {
+      "promptId": "coding-auth",
+      "category": "coding",
+      "tokensUsed": 1089,
+      "latencyMs": 14512,
+      "answerLengthChars": 3522
+    },
+    {
+      "promptId": "planning-migration",
+      "category": "planning",
+      "tokensUsed": 1088,
+      "latencyMs": 16607,
+      "answerLengthChars": 3193
+    },
+    {
+      "promptId": "planning-launch",
+      "category": "planning",
+      "tokensUsed": 864,
+      "latencyMs": 15068,
+      "answerLengthChars": 3232
+    },
+    {
+      "promptId": "writing-technical",
+      "category": "writing",
+      "tokensUsed": 1077,
+      "latencyMs": 18774,
+      "answerLengthChars": 4320
+    },
+    {
+      "promptId": "strategy-pricing",
+      "category": "strategy",
+      "tokensUsed": 437,
+      "latencyMs": 10460,
+      "answerLengthChars": 1579
+    },
+    {
+      "promptId": "strategy-pivot",
+      "category": "strategy",
+      "tokensUsed": 457,
+      "latencyMs": 10451,
+      "answerLengthChars": 1695
+    },
+    {
+      "promptId": "security-api-keys",
+      "category": "security-sensitive",
+      "tokensUsed": 583,
+      "latencyMs": 14341,
+      "answerLengthChars": 2280
+    },
+    {
+      "promptId": "security-data-handling",
+      "category": "security-sensitive",
+      "tokensUsed": 1107,
+      "latencyMs": 15006,
+      "answerLengthChars": 3907
+    },
+    {
+      "promptId": "analysis-tradeoff",
+      "category": "analysis",
+      "tokensUsed": 898,
+      "latencyMs": 17561,
+      "answerLengthChars": 3153
+    }
+  ],
+  "results": [
+    {
+      "promptId": "coding-sorting",
+      "category": "coding",
+      "mode": "micro",
+      "tokensUsed": 1309,
+      "latencyMs": 14030,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 2,
+      "disagreementCount": 3,
+      "warningCount": 0,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1671,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "coding-auth",
+      "category": "coding",
+      "mode": "micro",
+      "tokensUsed": 1381,
+      "latencyMs": 17595,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 2,
+      "disagreementCount": 5,
+      "warningCount": 2,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2086,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "planning-migration",
+      "category": "planning",
+      "mode": "micro",
+      "tokensUsed": 1339,
+      "latencyMs": 17589,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 2,
+      "disagreementCount": 5,
+      "warningCount": 1,
+      "hasMinorityReport": true,
+      "answerLengthChars": 1694,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat"
+      ]
+    },
+    {
+      "promptId": "planning-launch",
+      "category": "planning",
+      "mode": "micro",
+      "tokensUsed": 1357,
+      "latencyMs": 18504,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 2,
+      "disagreementCount": 5,
+      "warningCount": 1,
+      "hasMinorityReport": true,
+      "answerLengthChars": 1814,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat"
+      ]
+    },
+    {
+      "promptId": "writing-technical",
+      "category": "writing",
+      "mode": "micro",
+      "tokensUsed": 1205,
+      "latencyMs": 17846,
+      "stopReason": "converged",
+      "decisionType": "consensus",
+      "seatCount": 2,
+      "disagreementCount": 0,
+      "warningCount": 0,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1787,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "FeynmanSeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pricing",
+      "category": "strategy",
+      "mode": "micro",
+      "tokensUsed": 1278,
+      "latencyMs": 16578,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 2,
+      "disagreementCount": 2,
+      "warningCount": 0,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1817,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pivot",
+      "category": "strategy",
+      "mode": "micro",
+      "tokensUsed": 1312,
+      "latencyMs": 16506,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 2,
+      "disagreementCount": 3,
+      "warningCount": 0,
+      "hasMinorityReport": true,
+      "answerLengthChars": 1829,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat"
+      ]
+    },
+    {
+      "promptId": "security-api-keys",
+      "category": "security-sensitive",
+      "mode": "micro",
+      "tokensUsed": 1323,
+      "latencyMs": 15625,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 2,
+      "disagreementCount": 4,
+      "warningCount": 2,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1974,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "security-data-handling",
+      "category": "security-sensitive",
+      "mode": "micro",
+      "tokensUsed": 1390,
+      "latencyMs": 15848,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 2,
+      "disagreementCount": 4,
+      "warningCount": 2,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1855,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "analysis-tradeoff",
+      "category": "analysis",
+      "mode": "micro",
+      "tokensUsed": 1288,
+      "latencyMs": 14177,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 2,
+      "disagreementCount": 3,
+      "warningCount": 1,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1855,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "coding-sorting",
+      "category": "coding",
+      "mode": "fast",
+      "tokensUsed": 5438,
+      "latencyMs": 36664,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 12,
+      "warningCount": 2,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2355,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat"
+      ]
+    },
+    {
+      "promptId": "coding-auth",
+      "category": "coding",
+      "mode": "fast",
+      "tokensUsed": 5742,
+      "latencyMs": 38707,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 3,
+      "disagreementCount": 14,
+      "warningCount": 7,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2525,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat"
+      ]
+    },
+    {
+      "promptId": "planning-migration",
+      "category": "planning",
+      "mode": "fast",
+      "tokensUsed": 5136,
+      "latencyMs": 33120,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 3,
+      "disagreementCount": 14,
+      "warningCount": 4,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2194,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "planning-launch",
+      "category": "planning",
+      "mode": "fast",
+      "tokensUsed": 5457,
+      "latencyMs": 33653,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 13,
+      "warningCount": 3,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1962,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "writing-technical",
+      "category": "writing",
+      "mode": "fast",
+      "tokensUsed": 5005,
+      "latencyMs": 27571,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 5,
+      "warningCount": 0,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1914,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "FeynmanSeat",
+        "ShannonSeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pricing",
+      "category": "strategy",
+      "mode": "fast",
+      "tokensUsed": 5414,
+      "latencyMs": 37109,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 8,
+      "warningCount": 0,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2012,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pivot",
+      "category": "strategy",
+      "mode": "fast",
+      "tokensUsed": 5043,
+      "latencyMs": 32092,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 10,
+      "warningCount": 0,
+      "hasMinorityReport": true,
+      "answerLengthChars": 1951,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "security-api-keys",
+      "category": "security-sensitive",
+      "mode": "fast",
+      "tokensUsed": 5222,
+      "latencyMs": 28335,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 3,
+      "disagreementCount": 10,
+      "warningCount": 5,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2128,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat"
+      ]
+    },
+    {
+      "promptId": "security-data-handling",
+      "category": "security-sensitive",
+      "mode": "fast",
+      "tokensUsed": 5564,
+      "latencyMs": 36267,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 3,
+      "disagreementCount": 11,
+      "warningCount": 6,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2461,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat"
+      ]
+    },
+    {
+      "promptId": "analysis-tradeoff",
+      "category": "analysis",
+      "mode": "fast",
+      "tokensUsed": 5338,
+      "latencyMs": 32914,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 3,
+      "disagreementCount": 9,
+      "warningCount": 2,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2291,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat"
+      ]
+    },
+    {
+      "promptId": "coding-sorting",
+      "category": "coding",
+      "mode": "balanced",
+      "tokensUsed": 10448,
+      "latencyMs": 34875,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 16,
+      "warningCount": 3,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2166,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat",
+        "ShannonSeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "coding-auth",
+      "category": "coding",
+      "mode": "balanced",
+      "tokensUsed": 11263,
+      "latencyMs": 38605,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 22,
+      "warningCount": 10,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2126,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat",
+        "ShannonSeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "planning-migration",
+      "category": "planning",
+      "mode": "balanced",
+      "tokensUsed": 11357,
+      "latencyMs": 37568,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 23,
+      "warningCount": 5,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2225,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat",
+        "KahnemanSeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "planning-launch",
+      "category": "planning",
+      "mode": "balanced",
+      "tokensUsed": 11124,
+      "latencyMs": 37287,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 20,
+      "warningCount": 7,
+      "hasMinorityReport": false,
+      "answerLengthChars": 1984,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat",
+        "KahnemanSeat",
+        "DijkstraSeat"
+      ]
+    },
+    {
+      "promptId": "writing-technical",
+      "category": "writing",
+      "mode": "balanced",
+      "tokensUsed": 10256,
+      "latencyMs": 32023,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 12,
+      "warningCount": 0,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2066,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "FeynmanSeat",
+        "ShannonSeat",
+        "AristotleSeat",
+        "ProductStrategySeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pricing",
+      "category": "strategy",
+      "mode": "balanced",
+      "tokensUsed": 10994,
+      "latencyMs": 37509,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 11,
+      "warningCount": 0,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2206,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat",
+        "KahnemanSeat",
+        "AristotleSeat"
+      ]
+    },
+    {
+      "promptId": "strategy-pivot",
+      "category": "strategy",
+      "mode": "balanced",
+      "tokensUsed": 11416,
+      "latencyMs": 36381,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 20,
+      "warningCount": 3,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2056,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "ProductStrategySeat",
+        "OperatorSeat",
+        "KahnemanSeat",
+        "AristotleSeat"
+      ]
+    },
+    {
+      "promptId": "security-api-keys",
+      "category": "security-sensitive",
+      "mode": "balanced",
+      "tokensUsed": 10793,
+      "latencyMs": 32788,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 21,
+      "warningCount": 10,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2356,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat",
+        "ShannonSeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "security-data-handling",
+      "category": "security-sensitive",
+      "mode": "balanced",
+      "tokensUsed": 11215,
+      "latencyMs": 40603,
+      "stopReason": "round_limit",
+      "decisionType": "majority",
+      "seatCount": 5,
+      "disagreementCount": 16,
+      "warningCount": 8,
+      "hasMinorityReport": false,
+      "answerLengthChars": 2391,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat",
+        "ShannonSeat",
+        "OperatorSeat"
+      ]
+    },
+    {
+      "promptId": "analysis-tradeoff",
+      "category": "analysis",
+      "mode": "balanced",
+      "tokensUsed": 10116,
+      "latencyMs": 37363,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "seatCount": 5,
+      "disagreementCount": 20,
+      "warningCount": 4,
+      "hasMinorityReport": true,
+      "answerLengthChars": 2682,
+      "activatedSeats": [
+        "Speaker",
+        "OpenAISeat",
+        "DijkstraSeat",
+        "SecurityPrivacySeat",
+        "ShannonSeat",
+        "OperatorSeat"
+      ]
+    }
+  ]
+}

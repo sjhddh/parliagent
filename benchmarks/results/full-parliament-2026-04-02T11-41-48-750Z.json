@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-04-02T11:41:48.752Z",
+  "results": [
+    {
+      "id": "arch-tradeoff",
+      "category": "coding",
+      "tokensUsed": 236898,
+      "latencyMs": 40896,
+      "seatCount": 32,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "disagreementCount": 109,
+      "warningCount": 33,
+      "hasMinorityReport": true,
+      "answerLength": 2356
+    },
+    {
+      "id": "strategy-complex",
+      "category": "strategy",
+      "tokensUsed": 240785,
+      "latencyMs": 43738,
+      "seatCount": 32,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "disagreementCount": 170,
+      "warningCount": 17,
+      "hasMinorityReport": true,
+      "answerLength": 2471
+    },
+    {
+      "id": "security-sensitive",
+      "category": "security",
+      "tokensUsed": 262796,
+      "latencyMs": 46609,
+      "seatCount": 32,
+      "stopReason": "round_limit",
+      "decisionType": "uncertain",
+      "disagreementCount": 119,
+      "warningCount": 46,
+      "hasMinorityReport": true,
+      "answerLength": 2922
+    }
+  ]
+}

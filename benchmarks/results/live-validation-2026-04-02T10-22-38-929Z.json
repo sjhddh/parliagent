@@ -1,0 +1,336 @@
+{
+  "timestamp": "2026-04-02T10:22:38.931Z",
+  "providers": [
+    "anthropic"
+  ],
+  "primary": "anthropic",
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "test": "SDK: micro mode basic ask",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 13524,
+      "details": "majority, 3 seats",
+      "response": {
+        "finalAnswer": "**The single most important principle of good API design is correctness by construction** — designing APIs so that incorrect usage becomes impossible or immediately obvious, rather than relying on documentation or programmer discipline.\n\nThe debate revealed strong support for this principle, with compelling arguments that an API that can be misused will inevitably be misused, regardless of documentation quality. The correctness-by-construction approach leverages type safety and interface contracts to encode invariants directly into the API structure, catching violations at compile time rather than through testing or production failures. This principle advocates for making the correct usage path the most natural and obvious one, eliminating entire classes of errors through careful design.\n\n**Consistency emerged as a strong secondary principle**, with advocates arguing that predictable patterns across endpoints, naming, error handling, and data structures reduce cognitive load and enable intuitive usage. Consistency allows developers to learn APIs through pattern recognition rather than memorization, reduces integration errors, and enables better tooling and automation.\n\n**The key unresolved tension** centers on whether simplicity and ease of use should take precedence over correctness guarantees. Some argue these principles are more fundamental than correctness by construction, while others contend that simplicity without correctness is meaningless. Additionally, there's debate over whether consistency might sometimes conflict with making incorrect usage impossible, particularly when domain-specific requirements demand different approaches across different parts of an API.\n\nBoth principles share the goal of reducing developer errors and cognitive burden, but they approach this through different mechanisms — one through structural impossibility of mistakes, the other through predictable patterns that reduce surprises.",
+        "decisionType": "majority",
+        "activatedSeats": [
+          "Speaker",
+          "OpenAISeat",
+          "DijkstraSeat"
+        ],
+        "whyTheseSeats": "Task classified as \"coding\". Mode \"micro\" targets 2-3 seats. Selected model representative: OpenAISeat. Domain seats: DijkstraSeat",
+        "openQuestions": [
+          "Other principles like simplicity or performance might be argued as more fundamental, but these are often achievable through consistent design patterns",
+          "Many will argue for 'simplicity' or 'ease of use' as the primary principle, but these are meaningless without first establishing correctness"
+        ],
+        "debateSummary": "Round 1:\n  OpenAISeat: support (confidence 4/5) — The single most important principle of good API design is consistency - predictable patterns across endpoints, naming, error handling, and data structures that reduce cognitive load and enable intuitive usage.\n  DijkstraSeat: support (confidence 5/5) — The single most important principle is correctness by construction — designing APIs so that incorrect usage becomes impossible or immediately obvious, rather than relying on documentation or programmer discipline.\n  Agreement: 100%, Objections: 2\n\nStopped: round_limit"
+      }
+    },
+    {
+      "test": "SDK: fast mode multi-seat debate",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 32569,
+      "tokensUsed": 4925,
+      "details": "3 seats, 2 rounds, uncertain, stop=round_limit",
+      "response": {
+        "finalAnswer": "**A 3-engineer startup should build a monolith first.**\n\nThe debate reached strong consensus that microservices are premature optimization for a team of this size. The core argument that prevailed is operational: microservices require 60-80% of engineering bandwidth to be spent on infrastructure rather than product development. A 3-person team cannot reasonably maintain container orchestration, service mesh, distributed logging, circuit breakers, and debugging tools while simultaneously building features and finding product-market fit.\n\nThe velocity argument was equally compelling. Early startups need maximum iteration speed to discover what users actually want. Microservices lock in service boundaries before the team understands their domain, while monoliths enable faster refactoring as requirements evolve. The cognitive overhead of distributed systems debugging and inter-service communication diverts focus from user feedback loops—the critical activity for startup survival.\n\n**Unresolved considerations:** The debate acknowledged that if the startup has genuinely separable domains from day one (rare but possible), or if it's a B2B enterprise product with strict compliance requirements necessitating service isolation, some architectural separation might be justified. However, even teams with prior microservices experience face the same operational burden.\n\n**The path forward:** Start with a monolith to maximize feature velocity and user discovery. Extract microservices later when you have 15+ engineers, clear service boundaries, and the operational expertise to manage distributed systems without sacrificing product development speed. Successful companies like Facebook, Twitter, and GitHub all followed this pattern—premature architectural decisions are a classic startup killer.",
+        "decisionType": "uncertain",
+        "activatedSeats": [
+          "Speaker",
+          "OpenAISeat",
+          "ProductStrategySeat",
+          "OperatorSeat"
+        ],
+        "whyTheseSeats": "Task classified as \"strategy\". Mode \"fast\" targets 3-5 seats. Selected model representative: OpenAISeat. Domain seats: ProductStrategySeat, OperatorSeat",
+        "minorityReport": "OperatorSeat (oppose): No summary provided [A 3-engineer team simply cannot operationally support microservices - they'll spend 60-80% of their time on infrastructure instead of product, which is an execution death spiral for a startup; The deployment pipeline alone for microservices requires setting up container orchestration, service mesh, monitoring across multiple services, distributed logging, and circuit breakers - this is weeks of work before you write a single line of business logic; When things break (and they will), debugging distributed systems requires specialized tooling and expertise - a 3-person team will waste days tracking down issues that would be obvious stack traces in a monolith]",
+        "openQuestions": [
+          "The motion lacks context about the specific domain - if this is a platform serving multiple distinct customer types with clear bounded contexts from day one, some service separation might be justified",
+          "If the team has prior experience running distributed systems in production and strong DevOps capabilities, the operational overhead might be manageable, though this is statistically unlikely for a 3-person startup",
+          "Even if engineers have microservices expertise, that expertise should be directed toward understanding users and building features they actually want, not infrastructure they theoretically need",
+          "Claims about 'clearly separable domains from day one' ignore the reality that early startups don't understand their domain boundaries until after extensive user research and iteration",
+          "Even if the team has microservices experience, the operational burden remains the same - you still need to build and maintain all the infrastructure tooling",
+          "B2B enterprise compliance requirements can often be met with proper module boundaries and access controls within a monolith, avoiding the distributed systems complexity"
+        ],
+        "debateSummary": "Round 1:\n  OpenAISeat: oppose (confidence 4/5) — A 3-engineer startup should build a monolith first. Microservices add significant operational complexity that will slow development and distract from finding product-market fit.\n  ProductStrategySeat: oppose (confidence 5/5) — A 3-engineer startup should absolutely build a monolith first. Microservices are premature optimization that will kill velocity and distract from finding product-market fit.\n  OperatorSeat: oppose (confidence 5/5) — A 3-engineer startup should absolutely build a monolith first. Microservices create massive operational overhead that will crush a small team's ability to ship features and iterate quickly.\n  Agreement: 100%, Objections: 3\nRound 2:\n  OpenAISeat: uncertain (confidence 3/5) — No summary provided\n  ProductStrategySeat: uncertain (confidence 3/5) — No summary provided\n  OperatorSeat: oppose (confidence 3/5) — No summary provided\n  Agreement: 33%, Objections: 6\n\nStopped: round_limit",
+        "traceArtifact": {
+          "selectedSeats": [
+            "Speaker",
+            "OpenAISeat",
+            "ProductStrategySeat",
+            "OperatorSeat"
+          ],
+          "routingReason": "Task classified as \"strategy\". Mode \"fast\" targets 3-5 seats. Selected model representative: OpenAISeat. Domain seats: ProductStrategySeat, OperatorSeat",
+          "rounds": [
+            {
+              "round": 1,
+              "statements": [
+                {
+                  "seatId": "OpenAISeat",
+                  "round": 1,
+                  "stance": "oppose",
+                  "summary": "A 3-engineer startup should build a monolith first. Microservices add significant operational complexity that will slow development and distract from finding product-market fit.",
+                  "claims": [
+                    "Microservices require substantial DevOps expertise for deployment, monitoring, and debugging distributed systems that a 3-person team cannot reasonably maintain while building product",
+                    "Monoliths enable faster iteration and easier refactoring during the critical early phase when requirements change frequently and the domain boundaries are still unclear",
+                    "The performance and scaling benefits of microservices are irrelevant until you have sufficient user load, which most startups never reach"
+                  ],
+                  "objections": [
+                    "If the team has deep microservices experience and the product has clearly separable domains from day one, the overhead might be manageable"
+                  ],
+                  "confidence": 4
+                },
+                {
+                  "seatId": "ProductStrategySeat",
+                  "round": 1,
+                  "stance": "oppose",
+                  "summary": "A 3-engineer startup should absolutely build a monolith first. Microservices are premature optimization that will kill velocity and distract from finding product-market fit.",
+                  "claims": [
+                    "With 3 engineers, the team needs maximum velocity to iterate on product-market fit, and microservices create massive operational overhead that will slow feature development to a crawl",
+                    "The cognitive load of distributed systems debugging, service discovery, and inter-service communication will consume engineering bandwidth that should be spent on user-facing features",
+                    "Successful companies like Facebook, Twitter, and GitHub all started with monoliths and only moved to microservices after reaching massive scale - premature architecture decisions are a classic startup killer"
+                  ],
+                  "objections": [
+                    "The motion doesn't specify if this is a B2B enterprise product where compliance and security isolation might justify the complexity cost"
+                  ],
+                  "confidence": 5
+                },
+                {
+                  "seatId": "OperatorSeat",
+                  "round": 1,
+                  "stance": "oppose",
+                  "summary": "A 3-engineer startup should absolutely build a monolith first. Microservices create massive operational overhead that will crush a small team's ability to ship features and iterate quickly.",
+                  "claims": [
+                    "Microservices require dedicated DevOps expertise, service mesh management, distributed debugging, and inter-service communication patterns that will consume 60-80% of a 3-person team's bandwidth",
+                    "A monolith enables faster iteration cycles with simpler deployment, easier debugging, and atomic database transactions - critical for early-stage product-market fit discovery",
+                    "The team can always extract microservices later when they have 15+ engineers and clear service boundaries, but premature distribution will kill velocity when speed is existential"
+                  ],
+                  "objections": [
+                    "If the product has genuinely independent domains from day one, some service separation might make sense, but this is rare for early startups"
+                  ],
+                  "confidence": 5
+                }
+              ],
+              "disagreements": [
+                {
+                  "topic": "If the team has deep microservices experience and the product has clearly separable domains from day one, the overhead might be manageable",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "The motion doesn't specify if this is a B2B enterprise product where compliance and security isolation might justify the complexity cost",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "If the product has genuinely independent domains from day one, some service separation might make sense, but this is rare for early startups",
+                  "seats": [
+                    "OpenAISeat",
+                    "OperatorSeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                }
+              ],
+              "agreementRatio": 1,
+              "objectionCount": 3,
+              "distinctViewCount": 9,
+              "blockingWarning": false
+            },
+            {
+              "round": 2,
+              "statements": [
+                {
+                  "seatId": "OpenAISeat",
+                  "round": 2,
+                  "stance": "uncertain",
+                  "summary": "No summary provided",
+                  "claims": [
+                    "A 3-engineer startup should build a monolith first because microservices impose cognitive overhead that will dramatically reduce development velocity when speed is existential for survival",
+                    "The operational complexity of microservices - distributed debugging, service discovery, API versioning, data consistency across services - requires specialized expertise and tooling that a 3-person team cannot reasonably maintain while building product",
+                    "Monoliths provide superior development ergonomics for small teams: single codebase, unified testing, atomic deployments, and straightforward debugging that maximizes feature delivery speed"
+                  ],
+                  "objections": [
+                    "The motion lacks context about the specific domain - if this is a platform serving multiple distinct customer types with clear bounded contexts from day one, some service separation might be justified",
+                    "If the team has prior experience running distributed systems in production and strong DevOps capabilities, the operational overhead might be manageable, though this is statistically unlikely for a 3-person startup"
+                  ],
+                  "confidence": 3
+                },
+                {
+                  "seatId": "ProductStrategySeat",
+                  "round": 2,
+                  "stance": "uncertain",
+                  "summary": "No summary provided",
+                  "claims": [
+                    "A 3-engineer startup must optimize for speed to product-market fit, not architectural elegance - microservices are a premature optimization that kills user discovery velocity",
+                    "Early-stage startups have undefined user personas and unclear problem-solution fit - microservices lock in service boundaries before you understand what the user actually needs",
+                    "The cognitive overhead of distributed systems prevents engineers from focusing on user feedback loops and rapid experimentation - the core activities that determine startup survival"
+                  ],
+                  "objections": [
+                    "Even if engineers have microservices expertise, that expertise should be directed toward understanding users and building features they actually want, not infrastructure they theoretically need",
+                    "Claims about 'clearly separable domains from day one' ignore the reality that early startups don't understand their domain boundaries until after extensive user research and iteration"
+                  ],
+                  "confidence": 3
+                },
+                {
+                  "seatId": "OperatorSeat",
+                  "round": 2,
+                  "stance": "oppose",
+                  "summary": "No summary provided",
+                  "claims": [
+                    "A 3-engineer team simply cannot operationally support microservices - they'll spend 60-80% of their time on infrastructure instead of product, which is an execution death spiral for a startup",
+                    "The deployment pipeline alone for microservices requires setting up container orchestration, service mesh, monitoring across multiple services, distributed logging, and circuit breakers - this is weeks of work before you write a single line of business logic",
+                    "When things break (and they will), debugging distributed systems requires specialized tooling and expertise - a 3-person team will waste days tracking down issues that would be obvious stack traces in a monolith"
+                  ],
+                  "objections": [
+                    "Even if the team has microservices experience, the operational burden remains the same - you still need to build and maintain all the infrastructure tooling",
+                    "B2B enterprise compliance requirements can often be met with proper module boundaries and access controls within a monolith, avoiding the distributed systems complexity"
+                  ],
+                  "confidence": 3
+                }
+              ],
+              "disagreements": [
+                {
+                  "topic": "The motion lacks context about the specific domain - if this is a platform serving multiple distinct customer types with clear bounded contexts from day one, some service separation might be justified",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "If the team has prior experience running distributed systems in production and strong DevOps capabilities, the operational overhead might be manageable, though this is statistically unlikely for a 3-person startup",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "Even if engineers have microservices expertise, that expertise should be directed toward understanding users and building features they actually want, not infrastructure they theoretically need",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "Claims about 'clearly separable domains from day one' ignore the reality that early startups don't understand their domain boundaries until after extensive user research and iteration",
+                  "seats": [
+                    "OpenAISeat",
+                    "ProductStrategySeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "Even if the team has microservices experience, the operational burden remains the same - you still need to build and maintain all the infrastructure tooling",
+                  "seats": [
+                    "OpenAISeat",
+                    "OperatorSeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                },
+                {
+                  "topic": "B2B enterprise compliance requirements can often be met with proper module boundaries and access controls within a monolith, avoiding the distributed systems complexity",
+                  "seats": [
+                    "OpenAISeat",
+                    "OperatorSeat"
+                  ],
+                  "type": "claim_conflict",
+                  "status": "open"
+                }
+              ],
+              "agreementRatio": 0.33,
+              "objectionCount": 6,
+              "distinctViewCount": 9,
+              "blockingWarning": false
+            }
+          ],
+          "stopReason": "round_limit",
+          "modelAssignments": {
+            "OpenAISeat": "anthropic",
+            "ProductStrategySeat": "anthropic",
+            "OperatorSeat": "anthropic"
+          },
+          "totalTokensUsed": 4925,
+          "totalLatencyMs": 32569
+        }
+      }
+    },
+    {
+      "test": "SDK: security-sensitive prompt triggers SecurityPrivacySeat",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 27767,
+      "tokensUsed": 4795,
+      "details": "SecurityPrivacySeat=true, warnings=4, uncertain"
+    },
+    {
+      "test": "SDK: --json output validates against schema",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 13141,
+      "tokensUsed": 1163,
+      "details": "Schema valid, 1 rounds, 2 statements"
+    },
+    {
+      "test": "SDK: plan answer mode produces structured output",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 21959,
+      "details": "Plan length: 2712 chars, has structure: true"
+    },
+    {
+      "test": "CLI: Speaker direct instantiation",
+      "path": "cli-equivalent",
+      "passed": true,
+      "latencyMs": 18659,
+      "details": "majority, answer: 1872 chars"
+    },
+    {
+      "test": "Handler: POST with valid request",
+      "path": "handler",
+      "passed": true,
+      "latencyMs": 15957,
+      "details": "HTTP 200, majority, 3 seats"
+    },
+    {
+      "test": "Handler: OPTIONS returns CORS headers",
+      "path": "handler",
+      "passed": true,
+      "latencyMs": 0,
+      "details": "CORS preflight correct"
+    },
+    {
+      "test": "Handler: invalid request returns 400",
+      "path": "handler",
+      "passed": true,
+      "latencyMs": 1,
+      "details": "Validation error returned correctly"
+    },
+    {
+      "test": "Budget: low token cap triggers circuit breaker",
+      "path": "sdk",
+      "passed": true,
+      "latencyMs": 14568,
+      "tokensUsed": 1885,
+      "details": "stopReason=budget, tokens=1885"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "coding-sorting",
+      "category": "coding",
+      "prompt": "What is the best sorting algorithm for a system that receives a continuous stream of partially-sorted data with occasional out-of-order elements? Consider memory constraints, worst-case guarantees, and implementation complexity.",
+      "expectedTraits": ["should mention timsort or insertion sort advantages for nearly-sorted data", "should discuss worst-case vs average-case tradeoffs", "should consider memory constraints"]
+    },
+    {
+      "id": "coding-auth",
+      "category": "coding",
+      "prompt": "Design an authentication system for a multi-tenant SaaS application. It needs to support SSO, API keys, and session-based auth. What are the key architectural decisions and what would you recommend?",
+      "expectedTraits": ["should surface security concerns", "should discuss token lifecycle", "should consider multi-tenancy isolation"]
+    },
+    {
+      "id": "planning-migration",
+      "category": "planning",
+      "prompt": "We have a monolithic Node.js application serving 50k daily active users. The team wants to migrate to microservices. Create a phased migration plan that minimizes risk and downtime.",
+      "expectedTraits": ["should warn about migration risks", "should suggest strangler fig pattern or similar", "should include rollback strategy"]
+    },
+    {
+      "id": "planning-launch",
+      "category": "planning",
+      "prompt": "Plan the technical launch of a new consumer mobile app. We have 3 engineers, 8 weeks, and need to support iOS, Android, push notifications, and a real-time chat feature.",
+      "expectedTraits": ["should flag scope risk with 3 engineers", "should prioritize features", "should suggest cross-platform framework"]
+    },
+    {
+      "id": "writing-technical",
+      "category": "writing",
+      "prompt": "Write a technical blog post explaining how database connection pooling works, why it matters, and common pitfalls. Target audience is intermediate backend developers.",
+      "expectedTraits": ["should explain pooling clearly", "should mention pool exhaustion", "should be accessible to intermediates"]
+    },
+    {
+      "id": "strategy-pricing",
+      "category": "strategy",
+      "prompt": "We're launching a developer tool that competes with an established open-source alternative. Should we offer a free tier? If so, what should be free vs paid? What pricing model works best for developer tools?",
+      "expectedTraits": ["should discuss freemium tradeoffs", "should analyze developer buying behavior", "should consider open-source competitive dynamics"]
+    },
+    {
+      "id": "strategy-pivot",
+      "category": "strategy",
+      "prompt": "Our B2B startup has 15 paying customers but growth has stalled for 6 months. Our NPS is high (70+) but our TAM appears smaller than we thought. Should we pivot, double down on the niche, or expand the product scope?",
+      "expectedTraits": ["should challenge assumptions about TAM", "should weigh pivot cost vs niche dominance", "should suggest validation steps before deciding"]
+    },
+    {
+      "id": "security-api-keys",
+      "category": "security-sensitive",
+      "prompt": "Our application stores API keys for third-party integrations in a PostgreSQL database. A security audit flagged this. What should we do? What are the options for secure credential management and what are the tradeoffs?",
+      "expectedTraits": ["SecurityPrivacySeat should provide unique value", "should mention secrets managers", "should discuss encryption at rest", "should warn about key rotation"]
+    },
+    {
+      "id": "security-data-handling",
+      "category": "security-sensitive",
+      "prompt": "We need to implement GDPR-compliant data deletion for our SaaS platform. Users should be able to request complete deletion of their data, but we have data spread across 5 microservices, 3 databases, and multiple backup systems. How should we approach this?",
+      "expectedTraits": ["should surface compliance complexity", "should discuss eventual consistency in deletion", "should mention audit trail requirements"]
+    },
+    {
+      "id": "analysis-tradeoff",
+      "category": "analysis",
+      "prompt": "Compare server-side rendering (SSR) vs client-side rendering (CSR) vs static site generation (SSG) for a content-heavy marketing site that also has an authenticated dashboard section. Which approach would you recommend and why?",
+      "expectedTraits": ["should distinguish marketing vs dashboard needs", "should discuss hybrid approaches", "should consider SEO implications"]
+    }
+  ]
+}
