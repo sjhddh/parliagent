@@ -82,10 +82,19 @@ These defaults are backed by benchmark data (10 prompts × 3 modes: micro/fast/b
 |----------|--------|-------------|
 | **Anthropic** | Live-validated + benchmarked | `ANTHROPIC_API_KEY` |
 | **OpenAI** | Live-validated | `OPENAI_API_KEY` |
-| Google AI | Implemented, not live-validated (no key provided for testing) | `GOOGLE_API_KEY` |
-| **Federated** (Anthropic + OpenAI) | Live-validated | Both keys set |
+| **FLOCK** | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` |
+| Google AI | Implemented, not live-validated | `GOOGLE_API_KEY` |
+| **Federated** | Live-validated (Anthropic+OpenAI, FLOCK+Anthropic) | Multiple keys |
 
-Set at least one key. The system auto-detects available providers and picks a primary. Anthropic and OpenAI are both live-validated. Federated mode (multiple providers, provider-native seat routing) is validated with Anthropic + OpenAI. Google adapter is implemented and type-checked but not live-tested because no API key was available during validation.
+Set at least one key. The system auto-detects available providers. Anthropic, OpenAI, and FLOCK are all live-validated individually and in federated/supreme combinations. Google adapter is implemented but not live-tested (no key available).
+
+FLOCK uses the OpenAI-compatible API format. Configure with:
+
+```bash
+FLOCK_API_KEY=sk-...
+FLOCK_BASE_URL=https://api.flock.io/v1   # default, can be overridden
+FLOCK_MODEL=flock-1                       # default model
+```
 
 To force a specific primary provider:
 
@@ -136,9 +145,13 @@ With only one API key, all three profiles produce the same assignments — every
 ### Environment Variables
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-...                        # Provider key (at least one required)
+ANTHROPIC_API_KEY=sk-ant-...                        # Provider keys (at least one required)
+OPENAI_API_KEY=sk-...
+FLOCK_API_KEY=sk-...
+FLOCK_BASE_URL=https://api.flock.io/v1              # FLOCK base URL (default shown)
+FLOCK_MODEL=flock-1                                 # FLOCK model override
 SUN_PARLIAMENT_PRIMARY_PROVIDER=anthropic            # Force primary provider
-SUN_PARLIAMENT_SUPREME_PROVIDER=anthropic            # Override supreme model selection
+SUN_PARLIAMENT_SUPREME_PROVIDER=flock                # Override supreme model selection
 SUN_PARLIAMENT_EXECUTION_PROFILE=available           # Default profile
 SUN_PARLIAMENT_DEFAULT_MODE=fast                     # Override default mode
 SUN_PARLIAMENT_DEFAULT_TRACE=summary                 # none | summary | full

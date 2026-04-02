@@ -51,7 +51,8 @@
 |----------|---------|---------------|------------|-------|
 | **Anthropic** | `src/runtime/providers/anthropic.ts` | **Yes** — 3/3 single + 10/10 full | **Yes** — 10 prompts × 3 modes + full parliament | Primary benchmark provider |
 | **OpenAI** | `src/runtime/providers/openai.ts` | **Yes** — 3/3 single | No | Live-validated: micro, fast+seed, review mode |
-| **Federated** | Anthropic + OpenAI | **Yes** — 4/4 | No | Tested: available, federated, supreme profiles + balanced strategy |
+| **FLOCK** | `src/runtime/providers/flock.ts` | **Yes** — 6/6 (single + federated + supreme) | No | OpenAI-compatible, `FLOCK_API_KEY`, default base `https://api.flock.io/v1` |
+| **Federated** | Multi-provider | **Yes** — Anthropic+OpenAI 4/4, FLOCK+Anthropic 2/2 | No | available, federated, supreme profiles all tested |
 | Google | `src/runtime/providers/google.ts` | **No** (no key provided) | No | Adapter implemented, `x-goog-api-key` header auth, untested |
 
 ## Benchmark Scope

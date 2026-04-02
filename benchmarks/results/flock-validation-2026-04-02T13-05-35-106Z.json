@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-04-02T13:05:35.106Z",
+  "passed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "test": "FLOCK-only micro",
+      "passed": true,
+      "latencyMs": 4275,
+      "tokensUsed": 534,
+      "details": "uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"flock (primary)\"}"
+    },
+    {
+      "test": "FLOCK-only fast + seed",
+      "passed": true,
+      "latencyMs": 3045,
+      "tokensUsed": 483,
+      "details": "uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"flock (primary)\",\"SecurityPrivacySeat\":\"flock (primary)\"}"
+    },
+    {
+      "test": "FLOCK-only plan mode",
+      "passed": true,
+      "latencyMs": 2882,
+      "tokensUsed": 498,
+      "details": "uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"ProductStrategySeat\":\"flock (primary)\"}"
+    },
+    {
+      "test": "Federated micro (FLOCK primary)",
+      "passed": true,
+      "latencyMs": 3747,
+      "tokensUsed": 538,
+      "details": "uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"flock (primary)\"}"
+    },
+    {
+      "test": "Federated fast (federated profile)",
+      "passed": true,
+      "latencyMs": 3480,
+      "tokensUsed": 515,
+      "details": "uncertain, models: {\"OpenAISeat\":\"openai (federated-native)\",\"DijkstraSeat\":\"flock (primary)\",\"SecurityPrivacySeat\":\"flock (primary)\"}"
+    },
+    {
+      "test": "Supreme (FLOCK supreme, Anthropic primary)",
+      "passed": true,
+      "latencyMs": 462,
+      "tokensUsed": 0,
+      "details": "split, models: {\"OpenAISeat\":\"flock (supreme)\",\"DijkstraSeat\":\"flock (supreme)\"}"
+    }
+  ]
+}

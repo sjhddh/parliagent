@@ -80,7 +80,7 @@ export class Speaker {
   async debate(request: ParliamentRequest): Promise<ParliamentResponse> {
     if (!this.modelPolicy.isReady()) {
       throw new Error(
-        "No model provider configured. Set at least one of: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY",
+        "No model provider configured. Set at least one of: ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, FLOCK_API_KEY",
       );
     }
 

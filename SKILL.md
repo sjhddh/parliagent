@@ -204,11 +204,11 @@ A hard-blocked safety prompt returns a response with `activatedSeats: []` and a 
 
 ## Provider Status
 
-| Provider | Status |
-|----------|--------|
-| Anthropic | Live-validated + benchmarked |
-| OpenAI | Live-validated |
-| Google AI | Implemented, not live-validated |
-| Federated (Anthropic + OpenAI) | Live-validated |
+| Provider | Status | Key |
+|----------|--------|-----|
+| Anthropic | Live-validated + benchmarked | `ANTHROPIC_API_KEY` |
+| OpenAI | Live-validated | `OPENAI_API_KEY` |
+| FLOCK | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` |
+| Google AI | Implemented, not live-validated | `GOOGLE_API_KEY` |
 
-The system uses whichever provider has a key set (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_API_KEY`). Anthropic and OpenAI are both production-validated. Google adapter is implemented but untested (no key was available).
+Anthropic, OpenAI, and FLOCK are all production-validated including federated and supreme scenarios. Google adapter is implemented but untested. FLOCK defaults to `https://api.flock.io/v1`; override with `FLOCK_BASE_URL` and `FLOCK_MODEL`.

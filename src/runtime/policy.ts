@@ -4,6 +4,7 @@ import type { ModelAdapter } from "./adapter.js";
 import { OpenAIAdapter } from "./providers/openai.js";
 import { AnthropicAdapter } from "./providers/anthropic.js";
 import { GoogleAdapter } from "./providers/google.js";
+import { FlockAdapter } from "./providers/flock.js";
 
 export interface ModelAssignment {
   seatId: string;
@@ -15,8 +16,9 @@ export interface RuntimeConfig {
   openai?: { apiKey?: string; baseUrl?: string; defaultModel?: string };
   anthropic?: { apiKey?: string; defaultModel?: string };
   google?: { apiKey?: string; defaultModel?: string };
-  primaryProvider?: "openai" | "anthropic" | "google";
-  supremeProvider?: "openai" | "anthropic" | "google";
+  flock?: { apiKey?: string; baseUrl?: string; defaultModel?: string };
+  primaryProvider?: "openai" | "anthropic" | "google" | "flock";
+  supremeProvider?: "openai" | "anthropic" | "google" | "flock";
 }
 
 const DEFAULT_SUBSTRATE: SubstratePolicy = {
@@ -45,10 +47,12 @@ export class ModelPolicy {
     const openai = new OpenAIAdapter(config.openai);
     const anthropic = new AnthropicAdapter(config.anthropic);
     const google = new GoogleAdapter(config.google);
+    const flock = new FlockAdapter(config.flock);
 
     if (openai.isAvailable()) this.adapters.set("openai", openai);
     if (anthropic.isAvailable()) this.adapters.set("anthropic", anthropic);
     if (google.isAvailable()) this.adapters.set("google", google);
+    if (flock.isAvailable()) this.adapters.set("flock", flock);
 
     this.primaryProviderId =
       config.primaryProvider ??
@@ -56,9 +60,11 @@ export class ModelPolicy {
         ? "anthropic"
         : openai.isAvailable()
           ? "openai"
-          : google.isAvailable()
-            ? "google"
-            : "none");
+          : flock.isAvailable()
+            ? "flock"
+            : google.isAvailable()
+              ? "google"
+              : "none");
 
     this.supremeProviderId =
       config.supremeProvider ?? this.primaryProviderId;
@@ -205,7 +211,7 @@ export class ModelPolicy {
     }
 
     throw new Error(
-      `No model provider available for seat ${seat.id}. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GOOGLE_API_KEY.`,
+      `No model provider available for seat ${seat.id}. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, or FLOCK_API_KEY.`,
     );
   }
 }

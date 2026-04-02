@@ -3,7 +3,7 @@ import { z } from "zod";
 export const ModelClass = z.enum(["chair", "frontier", "support"]);
 export type ModelClass = z.infer<typeof ModelClass>;
 
-export const ProviderId = z.enum(["openai", "anthropic", "google"]);
+export const ProviderId = z.enum(["openai", "anthropic", "google", "flock"]);
 export type ProviderId = z.infer<typeof ProviderId>;
 
 export const FallbackStep = z.enum(["preferred", "primary", "any-available"]);

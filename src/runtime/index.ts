@@ -8,5 +8,6 @@ export type {
 export { OpenAIAdapter } from "./providers/openai.js";
 export { AnthropicAdapter } from "./providers/anthropic.js";
 export { GoogleAdapter } from "./providers/google.js";
+export { FlockAdapter } from "./providers/flock.js";
 export { ModelPolicy } from "./policy.js";
 export type { ModelAssignment, RuntimeConfig } from "./policy.js";

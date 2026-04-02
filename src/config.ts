@@ -7,9 +7,11 @@ const TraceLevelEnum = z.enum(["none", "summary", "full"]);
 
 const ExecutionProfileEnum = z.enum(["available", "federated", "supreme"]);
 
+const ProviderEnum = z.enum(["openai", "anthropic", "google", "flock"]);
+
 export const SunParliamentConfig = z.object({
-  primaryProvider: z.enum(["openai", "anthropic", "google"]).optional(),
-  supremeProvider: z.enum(["openai", "anthropic", "google"]).optional(),
+  primaryProvider: ProviderEnum.optional(),
+  supremeProvider: ProviderEnum.optional(),
   openai: z
     .object({
       apiKey: z.string().optional(),
@@ -26,6 +28,13 @@ export const SunParliamentConfig = z.object({
   google: z
     .object({
       apiKey: z.string().optional(),
+      defaultModel: z.string().optional(),
+    })
+    .optional(),
+  flock: z
+    .object({
+      apiKey: z.string().optional(),
+      baseUrl: z.string().optional(),
       defaultModel: z.string().optional(),
     })
     .optional(),
@@ -88,16 +97,16 @@ function loadEnvConfig(): SunParliamentConfig {
   const config: SunParliamentConfig = {};
 
   if (process.env.SUN_PARLIAMENT_PRIMARY_PROVIDER) {
-    const p = process.env.SUN_PARLIAMENT_PRIMARY_PROVIDER;
-    if (p === "openai" || p === "anthropic" || p === "google") {
-      config.primaryProvider = p;
+    const parsed = ProviderEnum.safeParse(process.env.SUN_PARLIAMENT_PRIMARY_PROVIDER);
+    if (parsed.success) {
+      config.primaryProvider = parsed.data;
     }
   }
 
   if (process.env.SUN_PARLIAMENT_SUPREME_PROVIDER) {
-    const p = process.env.SUN_PARLIAMENT_SUPREME_PROVIDER;
-    if (p === "openai" || p === "anthropic" || p === "google") {
-      config.supremeProvider = p;
+    const parsed = ProviderEnum.safeParse(process.env.SUN_PARLIAMENT_SUPREME_PROVIDER);
+    if (parsed.success) {
+      config.supremeProvider = parsed.data;
     }
   }
 
@@ -130,6 +139,16 @@ function loadEnvConfig(): SunParliamentConfig {
   }
   if (process.env.GOOGLE_MODEL) {
     config.google = { ...config.google, defaultModel: process.env.GOOGLE_MODEL };
+  }
+
+  if (process.env.FLOCK_API_KEY || process.env.FLOCK_BASE_URL) {
+    config.flock = {
+      apiKey: process.env.FLOCK_API_KEY,
+      baseUrl: process.env.FLOCK_BASE_URL,
+    };
+  }
+  if (process.env.FLOCK_MODEL) {
+    config.flock = { ...config.flock, defaultModel: process.env.FLOCK_MODEL };
   }
 
   if (process.env.SUN_PARLIAMENT_DEFAULT_MODE) {
@@ -193,6 +212,10 @@ function mergeConfigs(
       ...fileConfig.google,
       ...envConfig.google,
     },
+    flock: {
+      ...fileConfig.flock,
+      ...envConfig.flock,
+    },
     defaults: {
       ...fileConfig.defaults,
       ...envConfig.defaults,
@@ -214,5 +237,6 @@ export function toRuntimeConfig(config: SunParliamentConfig) {
     openai: config.openai,
     anthropic: config.anthropic,
     google: config.google,
+    flock: config.flock,
   };
 }

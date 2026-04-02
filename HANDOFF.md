@@ -58,7 +58,8 @@ Full parliament does NOT change default behavior. It is a separate, explicit fla
 |----------|------------|---------------|-------------|---------|
 | **Anthropic** | Yes | Yes (3/3 single + 10/10 full) | Yes (10 prompts × 3 modes) | `live-validation-*.json`, `benchmark-*.json` |
 | **OpenAI** | Yes | Yes (3/3 single) | No | `provider-validation-*.json` |
-| **Federated** (Anthropic + OpenAI) | Yes | Yes (4/4) | No | `provider-validation-*.json` |
+| **FLOCK** | Yes | Yes (6/6: single + federated + supreme) | No | `flock-validation-*.json` |
+| **Federated** | Yes | Yes (Anthropic+OpenAI 4/4, FLOCK+Anthropic 2/2) | No | `provider-validation-*.json`, `flock-validation-*.json` |
 | Google AI | Yes | **No** (no key provided) | No | — |
 
 ## Result Traceability
@@ -69,4 +70,5 @@ Full parliament does NOT change default behavior. It is a separate, explicit fla
 | Benchmark (Phase 3B) | `benchmarks/results/benchmark-2026-04-02T10-39-45-987Z.json` |
 | Full parliament benchmark | `benchmarks/results/full-parliament-2026-04-02T11-41-48-750Z.json` |
 | Provider validation (Anthropic + OpenAI + federated) | `benchmarks/results/provider-validation-2026-04-02T12-54-53-649Z.json` |
+| FLOCK validation (single + federated + supreme) | `benchmarks/results/flock-validation-2026-04-02T13-05-35-106Z.json` |
 | Benchmark analysis | `benchmarks/ANALYSIS.md` |
