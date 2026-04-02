@@ -1,4 +1,4 @@
-import type { ParliagentRequest, OutputLength, AnswerMode, ExecutionProfile } from "../contracts/request.js";
+import type { ParliagentRequest, OutputLength, AnswerMode, ExecutionProfile, EvidenceItem } from "../contracts/request.js";
 import type { ParliagentResponse, DecisionType } from "../contracts/response.js";
 import type { SeatStatement, StopReason, RoundResult, AgendaStage, DisagreementRecord } from "../contracts/trace.js";
 import type { SeatProfile } from "../contracts/seats.js";
@@ -210,6 +210,7 @@ export class Speaker {
         request.seed,
         stage,
         disputeContext,
+        request.evidenceBundle,
       );
 
       if (roundResult.failedSeats.length > 0) {
@@ -359,6 +360,7 @@ export class Speaker {
     seed?: string,
     stage?: AgendaStage,
     disputeContext?: string,
+    evidenceBundle?: EvidenceItem[],
   ): Promise<{ statements: SeatStatement[]; failedSeats: string[]; tokensUsed: number }> {
     const isRebuttal = round > 1 && previousStatements.length > 0;
     const isResolution = stage === "resolution";
@@ -387,6 +389,10 @@ export class Speaker {
         userContent = `Debate motion: ${prompt}`;
       }
 
+      if (evidenceBundle && evidenceBundle.length > 0) {
+        userContent += "\n\n" + formatEvidenceBundle(evidenceBundle);
+      }
+
       try {
         const result = await assignment.adapter.complete(
           [
@@ -396,6 +402,7 @@ export class Speaker {
           {
             temperature: 0.7,
             maxTokens: 600,
+            jsonMode: true,
             ...(numericSeed != null ? { seed: numericSeed } : {}),
           },
         );
@@ -653,6 +660,15 @@ function validateConfidence(c: unknown): 1 | 2 | 3 | 4 | 5 {
   const n = Number(c);
   if (n >= 1 && n <= 5) return Math.round(n) as 1 | 2 | 3 | 4 | 5;
   return 3;
+}
+
+function formatEvidenceBundle(items: EvidenceItem[]): string {
+  const header = "=== SHARED EVIDENCE (reference these when classifying claim provenance) ===";
+  const entries = items.map((item, i) => {
+    const typeLabel = item.type ? ` [${item.type}]` : "";
+    return `Evidence ${i + 1}${typeLabel} — ${item.source}:\n${item.content}`;
+  });
+  return `${header}\n\n${entries.join("\n\n")}`;
 }
 
 function isSeatFailure(stmt: SeatStatement): boolean {

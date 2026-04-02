@@ -119,6 +119,22 @@ Supported: any BCP-47 language code (`en`, `zh`, `zh-CN`, `ja`, `es`, `fr`, `ko`
 
 **What stays English:** Internal seat statements, disagreement records, trace artifacts. These are reasoning internals, not user-facing output.
 
+## Evidence Bundle
+
+Pass shared evidence to seats for grounded deliberation:
+
+```typescript
+debate({
+  prompt: "Should we migrate to PostgreSQL?",
+  evidenceBundle: [
+    { source: "benchmark-2024.csv", content: "PostgreSQL: 12k TPS, MySQL: 9k TPS", type: "data" },
+    { source: "ops-report.md", content: "Current MySQL cluster has 3 known replication issues", type: "document" },
+  ],
+})
+```
+
+When evidence is provided, seats can classify claims as `supported` (backed by evidence) vs `speculative`. The evidence is injected as shared context — all seats see the same bundle. Evidence types: `document`, `data`, `code`, `citation`, `observation`.
+
 ## Execution Profiles
 
 Mode controls **how many seats debate**. Profile controls **which models they use**. These are independent knobs.

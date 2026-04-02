@@ -17,23 +17,33 @@
 | **v0.3 Review Fixes (2 rounds)** | **complete** | 13 issues resolved from code review |
 | **v0.3.1 Hardening** | **complete** | Runtime compat, parsing robustness, protocol completion |
 
-## v0.3.1 Hardening Summary
+## v0.3.x Hardening Summary (0.3.1 → 0.3.3)
 
 ### Runtime and Structured Output
 - OpenAI adapter: auto-selects `max_completion_tokens` for o-series models, `max_tokens` for standard models
-- JSON parser rewritten with brace-depth tracking — handles markdown fences, preamble/trailing text, nested objects
-- Seat failure isolation: failed seats are excluded from convergence calculations, tracked in separate warnings
-- `usage` fields made optional in OpenAI response cast (prevents crash on missing usage data)
+- **Provider-native JSON mode**: All adapters (OpenAI, Google, FLOCK) now request `response_format: json_object` / `responseMimeType: application/json`. This shifts structured-output enforcement from parse-side heuristics to provider-side guarantees.
+- JSON parser rewritten with 5 cascading strategies: direct parse, strip-and-parse, brace-depth extraction, truncation recovery, regex field extraction
+- Seat failure isolation: failed seats excluded from convergence, tracked in separate warnings
+
+### Evidence Grounding
+- New `evidenceBundle` field in `ParliagentRequest` — array of `{ source, content, type? }` items
+- Evidence bundle injected into seat prompts as shared context for provenance-aware claims
+- Seats can classify claims as `supported` when referencing provided evidence
+
+### Evaluation
+- `parliamentBeatBaseline` returns `null` (not false) when no baseline provided — no contradictory results
+- `generateBaseline()` calls a single model for same-rubric comparison
+- `compareWithBaseline()` evaluates both sides through identical 5-dimension scoring
 
 ### Protocol Completion
-- Resolution protocol extended to cover `risk_warning` and `priority_conflict` disputes (not just `claim_conflict`)
-- `getDisputeParticipants` and `formatDisputeContext` include all resolvable dispute types
-- Protocol invariant tests: convergence cannot claim "converged" with open disputes (9 new invariant tests)
+- Resolution protocol covers `risk_warning` and `priority_conflict` (not just `claim_conflict`)
+- Protocol invariant tests: convergence cannot claim "converged" with open disputes
 
-### Truth Surface Alignment
-- Plans.md: merged duplicate Phase 2.6/5, checked Phase 2.7 language support, fixed flag names, checked FLOCK
-- Provider terminology unified to "live-validated" across README, SKILL.md, HANDOFF
-- Removed "Federated" as provider table row (it's an execution profile, not a provider)
+### Known Limitations (honest assessment)
+- Full parliament (32 seats) structured-output success rate is improved but not 100% — some seats still produce partial or malformed output even with JSON mode
+- Evidence grounding is pass-through (caller supplies evidence), not retrieval-based
+- `parliamentBeatBaseline` requires a baseline string or adapter — it cannot auto-generate baselines
+- `decisionType` in full parliament runs still tends toward `uncertain`/`round_limit` because 32-seat single-round runs accumulate many unresolved disputes by design
 
 ## Upgrade Summary (v0.3)
 

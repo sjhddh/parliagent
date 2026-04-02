@@ -30,15 +30,17 @@ const response = await debate({
   taskType?,                 // "general" | "writing" | "planning" | "analysis" | "coding" | "strategy" | "ethics"
   answerMode?,               // "answer" | "memo" | "plan" | "review" | "transcript"
   outputLanguage?,           // BCP-47 code (e.g. "zh", "ja", "es") — output only, debate stays English
+  evidenceBundle?,           // [{source, content, type?}] — shared evidence for grounded claims
   trace?,                    // "none" | "summary" | "full"
 });
 ```
 
-**Four independent controls:**
+**Five independent controls:**
 - `mode` = how many seats and rounds (chamber shape)
 - `fullParliagent` = override mode and activate all 33 seats
 - `executionProfile` = which models run behind those seats (substrate)
 - `outputLanguage` = final output language (internal debate is always English)
+- `evidenceBundle` = shared evidence for grounded claims (seats classify provenance against it)
 
 **Response consumption rules:**
 

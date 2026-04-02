@@ -44,6 +44,13 @@ export const ParliagentConstraints = z.object({
 });
 export type ParliagentConstraints = z.infer<typeof ParliagentConstraints>;
 
+export const EvidenceItem = z.object({
+  source: z.string(),
+  content: z.string(),
+  type: z.enum(["document", "data", "code", "citation", "observation"]).optional(),
+});
+export type EvidenceItem = z.infer<typeof EvidenceItem>;
+
 export const ParliagentRequest = z.object({
   prompt: z.string().min(1),
   mode: DebateMode.optional().default("micro"),
@@ -52,6 +59,7 @@ export const ParliagentRequest = z.object({
   taskType: TaskType.optional(),
   answerMode: AnswerMode.optional().default("answer"),
   outputLanguage: z.string().optional(),
+  evidenceBundle: z.array(EvidenceItem).optional(),
   seatHints: z.array(z.string()).optional(),
   excludeSeats: z.array(z.string()).optional(),
   constraints: ParliagentConstraints.optional(),

@@ -70,6 +70,7 @@ export class OpenAIAdapter implements ModelAdapter {
           temperature: options?.temperature ?? 0.7,
           ...tokenParam,
           ...(options?.seed != null ? { seed: options.seed } : {}),
+          ...(options?.jsonMode ? { response_format: { type: "json_object" } } : {}),
         }),
       },
     );

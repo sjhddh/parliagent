@@ -1,4 +1,5 @@
 import type { ParliagentResponse } from "../contracts/response.js";
+import type { ModelAdapter } from "../runtime/adapter.js";
 
 /**
  * Outcome-based evaluation rubric for measuring decision quality,
@@ -384,3 +385,70 @@ export const EVALUATION_FIXTURES: EvaluationFixture[] = [
     },
   },
 ];
+
+export interface ComparisonResult {
+  fixture: EvaluationFixture;
+  parliament: EvaluationResult;
+  baseline: EvaluationResult;
+  parliamentWins: boolean;
+  marginPercent: number;
+  summary: string;
+}
+
+/**
+ * Generate a baseline response from a single model call.
+ * This creates a minimal ParliagentResponse shape from a flat model answer,
+ * suitable for same-rubric comparison.
+ */
+export async function generateBaseline(
+  prompt: string,
+  adapter: ModelAdapter,
+): Promise<ParliagentResponse> {
+  const result = await adapter.complete(
+    [
+      { role: "system", content: "You are a helpful assistant. Answer the question directly and thoroughly." },
+      { role: "user", content: prompt },
+    ],
+    { temperature: 0.7, maxTokens: 1024 },
+  );
+
+  return {
+    finalAnswer: result.content,
+    decisionType: "uncertain",
+    activatedSeats: [],
+    whyTheseSeats: "",
+  };
+}
+
+/**
+ * Compare parliament response vs single-model baseline on the same rubric.
+ * Both are evaluated through the identical 5-dimension scoring function.
+ */
+export function compareWithBaseline(
+  fixture: EvaluationFixture,
+  parliamentResponse: ParliagentResponse,
+  baselineResponse: ParliagentResponse,
+): ComparisonResult {
+  const parliament = evaluateResponse(fixture, parliamentResponse);
+  const baseline = evaluateResponse(fixture, baselineResponse);
+
+  const parliamentWins = parliament.totalScore > baseline.totalScore;
+  const margin = parliament.percentScore - baseline.percentScore;
+
+  const dimComparison = parliament.dimensions.map((pd) => {
+    const bd = baseline.dimensions.find((d) => d.name === pd.name)!;
+    const diff = pd.score - bd.score;
+    if (diff > 0) return `${pd.name}: +${diff}`;
+    if (diff < 0) return `${pd.name}: ${diff}`;
+    return `${pd.name}: tied`;
+  }).join(", ");
+
+  return {
+    fixture,
+    parliament,
+    baseline,
+    parliamentWins,
+    marginPercent: margin,
+    summary: `Parliament ${margin}% vs baseline. ${dimComparison}`,
+  };
+}

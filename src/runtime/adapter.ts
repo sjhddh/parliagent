@@ -8,6 +8,7 @@ export interface CompletionOptions {
   temperature?: number;
   maxTokens?: number;
   seed?: number;
+  jsonMode?: boolean;
 }
 
 export interface CompletionResult {
