@@ -8,7 +8,7 @@ This file is intentionally plain Markdown with stable headings so agent runtimes
 
 - **Entrypoint:** `debate({...})` from `parliagent`
 - **Default mode:** `micro` (~16s, ~$0.01) — controls chamber size
-- **Default profile:** `available` — controls model backend selection
+- **Default profile:** `supreme` — all seats use the operator-designated provider for uniform quality
 - **Good for:** architecture tradeoffs, planning, risk review, security-sensitive decisions, strategy under uncertainty
 - **Avoid for:** trivial factual questions, pure drafting, low-latency iteration
 - **If prompt is security-sensitive:** system auto-upgrades to `fast`
@@ -104,7 +104,7 @@ Profile is independent of mode. Pick mode for chamber size, pick profile for mod
 
 ```
 Do you have only one API key?
-  → Profile doesn't matter — all three resolve to the same provider. Use default "available".
+  → Profile doesn't matter — all resolve to the same provider. Default "supreme" works fine.
 
 Do you have multiple keys and want model-family diversity (OpenAI vs Claude vs Gemini arguing)?
   → executionProfile: "federated"
