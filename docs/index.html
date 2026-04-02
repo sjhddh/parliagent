@@ -492,6 +492,8 @@ hr {
 
 <h2 data-i18n="h_arch">The Architecture</h2>
 
+<p data-i18n="arch_skip" style="font-family: var(--font-heading); font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Not a developer? <a href="#case-study" style="color: var(--link);">Skip to the live case study &darr;</a></p>
+
 <p data-i18n="arch1">Parliagent is a TypeScript library (<code>npm install parliagent</code>) with a single entry point:</p>
 
 <pre><code class="language-typescript">import { debate } from "parliagent";
@@ -603,7 +605,7 @@ if (currentRound >= maxRounds) {
 
 <!-- ========== SECTION 4: Live Case Study ========== -->
 
-<h2 data-i18n="h_case">Live Case Study: 33 Experts Argue About Microservices</h2>
+<h2 id="case-study" data-i18n="h_case">Live Case Study: 33 Experts Argue About Microservices</h2>
 
 <p data-i18n="case1">Theory is nice. Let's see it work. We asked all 33 seats of Parliagent:</p>
 
@@ -715,12 +717,22 @@ if (currentRound >= maxRounds) {
     <tr><td><strong>Warnings</strong></td><td>0</td><td>33 (PCI DSS, audit trails, ACID guarantees, data residency)</td></tr>
     <tr><td><strong>Minority report</strong></td><td>N/A</td><td>OpenAISeat and KantSeat dissented with specific reasoning</td></tr>
     <tr><td><strong>Surprise insight</strong></td><td>None</td><td>NietzscheSeat reframed the question as psychology, not engineering</td></tr>
-    <tr><td><strong>Cost</strong></td><td>~$0.005</td><td>~$1.50</td></tr>
-    <tr><td><strong>Latency</strong></td><td>~14s</td><td>~24s</td></tr>
+    <tr><td><strong>Cost</strong></td><td>~$0.005</td><td>~$1.50 (full parliament) / ~$0.01 (micro) / ~$0.04 (fast)</td></tr>
+    <tr><td><strong>Latency</strong></td><td>~14s</td><td>~24s (full) / ~16s (micro) / ~34s (fast)</td></tr>
   </tbody>
 </table>
 
-<p data-i18n="sbs2">The single agent gives you a diplomatic non-answer. The parliament gives you a clear position, explicit dissent, 33 risk flags, and one genuinely novel reframing — for a dollar fifty more and ten extra seconds. You decide which is worth more for a decision that will shape your company's next two years.</p>
+<p data-i18n="sbs2">The single agent gives you a diplomatic non-answer. The parliament gives you a clear position, explicit dissent, risk flags, and novel reframings. Full parliament mode costs $1.50, but the everyday <code>micro</code> mode costs a penny. You decide which is worth more.</p>
+
+<h3 data-i18n="h_monday">What This Looks Like on a Monday Morning</h3>
+
+<p data-i18n="monday1">The crush example is fun. The microservices debate is dramatic. But here's what actually gets Parliagent installed on someone's machine:</p>
+
+<div class="insight-box" data-i18n="monday_story">
+<strong>Sprint planning, 9:30 AM.</strong> Your team is deciding whether to add rate limiting before the product launch or after. You run <code>parliagent plan "Add rate limiting to our API before next week's launch — what's the priority vs. risk tradeoff?"</code> in 34 seconds. SecurityPrivacySeat flags three attack vectors you hadn't considered. ProductStrategySeat argues the launch deadline matters more. KahnemanSeat warns you're anchoring on the deadline and underestimating the cost of a post-launch incident. You walk into the meeting with a structured disagreement map instead of vibes. Cost: four cents.
+</div>
+
+<p data-i18n="monday2">That's the difference between "interesting demo I saw on HackerNews" and "tool I use before every planning meeting." Parliagent isn't for every question — but for the questions where you'd normally ask a colleague "what am I missing?", it's four cents and 34 seconds to get five experts who will actually tell you.</p>
 
 <hr>
 
@@ -1028,7 +1040,12 @@ if (result.warnings?.length) {
       case4: "你在开头就看到了这句话。它的价值不仅是震撼效果：NietzscheSeat把一个技术架构问题重新框定为<em>心理学</em>问题。没有其他席位想到质疑问题本身的动机。这不是你从单个agent那里能得到的——它需要一个专门挑战前提的角色。",
       h_sidebyside: "并排对比测试",
       sbs1: '议会的自我审查要求做这个测试：<em>"把同一个难题分别交给单个agent和Parliagent。并排展示输出。让读者判断。"</em>好的。',
-      sbs2: "单个agent给你一个外交辞令式的无回答。议会给你一个明确的立场、显式的异议、33个风险标记，和一个全新的问题重构——多花一块五，多等十秒。你来决定，对于一个将影响你公司未来两年的决策，哪个更值。",
+      sbs2: "单个agent给你一个外交辞令式的无回答。议会给你一个明确的立场、显式的异议、风险标记和全新的问题重构。全议会模式$1.50，但日常<code>micro</code>模式只要一分钱。你来决定哪个更值。",
+      arch_skip: '不是开发者？<a href="#case-study" style="color: var(--link);">跳到实战案例 &darr;</a>',
+      h_monday: "周一早上实际用起来是什么样的",
+      monday1: "暗恋的例子很有趣。微服务辩论很戏剧化。但真正让人装上Parliagent的是这个：",
+      monday_story: '<strong>Sprint规划会，早上9:30。</strong>你的团队在纠结是在产品上线前还是上线后加API限流。你跑了一句 <code>parliagent plan "在下周上线前给API加限流——优先级和风险怎么权衡？"</code>，34秒出结果。SecurityPrivacySeat标记了三个你没想到的攻击向量。ProductStrategySeat认为上线截止日期更重要。KahnemanSeat警告你在锚定截止日期、低估上线后事故的成本。你带着一份结构化的分歧地图走进会议，而不是凭感觉。费用：四分钱。',
+      monday2: '这就是"在HackerNews上看到的有趣demo"和"每次规划会前都用的工具"的区别。Parliagent不是用来回答每个问题的——但对于那些你通常会问同事"我是不是遗漏了什么？"的问题，四分钱和34秒就能让五个专家真正告诉你答案。',
       h_cost: "费用",
       h_wrong: "我们做错了什么（以及我们的坦诚）",
       wrong1: "这一节比架构那节更重要。如果我们要求你信任一个声称能暴露隐藏分歧的系统，我们就应该先暴露自己的。",
@@ -1157,7 +1174,12 @@ if (result.warnings?.length) {
       case4: "오프닝에서 이 인용을 보셨습니다. 충격 효과를 넘어 중요한 이유: NietzscheSeat는 기술 아키텍처 질문을 <em>심리학적</em> 질문으로 재구성했습니다. 다른 좌석은 질문 자체의 동기를 의문시할 생각을 하지 못했습니다. 아무리 좋은 단일 에이전트에서도 얻을 수 없는 것입니다 — 전제에 도전하는 것이 유일한 임무인 페르소나가 필요합니다.",
       h_sidebyside: "나란히 비교 테스트",
       sbs1: '의회의 자체 리뷰가 이것을 요구했습니다: <em>"같은 어려운 질문을 단일 에이전트와 Parliagent에 각각 던지세요. 나란히 보여주세요. 독자가 판단하게 하세요."</em> 좋습니다.',
-      sbs2: "단일 에이전트는 외교적 비(非)답변을 줍니다. 의회는 명확한 입장, 명시적 이견, 33개 리스크 플래그, 진정으로 새로운 재구성 하나를 줍니다 — 1.5달러 더, 10초 더. 회사의 향후 2년을 결정할 결정에 어느 쪽이 더 가치 있는지 판단하세요.",
+      sbs2: "단일 에이전트는 외교적 비답변을 줍니다. 의회는 명확한 입장, 명시적 이견, 리스크 플래그, 새로운 재구성을 줍니다. Full Parliament 모드는 $1.50이지만 일상적인 <code>micro</code> 모드는 1센트입니다. 어느 쪽이 더 가치 있는지 판단하세요.",
+      arch_skip: '개발자가 아니신가요? <a href="#case-study" style="color: var(--link);">실전 사례로 건너뛰기 &darr;</a>',
+      h_monday: "월요일 아침에 실제로 어떻게 쓰이는가",
+      monday1: "짝사랑 예시는 재미있습니다. 마이크로서비스 토론은 극적입니다. 하지만 실제로 Parliagent를 설치하게 만드는 건 이것입니다:",
+      monday_story: '<strong>스프린트 계획, 오전 9:30.</strong> 팀이 제품 출시 전에 API 속도 제한을 추가할지 후에 할지 결정 중입니다. <code>parliagent plan "다음 주 출시 전 API 속도 제한 추가 — 우선순위 vs 리스크 트레이드오프는?"</code>을 실행합니다. 34초. SecurityPrivacySeat가 고려하지 않은 3가지 공격 벡터를 표시합니다. ProductStrategySeat는 출시 마감이 더 중요하다고 주장합니다. KahnemanSeat는 마감에 앵커링하고 출시 후 사고 비용을 과소평가하고 있다고 경고합니다. 감이 아닌 구조화된 의견 불일치 맵을 가지고 회의에 들어갑니다. 비용: 4센트.',
+      monday2: '"HackerNews에서 본 재미있는 데모"와 "매번 기획 회의 전에 쓰는 도구"의 차이입니다. Parliagent는 모든 질문을 위한 것이 아닙니다 — 하지만 동료에게 "내가 뭘 놓치고 있지?"라고 물을 만한 질문에, 4센트와 34초로 실제로 말해줄 5명의 전문가를 얻을 수 있습니다.',
       h_cost: "비용",
       h_wrong: "우리가 잘못한 것 (그리고 솔직한 고백)",
       wrong1: "이 섹션은 아키텍처 섹션보다 중요합니다. 숨겨진 의견 불일치를 드러낸다고 주장하는 시스템을 신뢰해달라면, 먼저 우리 자신의 것을 드러내야 합니다.",
