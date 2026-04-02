@@ -31,6 +31,7 @@ const response = await debate({
   answerMode?,               // "answer" | "memo" | "plan" | "review" | "transcript"
   outputLanguage?,           // BCP-47 code (e.g. "zh", "ja", "es") — output only, debate stays English
   evidenceBundle?,           // [{source, content, type?}] — shared evidence for grounded claims
+  constraints?,              // { maxTokens?, maxLatencyMs?, maxRounds?, maxConcurrentSeats?, outputLength?, safetyMode? }
   trace?,                    // "none" | "summary" | "full"
 });
 ```
@@ -47,6 +48,7 @@ const response = await debate({
 1. Always read `response.finalAnswer`
 2. If `response.decisionType !== "consensus"`, inspect `response.minorityReport` and `response.openQuestions`
 3. Never suppress `response.warnings`
+4. If `trace === "full"`, monitor `traceArtifact.totalParseRecoveries` and `traceArtifact.totalDegradedParses` as reliability signals
 
 ## When to Invoke
 

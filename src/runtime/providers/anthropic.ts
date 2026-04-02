@@ -29,6 +29,16 @@ export class AnthropicAdapter implements ModelAdapter {
 
     const systemMessage = messages.find((m) => m.role === "system");
     const nonSystemMessages = messages.filter((m) => m.role !== "system");
+    const schemaInstruction = options?.jsonSchema
+      ? `\n\nOutput must match this JSON schema exactly:\n${JSON.stringify(options.jsonSchema.schema)}`
+      : "";
+
+    let systemContent: string | undefined;
+    if (systemMessage) {
+      systemContent = `${systemMessage.content}${schemaInstruction}`;
+    } else if (schemaInstruction) {
+      systemContent = schemaInstruction.trimStart();
+    }
 
     const apiMessages = nonSystemMessages.map((m) => ({
       role: m.role,
@@ -52,7 +62,7 @@ export class AnthropicAdapter implements ModelAdapter {
           model,
           max_tokens: options?.maxTokens ?? 1024,
           temperature: options?.temperature ?? 0.7,
-          ...(systemMessage ? { system: systemMessage.content } : {}),
+          ...(systemContent ? { system: systemContent } : {}),
           messages: apiMessages,
         }),
       },

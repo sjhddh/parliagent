@@ -39,6 +39,7 @@ export const ParliagentConstraints = z.object({
   maxTokens: z.number().positive().optional(),
   maxLatencyMs: z.number().positive().optional(),
   maxRounds: z.number().int().min(1).max(5).optional(),
+  maxConcurrentSeats: z.number().int().min(1).max(64).optional(),
   outputLength: OutputLength.optional(),
   safetyMode: SafetyMode.optional(),
 });

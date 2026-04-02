@@ -19,6 +19,7 @@ export interface RuntimeConfig {
   flock?: { apiKey?: string; baseUrl?: string; defaultModel?: string };
   primaryProvider?: "openai" | "anthropic" | "google" | "flock";
   supremeProvider?: "openai" | "anthropic" | "google" | "flock";
+  providerConcurrency?: Partial<Record<"openai" | "anthropic" | "google" | "flock", number>>;
 }
 
 const DEFAULT_SUBSTRATE: SubstratePolicy = {
@@ -40,9 +41,11 @@ export class ModelPolicy {
   private adapters: Map<string, ModelAdapter>;
   private primaryProviderId: string;
   private supremeProviderId: string;
+  private providerConcurrency: Partial<Record<string, number>>;
 
   constructor(config: RuntimeConfig = {}) {
     this.adapters = new Map();
+    this.providerConcurrency = config.providerConcurrency ?? {};
 
     const openai = new OpenAIAdapter(config.openai);
     const anthropic = new AnthropicAdapter(config.anthropic);
@@ -80,6 +83,10 @@ export class ModelPolicy {
 
   get availableProviders(): string[] {
     return Array.from(this.adapters.keys());
+  }
+
+  getProviderConcurrency(): Partial<Record<string, number>> {
+    return this.providerConcurrency;
   }
 
   isReady(): boolean {

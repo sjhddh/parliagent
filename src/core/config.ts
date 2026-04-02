@@ -6,6 +6,7 @@ export interface ModeConfig {
   seatCount: { min: number; max: number };
   defaultMaxTokens: number;
   defaultMaxLatencyMs: number;
+  defaultMaxConcurrentSeats: number;
 }
 
 export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
@@ -15,6 +16,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
     seatCount: { min: 2, max: 3 },
     defaultMaxTokens: 6000,
     defaultMaxLatencyMs: 8000,
+    defaultMaxConcurrentSeats: 3,
   },
   fast: {
     maxRounds: 2,
@@ -22,6 +24,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
     seatCount: { min: 3, max: 5 },
     defaultMaxTokens: 15000,
     defaultMaxLatencyMs: 15000,
+    defaultMaxConcurrentSeats: 4,
   },
   balanced: {
     maxRounds: 2,
@@ -29,6 +32,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
     seatCount: { min: 5, max: 9 },
     defaultMaxTokens: 28000,
     defaultMaxLatencyMs: 30000,
+    defaultMaxConcurrentSeats: 5,
   },
   deep: {
     maxRounds: 3,
@@ -36,6 +40,7 @@ export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {
     seatCount: { min: 7, max: 13 },
     defaultMaxTokens: 60000,
     defaultMaxLatencyMs: 60000,
+    defaultMaxConcurrentSeats: 6,
   },
 };
 
@@ -54,6 +59,7 @@ export const FULL_PARLIAGENT_CONFIG: ModeConfig = {
   seatCount: { min: 32, max: 32 },
   defaultMaxTokens: 300000,
   defaultMaxLatencyMs: 120000,
+  defaultMaxConcurrentSeats: 8,
 };
 
 export interface ChamberPreset {

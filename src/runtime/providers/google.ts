@@ -53,7 +53,8 @@ export class GoogleAdapter implements ModelAdapter {
           generationConfig: {
             temperature: options?.temperature ?? 0.7,
             maxOutputTokens: options?.maxTokens ?? 1024,
-            ...(options?.jsonMode ? { responseMimeType: "application/json" } : {}),
+            ...(options?.jsonMode || options?.jsonSchema ? { responseMimeType: "application/json" } : {}),
+            ...(options?.jsonSchema ? { responseSchema: options.jsonSchema.schema } : {}),
           },
         }),
       },

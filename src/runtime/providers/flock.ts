@@ -56,7 +56,20 @@ export class FlockAdapter implements ModelAdapter {
           temperature: options?.temperature ?? 0.7,
           max_tokens: options?.maxTokens ?? 1024,
           ...(options?.seed != null ? { seed: options.seed } : {}),
-          ...(options?.jsonMode ? { response_format: { type: "json_object" } } : {}),
+          ...(options?.jsonSchema
+            ? {
+                response_format: {
+                  type: "json_schema",
+                  json_schema: {
+                    name: options.jsonSchema.name,
+                    strict: true,
+                    schema: options.jsonSchema.schema,
+                  },
+                },
+              }
+            : options?.jsonMode
+              ? { response_format: { type: "json_object" } }
+              : {}),
         }),
       },
     );

@@ -1,5 +1,6 @@
 export { Speaker } from "./speaker.js";
 export type { SpeakerCallbacks } from "./speaker.js";
+export { determineDecisionType } from "./decision-semantics.js";
 export { selectChamber, selectFullParliagent, classifyTask } from "./routing.js";
 export type { RoutingDecision } from "./routing.js";
 export {
@@ -21,3 +22,11 @@ export type { ModeConfig, ChamberPreset } from "./config.js";
 export { buildSynthesisPrompt, getSynthesisMaxTokens, buildTraceText, resolveOutputLanguage } from "./synthesis.js";
 export type { SynthesisContext } from "./synthesis.js";
 export { detectAntiCollapse, checkSafetyBoundaries, isHardBlocked } from "./safety.js";
+export {
+  parseStatement,
+  isDegradedParse,
+  isSeatFailure,
+  fallbackStatement,
+  STATEMENT_JSON_SCHEMA,
+} from "./statement-parser.js";
+export { executeRound, formatDisputeContext } from "./round-execution.js";

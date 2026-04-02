@@ -1,10 +1,10 @@
-# Publish Checklist — parliagent v0.2.0
+# Publish Checklist — parliagent v0.4.1
 
 ## Pre-publish Verification
 
 ### Code Quality
 - [x] `npm run typecheck` passes (noUnusedLocals, noUnusedParameters enabled)
-- [x] `npm test` — 151 tests pass across 14 files
+- [x] `npm test` — 224 tests pass across 18 files
 - [x] `npm run build` — clean TypeScript compilation
 - [x] No `as any` casts in production code
 - [x] typescript/tsx in devDependencies only
@@ -41,7 +41,7 @@
 
 ### Documentation
 - [x] README.md — installation, SDK, CLI, config, deployment, roster, benchmark-backed mode guidance
-- [x] CHANGELOG.md — v0.1.0 release notes
+- [x] CHANGELOG.md — current version release notes
 - [x] Plans.md — all Phase 0+1, Phase 2, Phase 3, Phase 4 checkboxes complete
 - [x] HANDOFF.md — 5 core questions answered with evidence
 
@@ -83,4 +83,4 @@ npx parliagent seats
 
 - [ ] Verify package page on npmjs.com
 - [ ] Test install in a clean project
-- [ ] Tag git: `git tag v0.1.0 && git push --tags`
+- [ ] Tag git: `git tag v0.4.1 && git push --tags`

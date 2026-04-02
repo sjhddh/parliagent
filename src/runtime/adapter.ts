@@ -9,6 +9,10 @@ export interface CompletionOptions {
   maxTokens?: number;
   seed?: number;
   jsonMode?: boolean;
+  jsonSchema?: {
+    name: string;
+    schema: Record<string, unknown>;
+  };
 }
 
 export interface CompletionResult {

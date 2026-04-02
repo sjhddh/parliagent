@@ -52,6 +52,15 @@ export const ParliagentConfig = z.object({
     .object({
       maxTokens: z.number().positive().optional(),
       maxLatencyMs: z.number().positive().optional(),
+      maxConcurrentSeats: z.number().int().positive().optional(),
+    })
+    .optional(),
+  providerConcurrency: z
+    .object({
+      openai: z.number().int().positive().optional(),
+      anthropic: z.number().int().positive().optional(),
+      google: z.number().int().positive().optional(),
+      flock: z.number().int().positive().optional(),
     })
     .optional(),
 });
@@ -91,6 +100,11 @@ function loadConfigFile(cwd: string): ParliagentConfig {
     }
   }
   return {};
+}
+
+function safeParseInt(value: string): number | undefined {
+  const n = parseInt(value, 10);
+  return Number.isNaN(n) ? undefined : n;
 }
 
 function loadEnvConfig(): ParliagentConfig {
@@ -178,17 +192,45 @@ function loadEnvConfig(): ParliagentConfig {
   }
 
   if (process.env.PARLIAGENT_MAX_TOKENS) {
-    config.budgetOverrides = {
-      ...config.budgetOverrides,
-      maxTokens: parseInt(process.env.PARLIAGENT_MAX_TOKENS, 10),
-    };
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_TOKENS);
+    if (v !== undefined) {
+      config.budgetOverrides = { ...config.budgetOverrides, maxTokens: v };
+    }
   }
 
   if (process.env.PARLIAGENT_MAX_LATENCY_MS) {
-    config.budgetOverrides = {
-      ...config.budgetOverrides,
-      maxLatencyMs: parseInt(process.env.PARLIAGENT_MAX_LATENCY_MS, 10),
-    };
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_LATENCY_MS);
+    if (v !== undefined) {
+      config.budgetOverrides = { ...config.budgetOverrides, maxLatencyMs: v };
+    }
+  }
+
+  if (process.env.PARLIAGENT_MAX_CONCURRENT_SEATS) {
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_CONCURRENT_SEATS);
+    if (v !== undefined) {
+      config.budgetOverrides = { ...config.budgetOverrides, maxConcurrentSeats: v };
+    }
+  }
+
+  const providerConcurrency: NonNullable<ParliagentConfig["providerConcurrency"]> = {};
+  if (process.env.PARLIAGENT_MAX_CONCURRENT_OPENAI) {
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_CONCURRENT_OPENAI);
+    if (v !== undefined) providerConcurrency.openai = v;
+  }
+  if (process.env.PARLIAGENT_MAX_CONCURRENT_ANTHROPIC) {
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_CONCURRENT_ANTHROPIC);
+    if (v !== undefined) providerConcurrency.anthropic = v;
+  }
+  if (process.env.PARLIAGENT_MAX_CONCURRENT_GOOGLE) {
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_CONCURRENT_GOOGLE);
+    if (v !== undefined) providerConcurrency.google = v;
+  }
+  if (process.env.PARLIAGENT_MAX_CONCURRENT_FLOCK) {
+    const v = safeParseInt(process.env.PARLIAGENT_MAX_CONCURRENT_FLOCK);
+    if (v !== undefined) providerConcurrency.flock = v;
+  }
+  if (Object.keys(providerConcurrency).length > 0) {
+    config.providerConcurrency = providerConcurrency;
   }
 
   return config;
@@ -225,6 +267,10 @@ function mergeConfigs(
       ...fileConfig.budgetOverrides,
       ...envConfig.budgetOverrides,
     },
+    providerConcurrency: {
+      ...fileConfig.providerConcurrency,
+      ...envConfig.providerConcurrency,
+    },
   };
 }
 
@@ -239,5 +285,6 @@ export function toRuntimeConfig(config: ParliagentConfig) {
     anthropic: config.anthropic,
     google: config.google,
     flock: config.flock,
+    providerConcurrency: config.providerConcurrency,
   };
 }

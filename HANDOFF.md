@@ -18,8 +18,9 @@
 | **v0.3.x Hardening (0.3.1–0.3.2)** | **complete** | Runtime compat, parsing robustness, protocol completion |
 | **v0.4.0 Reliability + Evidence** | **complete** | JSON mode, evidence bundles, baseline comparison, convergence fix |
 | **v0.4.1 Review Fixes** | **complete** | Retry-with-feedback, Anthropic JSON prefill, convergence calibration |
+| **vNext Reliability-First Refactor (unreleased)** | **complete on main** | Speaker decomposition, provider-native schema path, decision calibration, concurrency governance |
 
-## Current Version: v0.4.1
+## Current Version: v0.4.1 (with unreleased vNext reliability refactor on main)
 
 Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-chamber runs.
 
@@ -36,6 +37,23 @@ Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-cha
 - Anthropic JSON prefill: assistant message starts with `{` to force JSON output
 - `determineDecisionType` rewritten: high `agreementRatio` (≥0.6) now maps to `majority` even with unresolved disputes — resolves "semantic majority → machine uncertain" gap in large-chamber runs
 - Degraded parse detection: `isDegradedParse()` identifies statements that were recovered from partial output
+
+### vNext (unreleased): Reliability-First Core Refactor
+- `Speaker` decomposed into focused modules:
+  - `src/core/round-execution.ts`
+  - `src/core/statement-parser.ts`
+  - `src/core/decision-semantics.ts`
+- Provider-native structured output hardening:
+  - OpenAI/FLOCK use `response_format: json_schema` when schema is available
+  - Google uses `responseSchema`
+  - Anthropic receives schema guidance in system instruction
+- Decision semantics calibrated for “majority with reservations” in high-seat runs
+- Concurrency governance added:
+  - round-level cap via `maxConcurrentSeats`
+  - optional provider-level caps via `PARLIAGENT_MAX_CONCURRENT_{PROVIDER}`
+- Full-trace reliability metrics added:
+  - per-round: `parseRecoveryCount`, `degradedParseCount`
+  - aggregate: `totalParseRecoveries`, `totalDegradedParses`
 
 ## v0.3.x Hardening Summary (0.3.1 → 0.3.2)
 
@@ -63,7 +81,7 @@ Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-cha
 - Full parliament (32 seats) structured-output success rate is improved but not 100% — some seats still produce partial or malformed output even with JSON mode
 - Evidence grounding is pass-through (caller supplies evidence), not retrieval-based
 - `parliamentBeatBaseline` requires a baseline string or adapter — it cannot auto-generate baselines
-- `decisionType` in full parliament runs still tends toward `uncertain`/`round_limit` because 32-seat single-round runs accumulate many unresolved disputes by design
+- Full parliament remains expensive and can still hit `round_limit` by design; reliability metrics should be monitored in trace for production gating
 
 ## Upgrade Summary (v0.3)
 
@@ -114,11 +132,12 @@ Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-cha
 
 ## Test Suite
 
-222 tests across 18 files — all passing. Includes:
+263 tests across 19 files — all passing. Includes:
 - 26 protocol upgrade tests (agenda stages, dispute lifecycle, convergence, evidence)
 - 10 evaluation rubric tests
 - 23 review-fix integration tests (determineDecisionType, Speaker.debate() integration, calibration with trace, all 8 fixtures exercised)
 - 9 protocol invariant tests (convergence safety, dispute-driven decisionType, resolution coverage)
+- 39 statement-parser tests (5 extraction strategies, field validation, degraded-parse detection, failure isolation)
 
 ## Provider Validation Status
 

@@ -173,6 +173,11 @@ PARLIAGENT_DEFAULT_TRACE=summary                 # none | summary | full
 PARLIAGENT_DEFAULT_OUTPUT_LANGUAGE=en             # Output language (e.g. zh, ja, es)
 PARLIAGENT_MAX_TOKENS=15000                      # Global token budget cap
 PARLIAGENT_MAX_LATENCY_MS=20000                  # Global latency cap
+PARLIAGENT_MAX_CONCURRENT_SEATS=6               # Global seat concurrency cap per round
+PARLIAGENT_MAX_CONCURRENT_OPENAI=4              # Optional per-provider concurrency cap
+PARLIAGENT_MAX_CONCURRENT_ANTHROPIC=4
+PARLIAGENT_MAX_CONCURRENT_GOOGLE=4
+PARLIAGENT_MAX_CONCURRENT_FLOCK=4
 ```
 
 ### Config File
@@ -184,7 +189,8 @@ Optional `parliagent.config.json` in your working directory:
   "primaryProvider": "anthropic",
   "supremeProvider": "anthropic",
   "defaults": { "mode": "fast", "executionProfile": "federated", "trace": "summary", "outputLanguage": "en" },
-  "budgetOverrides": { "maxTokens": 15000, "maxLatencyMs": 20000 }
+  "budgetOverrides": { "maxTokens": 15000, "maxLatencyMs": 20000, "maxConcurrentSeats": 6 },
+  "providerConcurrency": { "anthropic": 4, "openai": 4, "google": 4, "flock": 4 }
 }
 ```
 
@@ -204,7 +210,7 @@ Every call returns a `ParliagentResponse`:
 | `openQuestions` | string[] | No | Unresolved disagreements |
 | `warnings` | string[] | No | Safety/security concerns raised |
 | `debateSummary` | string | When trace != "none" | Per-round summary |
-| `traceArtifact` | object | When trace == "full" | Full deliberation trace with rounds, statements, disagreements |
+| `traceArtifact` | object | When trace == "full" | Full deliberation trace with rounds, statements, disagreements, and structured-output reliability metrics (`parseRecoveryCount`, `degradedParseCount`) |
 
 ## Answer Modes
 
@@ -271,6 +277,7 @@ debate({ prompt, fullParliagent: true, trace: "full" })
 | Budget cap | 300k tokens / 120s |
 
 Full parliagent runs 1 round by default — 32 voices in a single round already produce 100+ disagreements. Budget limits apply between rounds; a single parallel round may use the full cap.
+Use `PARLIAGENT_MAX_CONCURRENT_SEATS` and optional per-provider concurrency caps to reduce rate-limit spikes in high-seat runs.
 
 **When to use:** Consequential decisions where you want every disciplinary angle — architecture with compliance implications, strategic pivots, security-critical designs.
 

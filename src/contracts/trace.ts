@@ -76,6 +76,8 @@ export const RoundResult = z.object({
   resolvedCount: z.number().int().min(0).optional(),
   acceptedSplitCount: z.number().int().min(0).optional(),
   unresolvedCount: z.number().int().min(0).optional(),
+  parseRecoveryCount: z.number().int().min(0).optional(),
+  degradedParseCount: z.number().int().min(0).optional(),
 });
 export type RoundResult = z.infer<typeof RoundResult>;
 
@@ -87,5 +89,7 @@ export const DeliberationTrace = z.object({
   modelAssignments: z.record(z.string(), z.string()).optional(),
   totalTokensUsed: z.number().int().optional(),
   totalLatencyMs: z.number().int().optional(),
+  totalParseRecoveries: z.number().int().optional(),
+  totalDegradedParses: z.number().int().optional(),
 });
 export type DeliberationTrace = z.infer<typeof DeliberationTrace>;

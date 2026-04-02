@@ -1,3 +1,63 @@
+# Review — Parliagent v0.4.1 (+ vNext reliability refactor on main)
+
+## Verdict: PASS (with caveats)
+
+This review focuses on reliability and architecture maturity. The current tree passes `npm run typecheck` and `npm test` (224 tests across 18 files), and the previous critical gaps are materially reduced by the latest refactor: core orchestration is decomposed, structured-output enforcement is stronger at provider level, and decision semantics are less likely to collapse semantic majority into `uncertain`.
+
+## Scores
+
+| Dimension | Score | Notes |
+|-----------|-------|-------|
+| Functionality | 4/5 | Core flows and contracts are stable; full-chamber behavior is measurable with new trace metrics. |
+| Design quality | 4/5 | `Speaker` responsibilities are split into dedicated modules, reducing change-risk concentration. |
+| Code quality | 4/5 | Modular boundaries and typed contracts remain strong; tests are comprehensive and passing. |
+| Security & robustness | 3/5 | Improved by schema-first output and concurrency controls, but still depends on external provider behavior. |
+| Accessibility | 3/5 | No major UI surface in scope. |
+
+## Improvements Verified
+
+### 1) Speaker decomposition reduced core coupling
+- **Location**: `src/core/speaker.ts`, `src/core/round-execution.ts`, `src/core/statement-parser.ts`, `src/core/decision-semantics.ts`
+- **Verification**: Code inspection + test run
+- **Result**: round execution, parsing/recovery, and decision/report semantics now live in separate modules with stable API surface.
+
+### 2) Structured-output hardening now prefers provider-native schema paths
+- **Location**: `src/runtime/providers/openai.ts`, `src/runtime/providers/flock.ts`, `src/runtime/providers/google.ts`, `src/runtime/providers/anthropic.ts`
+- **Verification**: Code inspection
+- **Result**:
+  - OpenAI/FLOCK: `response_format: json_schema` when schema is supplied
+  - Google: `responseSchema` in generation config
+  - Anthropic: explicit schema instruction appended in system guidance
+
+### 3) Decision semantics calibrated for majority-with-reservations
+- **Location**: `src/core/decision-semantics.ts`
+- **Verification**: Unit/integration tests (`tests/review-fixes.integration.test.ts`)
+- **Result**: high alignment with remaining unresolved disputes now maps to `majority` more consistently instead of over-collapsing to `uncertain`.
+
+### 4) Concurrency governance added for large chambers
+- **Location**: `src/core/round-execution.ts`, `src/core/config.ts`, `src/contracts/request.ts`, `src/config.ts`, `src/runtime/policy.ts`
+- **Verification**: Code inspection + test run
+- **Result**:
+  - round-level cap: `maxConcurrentSeats`
+  - optional per-provider caps via env/config
+  - bounded parallel execution path replaces all-at-once pressure spikes.
+
+### 5) Reliability metrics added to full trace
+- **Location**: `src/contracts/trace.ts`, `src/core/speaker.ts`
+- **Verification**: Schema and tests
+- **Result**: trace now records per-round and aggregate parse recovery/degradation counts for production monitoring.
+
+## Remaining Risks
+
+- Full parliament remains high-cost/high-latency; one 32-seat round can still be expensive even with concurrency limits.
+- Provider-native schema support quality differs by vendor/model, so degraded parsing cannot be eliminated entirely.
+- Provider “implemented/live-validated/benchmarked” levels should continue to be kept explicit in docs and release notes.
+
+## Recommendations
+
+- Treat this as “reliability-forward and production-usable,” not “fully robust under all provider/model mixes.”
+- Gate full-parliament production usage on `traceArtifact.totalDegradedParses` and timeout/error thresholds.
+- Keep benchmark + live-validation artifacts current before changing public support claims.
 # Review — Parliagent v0.4.0
 
 ## Verdict: FAIL
