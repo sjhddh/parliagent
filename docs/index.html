@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop Asking One AI. Start Running a Debate. | Sun Parliament</title>
+<meta name="description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Sun Parliament, a multi-agent deliberation engine with disagreement tracking.">
+
+<!-- OpenGraph -->
+<meta property="og:title" content="Stop Asking One AI. Start Running a Debate.">
+<meta property="og:description" content="What happens when 33 AI expert personas argue about your architecture decision? Inside Sun Parliament.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sjhddh.github.io/sun-parliament/">
+<meta property="og:image" content="https://sjhddh.github.io/sun-parliament/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Prism.js for syntax highlighting -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+<!-- Mermaid for diagrams -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+<style>
+:root {
+  --bg: #fafaf9;
+  --bg-alt: #f5f5f4;
+  --text: #1c1917;
+  --text-muted: #57534e;
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --border: #d6d3d1;
+  --code-bg: #292524;
+  --code-text: #e7e5e4;
+  --link: #b45309;
+  --seat-bg: #fef3c7;
+  --seat-border: #f59e0b;
+  --warn-bg: #fef2f2;
+  --warn-border: #ef4444;
+  --quote-bg: #f0fdf4;
+  --quote-border: #22c55e;
+  --font-body: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --max-width: 740px;
+}
+
+[data-theme="dark"] {
+  --bg: #1c1917;
+  --bg-alt: #292524;
+  --text: #e7e5e4;
+  --text-muted: #a8a29e;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --border: #44403c;
+  --code-bg: #0c0a09;
+  --code-text: #e7e5e4;
+  --link: #f59e0b;
+  --seat-bg: #422006;
+  --seat-border: #b45309;
+  --warn-bg: #450a0a;
+  --warn-border: #dc2626;
+  --quote-bg: #052e16;
+  --quote-border: #16a34a;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 18px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+}
+
+/* Header */
+.article-header {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-header .meta {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+
+.article-header h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.article-header .subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.read-time {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg-alt);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  margin-top: 1rem;
+}
+
+/* Typography */
+h2 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 3rem 0 1rem;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 2rem 0 0.75rem;
+}
+
+p { margin-bottom: 1.25rem; }
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+a:hover { color: var(--accent-hover); }
+
+strong { font-weight: 600; }
+
+/* Code */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-alt);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+pre {
+  background: var(--code-bg) !important;
+  border-radius: 8px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--code-text);
+  line-height: 1.6;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-weight: 600;
+  background: var(--bg-alt);
+  white-space: nowrap;
+}
+
+td:first-child { font-weight: 500; }
+
+/* Seat cards */
+.seat-card {
+  background: var(--seat-bg);
+  border-left: 4px solid var(--seat-border);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.seat-card .seat-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.seat-card .seat-stance {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.seat-card .seat-text {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.seat-card .seat-warning {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #dc2626;
+  font-style: italic;
+}
+
+/* Warning boxes */
+.warning-box {
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn-border);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+}
+
+/* Quote boxes */
+.insight-box {
+  background: var(--quote-bg);
+  border-left: 4px solid var(--quote-border);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Collapsible */
+details {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+details summary {
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-alt);
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 0.95rem;
+  user-select: none;
+}
+
+details summary:hover { background: var(--border); }
+
+details[open] summary { border-bottom: 1px solid var(--border); }
+
+details .details-content { padding: 1rem 1.25rem; }
+
+/* Lists */
+ul, ol { margin: 1rem 0 1.25rem 1.5rem; }
+li { margin-bottom: 0.4rem; }
+
+/* Diagram container */
+.mermaid {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: background 0.3s;
+}
+
+.theme-toggle:hover { background: var(--border); }
+
+/* Separator */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3rem 0;
+}
+
+/* Footer */
+.article-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .container { padding: 1rem 1rem 4rem; }
+  table { font-size: 0.8rem; }
+  th, td { padding: 0.4rem 0.5rem; }
+  pre { padding: 0.75rem; }
+}
+
+/* Metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.metric-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.metric-card .metric-value {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.metric-card .metric-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+  <span id="theme-icon">&#9790;</span>
+</button>
+
+<article class="container">
+
+<header class="article-header">
+  <div class="meta">Sun Parliament &middot; Engineering</div>
+  <h1>Stop Asking One AI.<br>Start Running a Debate.</h1>
+  <p class="subtitle">What happens when 33 AI expert personas argue about your architecture decision &mdash; and why the disagreements are the point.</p>
+  <span class="read-time">18 min read</span>
+</header>
+
+<!-- ========== SECTION 1: Cold Open ========== -->
+
+<p>Ask an LLM a hard architecture question and you'll get a confident, well-structured answer. It will sound authoritative. It will cite best practices. It will have a reassuring tone that makes you want to nod along.</p>
+
+<p>The problem is, it's one voice. One set of biases, one set of blind spots, one set of priors baked into a single forward pass. Ask it "should my fintech startup use microservices?" and it will lay out both sides politely — then lean whichever direction its training data nudges it. The dissenting voices, the uncomfortable warnings, the "yes, but what about regulatory compliance?" objections? Buried in hedging language, if they surface at all.</p>
+
+<p>This is the <strong>echo chamber of one</strong>. And it's the default mode for how most people use AI today.</p>
+
+<p>We built <a href="https://github.com/sjhddh/sun-parliament">Sun Parliament</a> to fix this. It's a multi-agent deliberation engine that runs a structured parliamentary debate among expert personas — with disagreement tracking, minority reports, and budget controls. One function call. Multiple perspectives. Structured dissent.</p>
+
+<p>To write this article, we did something recursive: <strong>we asked Sun Parliament how to write about itself.</strong> We ran four debates — one on article structure, one on the core thesis, one comparing approaches, and one full parliament with all 33 seats arguing about a real architecture decision. What you're reading is shaped by that output. The meta-debate produced minority reports we hadn't considered, warnings about our own framing, and one seat that accused us of "engineering ressentiment." More on that later.</p>
+
+<hr>
+
+<!-- ========== SECTION 2: Why Single-Agent Falls Short ========== -->
+
+<h2>Why Single-Agent Falls Short</h2>
+
+<p>Anthropic's engineering team <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">recently documented</a> a key failure mode they encountered while building long-running coding agents: <strong>self-evaluation doesn't work.</strong></p>
+
+<blockquote>
+  "When asked to evaluate work they've produced, agents tend to respond by confidently praising the work — even when, to a human observer, the quality is obviously mediocre."
+</blockquote>
+
+<p>Their solution was to separate the generator from the evaluator — a distinct agent whose job is to be skeptical. This works for code, where there are verifiable outcomes. But what about decisions that don't have unit tests? Architecture tradeoffs. Security design. Strategic pivots. Planning under uncertainty.</p>
+
+<p>For these problems, you don't just need a skeptic — you need a <em>parliament</em>. Multiple experts with different domains, different priors, different blind spots, structurally incentivized to disagree.</p>
+
+<p>Here's what the data shows. We benchmarked Sun Parliament against a single-agent baseline across 10 prompts spanning coding, planning, writing, strategy, security, and analysis:</p>
+
+<table>
+  <thead>
+    <tr><th>Mode</th><th>Avg Tokens</th><th>Avg Latency</th><th>Avg Seats</th><th>Avg Disagreements</th><th>Cost vs Baseline</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Baseline (single agent)</td><td>822</td><td>14.5s</td><td>1</td><td>0</td><td>1.0x</td></tr>
+    <tr><td>Micro</td><td>1,318</td><td>16.4s</td><td>2</td><td>3.4</td><td>1.6x</td></tr>
+    <tr><td>Fast</td><td>5,336</td><td>33.6s</td><td>3</td><td>10.6</td><td>6.5x</td></tr>
+    <tr><td>Balanced</td><td>10,898</td><td>36.5s</td><td>5</td><td>18.1</td><td>13.3x</td></tr>
+  </tbody>
+</table>
+
+<p>The baseline produces zero disagreements. Not because there's nothing to disagree about — because there's no one to disagree <em>with</em>. A single agent asked about security will mention security concerns. But it won't have SecurityPrivacySeat specifically raising PCI DSS violations while KahnemanSeat points out that you're anchoring on a microservices hype cycle.</p>
+
+<p><strong>The disagreements are the value.</strong> Micro mode adds 3.4 disagreements at just 1.6x the cost and 2 seconds more latency. Fast mode surfaces 10.6 disagreements — three times more conflict for six times the cost. That's not overhead. That's surface area for the things you'd otherwise miss.</p>
+
+<hr>
+
+<!-- ========== SECTION 3: Architecture ========== -->
+
+<h2>The Architecture</h2>
+
+<p>Sun Parliament is a TypeScript library (<code>npm install sun-parliament</code>) with a single entry point:</p>
+
+<pre><code class="language-typescript">import { debate } from "sun-parliament";
+
+const response = await debate({
+  prompt: "Should we use microservices or a monolith?",
+  mode: "fast",
+  taskType: "strategy",
+});
+
+console.log(response.finalAnswer);       // synthesized answer
+console.log(response.decisionType);      // "consensus" | "majority" | "split" | "uncertain"
+console.log(response.minorityReport);    // dissenting views
+console.log(response.warnings);          // safety/security flags
+</code></pre>
+
+<p>Behind that one-liner, here's what happens:</p>
+
+<div class="mermaid">
+graph LR
+    A["debate(request)"] --> B["Speaker"]
+    B --> C["Safety Check"]
+    C --> D["Task Classification"]
+    D --> E["Seat Routing"]
+    E --> F["Parallel Seat Calls"]
+    F --> G["Convergence Check"]
+    G -->|"not converged"| F
+    G -->|"converged / round limit"| H["Synthesis"]
+    H --> I["ParliamentResponse"]
+</div>
+
+<h3>1. The Speaker</h3>
+
+<p>The Speaker is the neutral chair — it never takes a substantive position. It routes the question to the right seats, manages debate rounds, and synthesizes the final answer from member contributions. Think of it as the procedural backbone.</p>
+
+<h3>2. Seat Routing</h3>
+
+<p>When a request arrives, the system classifies the task type (coding, planning, strategy, analysis, ethics, writing, general) using keyword scoring, then selects a chamber of seats appropriate for the mode:</p>
+
+<pre><code class="language-typescript">// Simplified from src/core/routing.ts
+export function classifyTask(prompt: string): TaskType {
+  const signals: Record&lt;TaskType, string[]&gt; = {
+    coding: ["code", "function", "implement", "debug", "api", ...],
+    strategy: ["strategy", "competitive", "market", "pricing", ...],
+    ethics: ["ethical", "bias", "fairness", "privacy", ...],
+    // ...
+  };
+  // Score each type by keyword hits, return the best match
+}</code></pre>
+
+<p>The routing is deliberately rule-based (not LLM-powered) because it runs on every request and needs to be fast, deterministic, and inspectable. You can preview routing without spending a token:</p>
+
+<pre><code class="language-bash">$ sun-parliament inspect "How to handle API key rotation?" --mode fast
+
+Selected Chamber:
+  • OpenAISeat — Strongest OpenAI-family generalist representative
+  • DijkstraSeat — Correctness, structure, anti-sloppiness
+  • SecurityPrivacySeat — Adversaries, misuse, trust boundaries
+  
+Routing Reason:
+  Task classified as "coding". Security seat priority upgraded.</code></pre>
+
+<h3>3. The 33 Seats</h3>
+
+<p>Each seat has a persona with a system prompt, domain expertise, strengths, blind spots, and a speaking style. They're not random — they're chosen to create productive tension:</p>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>Seats</th><th>What They Bring</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Model Reps</td><td>OpenAISeat, ClaudeSeat, GeminiSeat</td><td>Cross-family model diversity</td></tr>
+    <tr><td>Computing</td><td>Dijkstra, Knuth, Shannon, Turing</td><td>Correctness, algorithms, information theory</td></tr>
+    <tr><td>Philosophy</td><td>Aristotle, Kant, Nietzsche</td><td>Ethics, duty, uncomfortable truths</td></tr>
+    <tr><td>Psychology</td><td>Kahneman, Jung, CognitiveSci</td><td>Bias detection, cognitive framing</td></tr>
+    <tr><td>Security</td><td>SecurityPrivacy, DistributedSystems</td><td>Attack surfaces, failure modes</td></tr>
+    <tr><td>Product</td><td>ProductStrategy, Operator, DesignComm</td><td>User value, execution realism</td></tr>
+    <tr><td>Law &amp; Ethics</td><td>LawGovernance, EthicsHumanImpact, CitizenPragmatist</td><td>Regulatory, fairness, practical impact</td></tr>
+  </tbody>
+</table>
+
+<p>Seats speak in parallel. Each produces a structured JSON statement with a stance (<code>support</code> / <code>mixed</code> / <code>oppose</code> / <code>uncertain</code>), claims, objections, confidence level, and optional warnings. In subsequent rounds, they read each other's positions and can shift — or dig in.</p>
+
+<h3>4. Convergence</h3>
+
+<p>After each round, the system computes agreement ratios, clusters distinct claims using Jaccard similarity, counts objections, and decides whether to stop:</p>
+
+<pre><code class="language-typescript">// Simplified from src/core/convergence.ts
+if (blockingWarning && agreementRatio < 0.5) {
+  return { shouldStop: true, reason: "blocking_warning" };
+}
+if (agreementRatio >= targetAgreementRatio && objectionCount <= 1) {
+  return { shouldStop: true, reason: "converged" };
+}
+if (distinctViewCount <= 1 && objectionCount === 0) {
+  return { shouldStop: true, reason: "converged" };
+}
+if (currentRound >= maxRounds) {
+  return { shouldStop: true, reason: "round_limit" };
+}</code></pre>
+
+<p>An important design decision: <strong>the debate stays in English internally</strong>, even when the user requests output in another language. English is where LLM reasoning is strongest. Only the final synthesis step renders in the target language (<code>outputLanguage: "zh"</code>). This means a Chinese-speaking user gets the benefit of English-language deliberation without the reasoning quality loss.</p>
+
+<h3>5. Synthesis</h3>
+
+<p>The Speaker reads all seat statements, disagreements, and warnings, then produces a synthesis that reflects the actual state of the debate — including dissent. If the decision type is <code>split</code> or <code>uncertain</code>, the response says so. It doesn't paper over disagreement with false confidence.</p>
+
+<hr>
+
+<!-- ========== SECTION 4: Live Case Study ========== -->
+
+<h2>Live Case Study: 33 Experts Argue About Microservices</h2>
+
+<p>Theory is nice. Let's see it work. We asked all 33 seats of Sun Parliament:</p>
+
+<blockquote>
+  "Should a startup use microservices or a monolith for their fintech platform that needs to handle payments, KYC, and regulatory compliance?"
+</blockquote>
+
+<p>Here are the results:</p>
+
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-value">33</div>
+    <div class="metric-label">Seats Activated</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value">62</div>
+    <div class="metric-label">Disagreements</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value">33</div>
+    <div class="metric-label">Warnings Raised</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value">majority</div>
+    <div class="metric-label">Decision Type</div>
+  </div>
+</div>
+
+<p><strong>The verdict: start with a monolith.</strong> 30 out of 32 speaking seats opposed microservices, 2 were mixed, 0 supported them. That's 94% agreement — a rare near-consensus in a system designed to surface disagreement.</p>
+
+<p>But the number that matters isn't the vote count. It's <em>why</em> they opposed, and how differently each seat framed the same conclusion. Here are six highlights from the debate transcript:</p>
+
+<div class="seat-card">
+  <div class="seat-name">DijkstraSeat <span class="seat-stance">oppose &middot; confidence 5/5</span></div>
+  <div class="seat-text">"A startup should begin with a monolith. Microservices introduce distributed system complexity that will overwhelm a small team before they understand their domain boundaries."</div>
+  <div class="seat-warning">&#9888; Financial systems require strong consistency guarantees — distributed transactions across microservices introduce significant complexity in maintaining data integrity for regulatory compliance.</div>
+</div>
+
+<div class="seat-card">
+  <div class="seat-name">SecurityPrivacySeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text">"Microservices exponentially increase attack surface with multiple network boundaries, API endpoints, and inter-service authentication points that can be compromised."</div>
+  <div class="seat-warning">&#9888; Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade controls.</div>
+</div>
+
+<div class="seat-card">
+  <div class="seat-name">KahnemanSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text">"A startup should begin with a monolith due to systematic overconfidence in microservices benefits and underestimation of complexity costs. The planning fallacy suggests microservices will take longer and cost more than anticipated."</div>
+  <div class="seat-warning">&#9888; The availability heuristic makes recent successful microservices stories more salient than the base rate of startups that failed due to premature architectural complexity.</div>
+</div>
+
+<div class="seat-card">
+  <div class="seat-name">LawGovernanceSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text">"Regulatory compliance requires clear audit trails and data lineage — microservices create distributed transaction logs that complicate regulatory reporting and make it harder to demonstrate compliance during examinations."</div>
+</div>
+
+<div class="seat-card">
+  <div class="seat-name">FeynmanSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text">"You don't yet know where the real boundaries in your system should be — premature microservice splits will force you into awkward data flows and make simple changes require coordinating multiple services."</div>
+</div>
+
+<div class="seat-card" style="border-left-color: #7c3aed;">
+  <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text">"This question reveals the herd's obsession with architectural fashion over fundamental values. <strong>The microservices movement is largely driven by engineering ressentiment</strong> — developers who feel inadequate building simple things well, so they create complexity to justify their existence and salaries."</div>
+</div>
+
+<p>That last one is NietzscheSeat doing what it's designed to do: challenge the comfortable consensus from an angle nobody asked for. You might disagree with the framing — but you'll remember it. And that's the point of including a Nietzsche in your parliament.</p>
+
+<details>
+  <summary>View the minority report</summary>
+  <div class="details-content">
+    <p>Even in a 94% consensus, two seats held back:</p>
+    <div class="seat-card">
+      <div class="seat-name">OpenAISeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
+      <div class="seat-text">"Both microservices and monoliths have distinct advantages; the choice depends on the startup's specific needs and resources. Microservices offer scalability and flexibility. Monolithic architectures can lead to faster initial development."</div>
+    </div>
+    <div class="seat-card">
+      <div class="seat-name">KantSeat <span class="seat-stance">mixed &middot; confidence 4/5</span></div>
+      <div class="seat-text">"The choice must be determined by which architecture better enables the startup to treat its duties to customers, regulators, and society as categorical imperatives, not mere technical preferences."</div>
+    </div>
+    <p>The minority report exists because Sun Parliament <em>never suppresses dissent</em>. When the decision type isn't consensus, minority voices are surfaced explicitly — not buried in a paragraph of hedging.</p>
+  </div>
+</details>
+
+<details>
+  <summary>View selected warnings (33 total raised)</summary>
+  <div class="details-content">
+    <ul>
+      <li>"Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade security controls" — SecurityPrivacySeat</li>
+      <li>"Distributed payment processing creates data residency and cross-border compliance issues that could trigger regulatory violations in multiple jurisdictions" — SecurityPrivacySeat</li>
+      <li>"Financial systems require ACID guarantees — distributed transactions or eventual consistency patterns could lead to regulatory violations or money loss" — VonNeumannSeat</li>
+      <li>"The planning fallacy suggests we're systematically overestimating the coordination benefits while underestimating implementation complexity" — KahnemanSeat</li>
+      <li>"Distributed financial systems without formal verification of consistency properties pose systemic risk to payment integrity" — TuringSeat</li>
+    </ul>
+    <p>Each warning is tied to the seat that raised it. You can trace <em>who</em> flagged what, and decide for yourself how much weight to give it.</p>
+  </div>
+</details>
+
+<p>A single-agent response to this question would have given you a balanced "it depends." Sun Parliament gave you 33 expert opinions, 62 specific disagreements, 33 actionable warnings, and a clear majority decision — all in one call.</p>
+
+<hr>
+
+<!-- ========== SECTION 5: Cost/Benchmark Data ========== -->
+
+<h2>What It Costs</h2>
+
+<p>All benchmark data is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026.</p>
+
+<table>
+  <thead>
+    <tr><th>Mode</th><th>Seats</th><th>Rounds</th><th>Latency</th><th>Cost per Run</th><th>Avg Disagreements</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Micro</td><td>2-3</td><td>1</td><td>~16s</td><td>~$0.01</td><td>3.4</td></tr>
+    <tr><td>Fast</td><td>3-5</td><td>2</td><td>~34s</td><td>~$0.04</td><td>10.6</td></tr>
+    <tr><td>Balanced</td><td>5-9</td><td>2</td><td>~37s</td><td>~$0.08</td><td>18.1</td></tr>
+    <tr><td>Full Parliament</td><td>32 (+Speaker)</td><td>1</td><td>~44s</td><td>~$1.50</td><td>133</td></tr>
+  </tbody>
+</table>
+
+<p>Micro mode is the sweet spot for everyday use — it costs a penny, takes 16 seconds, and still surfaces 3+ disagreements on average. Fast mode is what we default for <code>plan</code> and <code>review</code> commands, where thoroughness matters more than speed.</p>
+
+<p>We're being honest about balanced mode: <strong>it has diminishing returns.</strong> It costs 13.3x baseline but only produces 1.7x more disagreements than fast. Almost everything resolves as "uncertain" (9 out of 10 runs). More seats don't automatically mean more clarity — they mean more perspectives, which can fragment rather than converge. We recommend fast for most use cases and reserve balanced for genuinely high-stakes decisions.</p>
+
+<p>Full Parliament at $1.50 per run is a special-purpose tool. You'd use it the way you'd schedule a board meeting — not for every question, but for the ones where you need every disciplinary angle covered.</p>
+
+<hr>
+
+<!-- ========== SECTION 6: What We Got Wrong ========== -->
+
+<h2>What We Got Wrong (and What We're Honest About)</h2>
+
+<p>This section matters more than the architecture section. If we're going to ask you to trust a system that claims to surface hidden disagreements, we should surface our own.</p>
+
+<h3>Convergence rarely triggers</h3>
+
+<p>In 30 parliament runs across our benchmark suite, only 1 reached the convergence threshold early. The other 29 hit the round limit. This means either our convergence thresholds are too strict, or these debates genuinely don't converge when you have personas with different priors.</p>
+
+<p>We think it's the latter — and it's by design. Sun Parliament is built to surface structured disagreement, not to manufacture premature consensus. The value is in the disagreement records and minority reports, not in everyone agreeing.</p>
+
+<h3>Writing tasks don't benefit from debate</h3>
+
+<p>A writing prompt in micro mode reached consensus in one round with <strong>zero disagreements</strong>. Even in fast mode, writing produced only 5 disagreements — the lowest of any category. This confirms what the <a href="https://github.com/sjhddh/sun-parliament/blob/main/SKILL.md">SKILL.md</a> explicitly warns: <em>"The task is pure writing or drafting — debate adds nothing."</em></p>
+
+<p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
+
+<h3>Only Anthropic is battle-tested</h3>
+
+<p>We ship adapters for OpenAI, Anthropic, and Google AI. Only Anthropic has been live-validated end-to-end. The other two are type-checked, structurally correct, and pass unit tests — but they haven't been run against real provider endpoints in production benchmarks. We say this in the README and we're saying it again here.</p>
+
+<h3>Security detection is coarse</h3>
+
+<p>The auto-upgrade from micro to fast for security-sensitive prompts uses keyword matching. It catches "auth," "credentials," and "PCI," but it won't catch a subtle security implication buried in a business logic description. This is a v0.1.0 limitation we intend to improve.</p>
+
+<h3>The meta-critique</h3>
+
+<p>When we ran our core thesis debate — asking whether multi-agent deliberation is fundamentally better than single-agent reasoning — KahnemanSeat raised an objection we hadn't considered:</p>
+
+<div class="seat-card">
+  <div class="seat-name">KahnemanSeat <span class="seat-stance">mixed &middot; confidence 2/5</span></div>
+  <div class="seat-text">"We lack rigorous evidence comparing multi-agent deliberation to single-agent approaches, and it may introduce new systematic errors like groupthink or coordination failures."</div>
+</div>
+
+<p>And the review debate's evaluator (itself a parliament) caught a fundamental circularity problem:</p>
+
+<div class="warning-box">
+  <strong>Critical issue identified:</strong> "Circular reasoning problem — used multi-agent deliberation to evaluate multi-agent deliberation, potentially amplifying the very biases being discussed."
+</div>
+
+<p>We're including this because it's exactly the kind of uncomfortable truth that the system is designed to surface. A single agent writing about itself would never flag its own circular reasoning.</p>
+
+<hr>
+
+<!-- ========== SECTION 7: When to Use ========== -->
+
+<h2>When to Use It (and When Not To)</h2>
+
+<p>Sun Parliament ships with a <a href="https://github.com/sjhddh/sun-parliament/blob/main/SKILL.md">SKILL.md</a> that AI agents can read directly. Here's the human version of the decision tree:</p>
+
+<div class="mermaid">
+graph TD
+    A["Is the question trivial or factual?"] -->|"Yes"| B["Don't call Sun Parliament"]
+    A -->|"No"| C["Does it involve security/auth/credentials?"]
+    C -->|"Yes"| D["mode: fast, taskType: coding"]
+    C -->|"No"| E["Is it a plan/roadmap question?"]
+    E -->|"Yes"| F["mode: fast, answerMode: plan"]
+    E -->|"No"| G["Is it a review or risk assessment?"]
+    G -->|"Yes"| H["mode: fast, answerMode: review"]
+    G -->|"No"| I["Is it high-stakes/multi-disciplinary?"]
+    I -->|"Yes"| J["mode: balanced or fullParliament"]
+    I -->|"No"| K["mode: micro"]
+</div>
+
+<p>The key principle: <strong>match the cost to the stakes.</strong> A penny for a quick take. Four cents for a thorough review. A dollar fifty for a full parliament. Zero cents for a question that doesn't need debate.</p>
+
+<hr>
+
+<!-- ========== SECTION 8: Try It ========== -->
+
+<h2>Try It Yourself</h2>
+
+<pre><code class="language-bash">npm install sun-parliament</code></pre>
+
+<pre><code class="language-bash"># Quick question — 2 seats, 1 round, ~16 seconds
+export ANTHROPIC_API_KEY=sk-ant-...
+sun-parliament ask "What's the best approach to rate limiting?"
+
+# See which seats would be selected (free, no API call)
+sun-parliament inspect "How to handle API key rotation?" --mode fast
+
+# Full debate with trace
+sun-parliament debate "Should we pivot to a platform model?" --mode fast --trace full
+
+# Planning mode
+sun-parliament plan "Migration plan from monolith to microservices"
+
+# All 33 seats — the board meeting
+sun-parliament debate "Should we open-source our core?" --full-parliament</code></pre>
+
+<p>Or from code:</p>
+
+<pre><code class="language-typescript">import { debate } from "sun-parliament";
+
+const result = await debate({
+  prompt: "Should we use Redis or Memcached for our session store?",
+  mode: "fast",
+  taskType: "coding",
+});
+
+if (result.decisionType === "split" || result.decisionType === "uncertain") {
+  // Parliament couldn't converge — surface both sides
+  console.log("No consensus:", result.minorityReport);
+  console.log("Open questions:", result.openQuestions);
+}
+
+// Never suppress warnings
+if (result.warnings?.length) {
+  console.warn("Parliament raised concerns:", result.warnings);
+}</code></pre>
+
+<p>The <code>inspect</code> command is free — it shows you exactly which seats would be selected and why, without making any API calls. Use it to understand routing before committing to a debate.</p>
+
+<hr>
+
+<!-- ========== SECTION 9: What Comes Next ========== -->
+
+<h2>What Comes Next</h2>
+
+<p>Sun Parliament v0.1.0 ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, a CLI, an SDK, and a serverless adapter. It works. The benchmarks are real. The limitations are documented.</p>
+
+<p>Here are the genuine open questions we're still working through:</p>
+
+<ul>
+  <li><strong>Multi-provider diversity:</strong> Does running OpenAISeat on OpenAI, ClaudeSeat on Anthropic, and GeminiSeat on Google actually produce more useful disagreement than running everything on one provider? The <code>federated</code> execution profile is built for this, but we haven't benchmarked it yet.</li>
+  <li><strong>Convergence tuning:</strong> 29/30 runs hitting the round limit suggests our convergence thresholds need work. Or maybe debates on hard problems <em>shouldn't</em> converge. We need more data to decide.</li>
+  <li><strong>Deep mode:</strong> Implemented but not benchmarked. 7-13 seats across 3 rounds with a 60k token budget. We want to understand when this adds value over fast mode before recommending it.</li>
+  <li><strong>Better routing:</strong> Keyword-based task classification works but misses subtlety. A security question framed as a business question won't trigger the security auto-upgrade. This needs a smarter classifier.</li>
+</ul>
+
+<p>The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much, rating its confidence at 2/5. What we can say is that for decisions with genuine tradeoffs, multiple perspectives surface things that a single voice misses. The disagreements are real. The minority reports contain insight. And the warnings catch risks that no one asked about.</p>
+
+<p>Maybe that's enough. Not every tool needs to be the final answer. Sometimes it just needs to be the one that asks the uncomfortable questions.</p>
+
+<hr>
+
+<div class="article-footer">
+  <p><strong>Sun Parliament</strong> is open-source under MIT. <a href="https://github.com/sjhddh/sun-parliament">GitHub</a> &middot; <a href="https://www.npmjs.com/package/sun-parliament">npm</a></p>
+  <p>This article was shaped by four Sun Parliament debates: one on article structure (<code>mode: fast</code>), one on the core thesis (<code>mode: balanced</code>, 5 seats), one comparative review (<code>mode: fast</code>), and one full parliament with all 33 seats. Total cost for the content generation debates: approximately $1.70.</p>
+  <p>Published April 2026.</p>
+</div>
+
+</article>
+
+<!-- Scripts -->
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    document.getElementById('theme-icon').textContent = next === 'dark' ? '\u2600' : '\u263E';
+  }
+
+  // Load saved theme
+  (function() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.getElementById('theme-icon').textContent = '\u2600';
+    }
+  })();
+
+  // Init Mermaid
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+    flowchart: { useMaxWidth: true, htmlLabels: true }
+  });
+</script>
+
+<!-- Prism.js -->
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+
+</body>
+</html>

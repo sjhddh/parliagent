@@ -80,11 +80,12 @@ These defaults are backed by benchmark data (10 prompts × 3 modes: micro/fast/b
 
 | Provider | Status | Key Variable |
 |----------|--------|-------------|
-| **Anthropic** | Live-validated (v0.1.0) | `ANTHROPIC_API_KEY` |
-| OpenAI | Adapter implemented, not live-validated | `OPENAI_API_KEY` |
-| Google AI | Adapter implemented, not live-validated | `GOOGLE_API_KEY` |
+| **Anthropic** | Live-validated + benchmarked | `ANTHROPIC_API_KEY` |
+| **OpenAI** | Live-validated | `OPENAI_API_KEY` |
+| Google AI | Implemented, not live-validated (no key provided for testing) | `GOOGLE_API_KEY` |
+| **Federated** (Anthropic + OpenAI) | Live-validated | Both keys set |
 
-Set at least one key. The system auto-detects available providers and picks a primary. Anthropic is the only provider tested end-to-end in v0.1.0. OpenAI and Google adapters are type-checked and structurally correct but may have undiscovered provider-specific quirks.
+Set at least one key. The system auto-detects available providers and picks a primary. Anthropic and OpenAI are both live-validated. Federated mode (multiple providers, provider-native seat routing) is validated with Anthropic + OpenAI. Google adapter is implemented and type-checked but not live-tested because no API key was available during validation.
 
 To force a specific primary provider:
 

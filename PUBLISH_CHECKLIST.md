@@ -47,11 +47,12 @@
 
 ## Provider Validation Scope
 
-| Provider | Adapter | Live-Validated | Notes |
-|----------|---------|---------------|-------|
-| **Anthropic** | `src/runtime/providers/anthropic.ts` | **Yes** — 10/10 validation, 40/40 benchmark | Primary provider for all v0.1.0 testing |
-| OpenAI | `src/runtime/providers/openai.ts` | No | Adapter implemented and type-checked. Not live-tested in v0.1.0. |
-| Google | `src/runtime/providers/google.ts` | No | Adapter implemented. Uses `x-goog-api-key` header auth. Not live-tested in v0.1.0. |
+| Provider | Adapter | Live-Validated | Benchmarked | Notes |
+|----------|---------|---------------|------------|-------|
+| **Anthropic** | `src/runtime/providers/anthropic.ts` | **Yes** — 3/3 single + 10/10 full | **Yes** — 10 prompts × 3 modes + full parliament | Primary benchmark provider |
+| **OpenAI** | `src/runtime/providers/openai.ts` | **Yes** — 3/3 single | No | Live-validated: micro, fast+seed, review mode |
+| **Federated** | Anthropic + OpenAI | **Yes** — 4/4 | No | Tested: available, federated, supreme profiles + balanced strategy |
+| Google | `src/runtime/providers/google.ts` | **No** (no key provided) | No | Adapter implemented, `x-goog-api-key` header auth, untested |
 
 ## Benchmark Scope
 

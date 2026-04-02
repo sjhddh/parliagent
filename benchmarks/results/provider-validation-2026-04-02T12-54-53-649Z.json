@@ -1,0 +1,91 @@
+{
+  "timestamp": "2026-04-02T12:54:53.650Z",
+  "availableProviders": [
+    "openai",
+    "anthropic"
+  ],
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "provider": "anthropic",
+      "test": "micro mode basic",
+      "passed": true,
+      "latencyMs": 20015,
+      "tokensUsed": 1177,
+      "details": "2 seats, uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"anthropic (primary)\"}"
+    },
+    {
+      "provider": "anthropic",
+      "test": "fast mode with seed",
+      "passed": true,
+      "latencyMs": 28834,
+      "tokensUsed": 4941,
+      "details": "3 seats, uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"anthropic (primary)\",\"SecurityPrivacySeat\":\"anthropic (primary)\"}"
+    },
+    {
+      "provider": "anthropic",
+      "test": "plan answer mode",
+      "passed": true,
+      "latencyMs": 18961,
+      "tokensUsed": 1172,
+      "details": "2 seats, majority, models: {\"OpenAISeat\":\"openai (preferred)\",\"ProductStrategySeat\":\"anthropic (primary)\"}"
+    },
+    {
+      "provider": "openai",
+      "test": "micro mode basic",
+      "passed": true,
+      "latencyMs": 10606,
+      "tokensUsed": 1040,
+      "details": "2 seats, majority, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"openai (primary)\"}"
+    },
+    {
+      "provider": "openai",
+      "test": "fast mode with seed",
+      "passed": true,
+      "latencyMs": 18668,
+      "tokensUsed": 4583,
+      "details": "3 seats, uncertain, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"openai (primary)\",\"SecurityPrivacySeat\":\"openai (primary)\"}"
+    },
+    {
+      "provider": "openai",
+      "test": "review answer mode",
+      "passed": true,
+      "latencyMs": 8917,
+      "tokensUsed": 1007,
+      "details": "2 seats, majority, models: {\"OpenAISeat\":\"openai (preferred)\",\"KahnemanSeat\":\"openai (primary)\"}"
+    },
+    {
+      "provider": "federated",
+      "test": "micro mode (available profile)",
+      "passed": true,
+      "latencyMs": 18234,
+      "tokensUsed": 1209,
+      "details": "2 seats, majority, models: {\"OpenAISeat\":\"openai (preferred)\",\"DijkstraSeat\":\"anthropic (primary)\"}"
+    },
+    {
+      "provider": "federated",
+      "test": "fast mode (federated profile)",
+      "passed": true,
+      "latencyMs": 30624,
+      "tokensUsed": 5088,
+      "details": "3 seats, uncertain, models: {\"OpenAISeat\":\"openai (federated-native)\",\"DijkstraSeat\":\"anthropic (primary)\",\"SecurityPrivacySeat\":\"anthropic (primary)\"}"
+    },
+    {
+      "provider": "federated",
+      "test": "micro mode (supreme profile, primary=anthropic)",
+      "passed": true,
+      "latencyMs": 17734,
+      "tokensUsed": 1292,
+      "details": "2 seats, majority, models: {\"OpenAISeat\":\"anthropic (supreme)\",\"DijkstraSeat\":\"anthropic (supreme)\"}"
+    },
+    {
+      "provider": "federated",
+      "test": "balanced mode (federated, strategy)",
+      "passed": true,
+      "latencyMs": 30192,
+      "tokensUsed": 9802,
+      "details": "5 seats, uncertain, models: {\"OpenAISeat\":\"openai (federated-native)\",\"ProductStrategySeat\":\"anthropic (primary)\",\"OperatorSeat\":\"anthropic (primary)\",\"KahnemanSeat\":\"anthropic (primary)\",\"AristotleSeat\":\"anthropic (primary)\"}"
+    }
+  ]
+}

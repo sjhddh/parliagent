@@ -52,11 +52,21 @@ Full parliament does NOT change default behavior. It is a separate, explicit fla
 
 151 tests across 14 files — all passing. Includes full parliament routing, seat completeness, preset reachability, substrate policy, and output language tests.
 
+## Provider Validation Status
+
+| Provider | Implemented | Live-Validated | Benchmarked | Evidence |
+|----------|------------|---------------|-------------|---------|
+| **Anthropic** | Yes | Yes (3/3 single + 10/10 full) | Yes (10 prompts × 3 modes) | `live-validation-*.json`, `benchmark-*.json` |
+| **OpenAI** | Yes | Yes (3/3 single) | No | `provider-validation-*.json` |
+| **Federated** (Anthropic + OpenAI) | Yes | Yes (4/4) | No | `provider-validation-*.json` |
+| Google AI | Yes | **No** (no key provided) | No | — |
+
 ## Result Traceability
 
 | Evidence | File |
 |----------|------|
-| Live validation (Phase 3A) | `benchmarks/results/live-validation-2026-04-02T10-22-38-929Z.json` |
+| Anthropic live validation (Phase 3A) | `benchmarks/results/live-validation-2026-04-02T10-22-38-929Z.json` |
 | Benchmark (Phase 3B) | `benchmarks/results/benchmark-2026-04-02T10-39-45-987Z.json` |
 | Full parliament benchmark | `benchmarks/results/full-parliament-2026-04-02T11-41-48-750Z.json` |
+| Provider validation (Anthropic + OpenAI + federated) | `benchmarks/results/provider-validation-2026-04-02T12-54-53-649Z.json` |
 | Benchmark analysis | `benchmarks/ANALYSIS.md` |

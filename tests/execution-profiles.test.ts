@@ -1,8 +1,24 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ModelPolicy } from "../src/runtime/policy.js";
 import { defaultRegistry } from "../src/seats/registry.js";
 
 describe("Execution Profiles", () => {
+  const savedEnv: Record<string, string | undefined> = {};
+
+  beforeEach(() => {
+    for (const key of ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GOOGLE_API_KEY"]) {
+      savedEnv[key] = process.env[key];
+      delete process.env[key];
+    }
+  });
+
+  afterEach(() => {
+    for (const [key, val] of Object.entries(savedEnv)) {
+      if (val !== undefined) process.env[key] = val;
+      else delete process.env[key];
+    }
+  });
+
   describe("substrate policy on all seats", () => {
     it("every seat has a substrate policy", () => {
       for (const seat of defaultRegistry.listAll()) {

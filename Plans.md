@@ -59,6 +59,7 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 - [x] If provider-native seats are unavailable, the system falls back deterministically to whatever configured providers exist
 - [x] A dedicated `supreme` execution profile routes all seats and synthesis to the operator-designated supreme provider (defaults to primary)
 - [x] Chamber-size modes and model-execution profiles are treated as separate controls
+- [ ] FLOCK is supported as a fourth provider option via its OpenAI-compatible endpoint
 
 ### 8. Language Control and Agent-Native Localization
 
@@ -149,7 +150,25 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 - [x] Provider validation scope documented in README and PUBLISH_CHECKLIST
 - [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios
 
-**Provider scope:** Anthropic live-validated (10/10). OpenAI and Google adapters implemented but not live-tested in v0.1.0.
+**Provider scope:** Anthropic live-validated (10/10 + benchmarked). OpenAI live-validated (3/3). Federated (Anthropic + OpenAI) live-validated (4/4). Google adapter implemented but not live-tested (no key provided).
+
+### Phase 3A.5: Full Provider Validation
+
+**Goal:** Upgrade provider support from "Anthropic battle-tested, others implemented" to evidence-backed validation across all shipped adapters.
+
+**Exit Criteria:**
+- [ ] OpenAI live-validation run completed with real API key and recorded result artifact
+- [ ] Google live-validation run completed with real API key and recorded result artifact
+- [ ] FLOCK live-validation run completed with real API key and recorded result artifact
+- [ ] At least one provider-native / multi-provider run is executed where `OpenAISeat`, `ClaudeSeat`, and `GeminiSeat` resolve to their own families under `federated`
+- [ ] At least one FLOCK-backed run is executed with a user-defined FLOCK model name
+- [ ] At least one single-provider-FLOCK run demonstrates that the full system works when only FLOCK credentials are configured
+- [ ] Provider comparison notes are documented for Anthropic, OpenAI, and Google:
+  latency, response-shape quirks, failure modes, and any degraded-seat behavior
+- [ ] Provider comparison notes also cover FLOCK as an OpenAI-compatible aggregator:
+  model naming, auth, latency, and interoperability notes
+- [ ] README, `SKILL.md`, `HANDOFF.md`, and publish docs all use the same provider-support wording
+- [ ] No public-facing docs say "implemented but not battle-tested" once validation evidence exists
 
 ### Phase 3B: Benchmarking and Evaluation ✓
 
@@ -184,6 +203,18 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 - [x] Publish checklist complete with all evidence items checked
 - [x] Package is ready for `npm publish`
 
+### Phase 4.1: Multi-Provider Release Wording
+
+**Goal:** Ensure provider-support claims are evidence-backed and consistent across all user-facing surfaces.
+
+**Exit Criteria:**
+- [ ] Provider support matrix in `README.md` matches benchmark/live-validation artifacts
+- [ ] `SKILL.md` provider-status section matches `README.md`
+- [ ] `HANDOFF.md` provider claims match current artifacts
+- [ ] Publish checklist includes explicit verification for Anthropic, OpenAI, Google, and FLOCK support status
+- [ ] If any provider remains partially validated, docs clearly distinguish:
+  implemented, live-validated, and benchmarked
+
 ### Phase 5: 33-Seat Complete Parliament ✓
 
 **Goal:** Upgrade from starter-only release to full 33-seat parliament where every seat is production-grade and invokable.
@@ -199,7 +230,7 @@ Sun Parliament is a skill-first multi-agent deliberation engine. A Speaker recei
 
 **Deferred to future:**
 - `deep` mode benchmarking — implemented but not validated with live data
-- OpenAI and Google live validation — adapters implemented, not tested
+- Google live validation — adapter implemented, not tested (no key provided)
 - Named celebrity overlays — only revisit after core engine proves value
 
 ## Full Parliament Roster (33 seats)
@@ -270,6 +301,126 @@ For the release to count as the "complete parliament" version:
 - complete parliament does **not** mean all 33 speak on every prompt
 
 This preserves practical runtime cost while making the release genuinely the full constitutional parliament.
+
+## Provider Validation Strategy
+
+Provider support should be described in three separate levels:
+
+1. `implemented`
+   Adapter exists, typechecks, unit tests pass.
+2. `live-validated`
+   Real API key used successfully in at least one end-to-end validation flow.
+3. `benchmarked`
+   Included in comparative benchmark or quality/cost/latency measurements.
+
+The docs should never blur these.
+
+### Minimum validation matrix
+
+For each provider (`Anthropic`, `OpenAI`, `Google`, `FLOCK`), run:
+
+- one `micro` ask
+- one multi-seat debate
+- one schema-valid `trace=full` run
+- one failure-path observation if feasible (timeout, bad key, retry, or degraded seat)
+
+For multi-provider behavior, run at least:
+
+- one `federated` profile call with multiple keys present
+- verify that `OpenAISeat`, `ClaudeSeat`, and `GeminiSeat` resolve to their own families when available
+- one FLOCK-backed call with a user-specified model name
+- one "FLOCK only" environment where all seats resolve cleanly through FLOCK fallback
+
+### Required artifacts
+
+Store results as reproducible evidence in `benchmarks/results/`, with one artifact per provider and at least one federated artifact.
+
+### Documentation rule
+
+Once OpenAI and Google have live validation artifacts, replace wording like:
+
+- "implemented but not battle-tested"
+
+with provider-specific status language based on evidence:
+
+- implemented
+- live-validated
+- benchmarked
+
+## FLOCK Provider Strategy
+
+FLOCK should be integrated as a **fourth provider option** using its OpenAI-compatible chat completions endpoint, not as a separate orchestration path. According to the FLOCK API docs, the base URL is `https://api.flock.io/v1`, requests are OpenAI-compatible, and authentication uses the `x-litellm-api-key` header rather than the standard OpenAI bearer token style ([FLOCK API Endpoint](https://docs.flock.io/flock-products/api-platform/api-endpoint)).
+
+### Why FLOCK matters
+
+- It gives users a fourth provider option beyond the three major model vendors.
+- It can act as a universal fallback path when a user only has one FLOCK key.
+- It can route to models from multiple ecosystems while fitting into the existing OpenAI-compatible adapter shape.
+- It reduces the risk that users without direct vendor keys are locked out of the complete parliament experience.
+
+### Integration rule
+
+Treat FLOCK as:
+
+- a first-class provider in config and runtime policy
+- an OpenAI-compatible transport at the HTTP layer
+- a user-defined model source at the model-name layer
+
+Do **not** treat FLOCK as equivalent to provider-native OpenAI / Anthropic / Google behavior for representative-seat claims. It is a transport/provider option, not evidence that native vendor APIs are unavailable or unnecessary.
+
+### Required config surface
+
+Add support for:
+
+- `FLOCK_API_KEY`
+- `FLOCK_BASE_URL` with default `https://api.flock.io/v1`
+- `FLOCK_MODEL`
+- `SUN_PARLIAMENT_PRIMARY_PROVIDER=flock`
+- `SUN_PARLIAMENT_SUPREME_PROVIDER=flock`
+
+Config file equivalents should also exist.
+
+### Model naming
+
+FLOCK model names should be explicitly user-configurable because the endpoint can expose many upstream models. The runtime must not guess or hardcode a single FLOCK model as globally correct for all users.
+
+### Safe interaction with existing logic
+
+The most efficient design is:
+
+- implement one FLOCK adapter that conforms to the existing adapter interface
+- keep seat substrate policies unchanged
+- allow FLOCK to satisfy fallback chains via `primary` / `any-available`
+- allow `supreme` to point at FLOCK if the operator wants one designated provider for the whole debate
+
+### Testing requirements
+
+Minimum FLOCK validation should include:
+
+- one `micro` ask with `FLOCK_MODEL`
+- one multi-seat debate
+- one `trace=full` schema-valid run
+- one run where FLOCK is the **only** configured provider
+- one run where FLOCK is selected as `primary`
+- one run where FLOCK is selected as `supreme`
+
+### Documentation sync requirements
+
+When FLOCK lands, update:
+
+- `README.md`
+- `SKILL.md`
+- `HANDOFF.md`
+- publish checklist
+- provider status matrix
+
+They must all explain:
+
+- that FLOCK is OpenAI-compatible
+- that it uses `x-litellm-api-key`
+- that model names are user-configurable
+- that FLOCK can act as a universal fallback provider
+- that provider-native seat semantics are still distinct from vendor-native APIs
 
 ## Seat Substrate Policy
 

@@ -204,4 +204,11 @@ A hard-blocked safety prompt returns a response with `activatedSeats: []` and a 
 
 ## Provider Status
 
-Anthropic is live-validated and recommended for v0.1.0. OpenAI and Google adapters are implemented but not live-tested. The system uses whichever provider has a key set (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_API_KEY`).
+| Provider | Status |
+|----------|--------|
+| Anthropic | Live-validated + benchmarked |
+| OpenAI | Live-validated |
+| Google AI | Implemented, not live-validated |
+| Federated (Anthropic + OpenAI) | Live-validated |
+
+The system uses whichever provider has a key set (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GOOGLE_API_KEY`). Anthropic and OpenAI are both production-validated. Google adapter is implemented but untested (no key was available).
