@@ -49,15 +49,16 @@ export function buildMinorityReport(
 ): string | undefined {
   if (decisionType === "consensus") return undefined;
 
-  const majority = statements.reduce<Record<string, number>>(
+  const weightedStances = statements.reduce<Record<string, number>>(
     (acc, s) => {
-      acc[s.stance] = (acc[s.stance] ?? 0) + 1;
+      const weight = s.confidenceScore ?? ((s.confidence - 1) / 4);
+      acc[s.stance] = (acc[s.stance] ?? 0) + weight;
       return acc;
     },
     {},
   );
 
-  const majorityStance = Object.entries(majority).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const majorityStance = Object.entries(weightedStances).sort((a, b) => b[1] - a[1])[0]?.[0];
   const minorities = statements.filter((s) => s.stance !== majorityStance && s.stance !== "uncertain");
   if (minorities.length === 0) return undefined;
 

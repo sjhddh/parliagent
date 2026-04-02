@@ -30,6 +30,9 @@ export {
   AgendaStage,
   StopReason,
   RoundResult,
+  ArgumentNodeSchema,
+  ArgumentEdgeSchema,
+  ArgumentDAGSchema,
   DeliberationTrace,
 } from "./trace.js";
 

@@ -13,6 +13,5 @@ export const reviewCommand = addCommonOptions(
     trace: "summary",
     answerMode: "review",
     taskType: "analysis",
-    progressPrefix: "Review panel",
   }),
 );

@@ -5,6 +5,7 @@ import type {
   CompletionResult,
 } from "../adapter.js";
 import { fetchWithRetry } from "../fetch.js";
+import { normalizeSchema } from "../schema-middleware.js";
 
 /**
  * Models that require max_completion_tokens instead of max_tokens.
@@ -77,7 +78,7 @@ export class OpenAIAdapter implements ModelAdapter {
                   json_schema: {
                     name: options.jsonSchema.name,
                     strict: true,
-                    schema: options.jsonSchema.schema,
+                    schema: normalizeSchema(options.jsonSchema.schema),
                   },
                 },
               }

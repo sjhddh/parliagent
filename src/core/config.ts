@@ -1,4 +1,4 @@
-import type { DebateMode, TaskType } from "../contracts/request.js";
+import type { DebateMode, ExecutionProfile, TaskType } from "../contracts/request.js";
 
 export interface ModeConfig {
   maxRounds: number;
@@ -7,6 +7,22 @@ export interface ModeConfig {
   defaultMaxTokens: number;
   defaultMaxLatencyMs: number;
   defaultMaxConcurrentSeats: number;
+}
+
+export interface ProfileConcurrencyConfig {
+  maxConcurrentSeats: number;
+  perProviderLimit: number;
+  retries: number;
+}
+
+export const PROFILE_CONCURRENCY: Record<ExecutionProfile, ProfileConcurrencyConfig> = {
+  federated: { maxConcurrentSeats: 10, perProviderLimit: 5, retries: 3 },
+  supreme:   { maxConcurrentSeats: 3,  perProviderLimit: 3, retries: 5 },
+  available: { maxConcurrentSeats: 6,  perProviderLimit: 4, retries: 3 },
+};
+
+export function getProfileConcurrency(profile: ExecutionProfile): ProfileConcurrencyConfig {
+  return PROFILE_CONCURRENCY[profile];
 }
 
 export const MODE_CONFIGS: Record<DebateMode, ModeConfig> = {

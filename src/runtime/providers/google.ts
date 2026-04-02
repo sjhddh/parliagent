@@ -5,6 +5,7 @@ import type {
   CompletionResult,
 } from "../adapter.js";
 import { fetchWithRetry } from "../fetch.js";
+import { normalizeSchema } from "../schema-middleware.js";
 
 export class GoogleAdapter implements ModelAdapter {
   readonly providerId = "google";
@@ -54,7 +55,7 @@ export class GoogleAdapter implements ModelAdapter {
             temperature: options?.temperature ?? 0.7,
             maxOutputTokens: options?.maxTokens ?? 1024,
             ...(options?.jsonMode || options?.jsonSchema ? { responseMimeType: "application/json" } : {}),
-            ...(options?.jsonSchema ? { responseSchema: options.jsonSchema.schema } : {}),
+            ...(options?.jsonSchema ? { responseSchema: normalizeSchema(options.jsonSchema.schema) } : {}),
           },
         }),
       },

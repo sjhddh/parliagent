@@ -21,6 +21,7 @@ const STATEMENT_PROMPT = `You are participating in a structured parliamentary de
   "claimProvenance": ["supported" | "inferred" | "speculative" | "missing_evidence"],
   "objections": ["Objection, if any"],
   "confidence": 1-5,
+  "confidenceScore": 0.0-1.0,
   "warnings": ["Only if there are safety/security/legal concerns"]
 }
 
@@ -29,6 +30,7 @@ Rules:
 - "claimProvenance" must match claims array length — classify each claim: "supported" (you have concrete evidence), "inferred" (logical deduction), "speculative" (hypothesis), "missing_evidence" (would need verification)
 - "objections" can have 0-2 items — unresolved concerns about the motion or other positions
 - "confidence" is 1 (very uncertain) to 5 (very confident)
+- "confidenceScore" is 0.0 (no confidence) to 1.0 (fully confident) — a continuous version of confidence
 - "warnings" is optional — only include if there are genuine safety, security, legal, or ethical red flags
 - Be substantive and specific, not generic
 - Take a clear position — do not hedge everything into "mixed" unless genuinely torn`;

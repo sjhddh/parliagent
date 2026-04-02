@@ -1,5 +1,5 @@
 import { Speaker } from "../core/speaker.js";
-import type { ParliagentRequest } from "../contracts/request.js";
+import { ParliagentRequest } from "../contracts/request.js";
 import type {
   DebateMode,
   TaskType,
@@ -7,7 +7,7 @@ import type {
   TraceLevel,
   ExecutionProfile,
 } from "../contracts/request.js";
-import { formatResponse, formatProgress } from "./format.js";
+import { formatResponse, formatStreamEvent } from "./format.js";
 import { loadConfig, toRuntimeConfig } from "../config.js";
 
 export interface CommandDefaults {
@@ -15,7 +15,6 @@ export interface CommandDefaults {
   trace: TraceLevel;
   answerMode: AnswerMode;
   taskType?: TaskType;
-  progressPrefix?: string;
 }
 
 export async function runDebate(
@@ -65,35 +64,35 @@ export async function runDebate(
     seed: opts.seed as string | undefined,
   };
 
-  const prefix = defaults.progressPrefix ?? "Chamber";
+  const parsed = ParliagentRequest.safeParse(request);
+  if (!parsed.success) {
+    console.error(`Invalid options: ${parsed.error.issues.map((i) => i.message).join(", ")}`);
+    process.exit(1);
+  }
+  const validatedRequest = parsed.data;
 
-  const speaker = new Speaker(toRuntimeConfig(config), undefined, {
-    onSeatSelected: (seats) => {
-      if (!opts.json) {
-        formatProgress(`${prefix}: ${seats.filter((s) => s !== "Speaker").join(", ")}`);
-      }
-    },
-    onRoundStart: (round) => {
-      if (!opts.json) formatProgress(`Round ${round}...`);
-    },
-    onSeatSpeaking: (seatId, round) => {
-      if (!opts.json) formatProgress(`  ${seatId} speaking (round ${round})`);
-    },
-    onRoundComplete: (round, result) => {
-      if (!opts.json) {
-        formatProgress(
-          `  Round ${round} — agreement: ${Math.round(result.agreementRatio * 100)}%, objections: ${result.objectionCount}`,
-        );
-      }
-    },
-    onDebateEnd: (reason) => {
-      if (!opts.json) formatProgress(`Complete: ${reason}`);
-    },
-  });
+  const speaker = new Speaker(toRuntimeConfig(config));
 
   try {
-    const response = await speaker.debate(request);
-    console.log(formatResponse(response, !!opts.json));
+    if (opts.json) {
+      const response = await speaker.debate(validatedRequest);
+      console.log(formatResponse(response, true));
+    } else {
+      const stream = speaker.debateStream(validatedRequest);
+      let response;
+      while (true) {
+        const { value, done } = await stream.next();
+        if (done) {
+          response = value;
+          break;
+        }
+        const line = formatStreamEvent(value);
+        if (line) process.stderr.write(line + "\n");
+      }
+      if (response) {
+        console.log(formatResponse(response, false));
+      }
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`);

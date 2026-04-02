@@ -13,6 +13,5 @@ export const planCommand = addCommonOptions(
     trace: "summary",
     answerMode: "plan",
     taskType: "planning",
-    progressPrefix: "Planning chamber",
   }),
 );

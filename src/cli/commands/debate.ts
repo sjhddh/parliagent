@@ -14,6 +14,5 @@ export const debateCommand = addCommonOptions(
     mode: "balanced",
     trace: "full",
     answerMode: "answer",
-    progressPrefix: "Chamber assembled",
   }),
 );

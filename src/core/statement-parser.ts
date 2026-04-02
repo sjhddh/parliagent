@@ -7,7 +7,7 @@ export const STATEMENT_JSON_SCHEMA = {
   schema: {
     type: "object",
     additionalProperties: false,
-    required: ["stance", "summary", "claims", "claimProvenance", "objections", "confidence"],
+    required: ["stance", "summary", "claims", "claimProvenance", "objections", "confidence", "confidenceScore"],
     properties: {
       stance: { type: "string", enum: ["support", "mixed", "oppose", "uncertain"] },
       summary: { type: "string" },
@@ -32,6 +32,11 @@ export const STATEMENT_JSON_SCHEMA = {
         type: "integer",
         minimum: 1,
         maximum: 5,
+      },
+      confidenceScore: {
+        type: "number",
+        minimum: 0,
+        maximum: 1,
       },
       warnings: {
         type: "array",
@@ -216,6 +221,9 @@ export function parseStatement(raw: string, seatId: string, round: number): Seat
       }
     }
 
+    const confidence = validateConfidence(parsed.confidence);
+    const confidenceScore = validateConfidenceScore(parsed.confidenceScore, confidence);
+
     return {
       seatId,
       round,
@@ -226,7 +234,8 @@ export function parseStatement(raw: string, seatId: string, round: number): Seat
       objections: Array.isArray(parsed.objections)
         ? parsed.objections.slice(0, 2).map(String)
         : [],
-      confidence: validateConfidence(parsed.confidence),
+      confidence,
+      confidenceScore,
       ...(Array.isArray(parsed.warnings) && parsed.warnings.length > 0
         ? { warnings: parsed.warnings.map(String) }
         : {}),
@@ -240,6 +249,7 @@ export function parseStatement(raw: string, seatId: string, round: number): Seat
       claims: ["Unable to parse structured response"],
       objections: [],
       confidence: 2,
+      confidenceScore: 0.25,
     };
   }
 }
@@ -253,6 +263,12 @@ function validateConfidence(c: unknown): 1 | 2 | 3 | 4 | 5 {
   const n = Number(c);
   if (n >= 1 && n <= 5) return Math.round(n) as 1 | 2 | 3 | 4 | 5;
   return 3;
+}
+
+function validateConfidenceScore(raw: unknown, confidence: number): number {
+  const n = Number(raw);
+  if (!Number.isNaN(n) && n >= 0 && n <= 1) return Math.round(n * 100) / 100;
+  return Math.round(((confidence - 1) / 4) * 100) / 100;
 }
 
 export function isDegradedParse(stmt: SeatStatement): boolean {
@@ -284,6 +300,7 @@ export function fallbackStatement(
     claims: ["Seat could not produce a response"],
     objections: [],
     confidence: 1,
+    confidenceScore: 0,
     warnings: [`Seat ${seatId} failed to respond`],
   };
 }

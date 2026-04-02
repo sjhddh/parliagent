@@ -11,3 +11,5 @@ export { GoogleAdapter } from "./providers/google.js";
 export { FlockAdapter } from "./providers/flock.js";
 export { ModelPolicy } from "./policy.js";
 export type { ModelAssignment, RuntimeConfig } from "./policy.js";
+export { normalizeMessages } from "./messages.js";
+export { normalizeSchema } from "./schema-middleware.js";

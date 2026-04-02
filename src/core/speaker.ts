@@ -6,7 +6,9 @@ import { ModelPolicy } from "../runtime/policy.js";
 import type { RuntimeConfig } from "../runtime/policy.js";
 import { defaultRegistry, SeatRegistry } from "../seats/registry.js";
 import { selectChamber, selectFullParliagent } from "./routing.js";
-import { FULL_PARLIAGENT_CONFIG, MODE_CONFIGS, shouldUpgradeSecurity } from "./config.js";
+import { FULL_PARLIAGENT_CONFIG, MODE_CONFIGS, getProfileConcurrency, shouldUpgradeSecurity } from "./config.js";
+import { computeCacheKey, defaultCacheConfig, readCache, writeCache } from "./cache.js";
+import type { CacheConfig } from "./cache.js";
 import { evaluateConvergence, getDisputeParticipants } from "./convergence.js";
 import { addTokens, advanceRound, checkBudget, createBudget } from "./budget.js";
 import { buildSynthesisPrompt, buildTraceText, getSynthesisMaxTokens } from "./synthesis.js";
@@ -20,6 +22,13 @@ import {
   extractWarnings,
 } from "./decision-semantics.js";
 import { executeRound, formatDisputeContext } from "./round-execution.js";
+import { isEntropyConverged } from "./entropy.js";
+import { buildArgumentDAG, describeCriticalPath } from "./argument-dag.js";
+import { defaultHarvesterConfig, harvestDebateExhaust } from "./harvester.js";
+import type { HarvesterConfig } from "./harvester.js";
+import type { DebateEvent } from "./events.js";
+
+export const SPEAKER_SEAT_ID = "Speaker";
 
 export interface SpeakerCallbacks {
   onSeatSelected?: (seats: string[]) => void;
@@ -29,11 +38,18 @@ export interface SpeakerCallbacks {
   onDebateEnd?: (reason: StopReason) => void;
 }
 
+type EventSink = (event: DebateEvent) => void;
+
+interface DebateContext {
+  highestStage: AgendaStage;
+}
+
 export class Speaker {
   private registry: SeatRegistry;
   private modelPolicy: ModelPolicy;
   private callbacks: SpeakerCallbacks;
-  private highestStage: AgendaStage = "opening";
+  private cacheConfig: CacheConfig;
+  private harvesterConfig: HarvesterConfig;
 
   private static readonly STAGE_ORDER: Record<AgendaStage, number> = {
     opening: 0,
@@ -45,10 +61,13 @@ export class Speaker {
     config?: RuntimeConfig,
     registry?: SeatRegistry,
     callbacks?: SpeakerCallbacks,
+    cacheConfig?: Partial<CacheConfig>,
   ) {
     this.registry = registry ?? defaultRegistry;
     this.modelPolicy = new ModelPolicy(config);
     this.callbacks = callbacks ?? {};
+    this.cacheConfig = { ...defaultCacheConfig(), ...cacheConfig };
+    this.harvesterConfig = defaultHarvesterConfig();
   }
 
   static withPolicy(policy: ModelPolicy, registry?: SeatRegistry, callbacks?: SpeakerCallbacks): Speaker {
@@ -58,7 +77,52 @@ export class Speaker {
   }
 
   async debate(request: ParliagentRequest): Promise<ParliagentResponse> {
-    this.highestStage = "opening";
+    const events: DebateEvent[] = [];
+    const sink: EventSink = (event) => {
+      events.push(event);
+      this.dispatchCallback(event);
+    };
+    return this.runDebatePipeline(request, sink);
+  }
+
+  async *debateStream(request: ParliagentRequest): AsyncGenerator<DebateEvent, ParliagentResponse> {
+    const eventQueue: DebateEvent[] = [];
+    let resolveWait: (() => void) | undefined;
+    let pipelineDone = false;
+    let pipelineResult: ParliagentResponse | undefined;
+    let pipelineError: Error | undefined;
+
+    const sink: EventSink = (event) => {
+      eventQueue.push(event);
+      resolveWait?.();
+    };
+
+    const pipelinePromise = this.runDebatePipeline(request, sink)
+      .then((result) => { pipelineResult = result; pipelineDone = true; resolveWait?.(); })
+      .catch((err) => { pipelineError = err; pipelineDone = true; resolveWait?.(); });
+
+    while (true) {
+      while (eventQueue.length > 0) {
+        yield eventQueue.shift()!;
+      }
+      if (pipelineDone) break;
+      await new Promise<void>((resolve) => { resolveWait = resolve; });
+    }
+
+    while (eventQueue.length > 0) {
+      yield eventQueue.shift()!;
+    }
+
+    if (pipelineError) throw pipelineError;
+    await pipelinePromise;
+    return pipelineResult!;
+  }
+
+  private async runDebatePipeline(
+    request: ParliagentRequest,
+    emit: EventSink,
+  ): Promise<ParliagentResponse> {
+    const ctx: DebateContext = { highestStage: "opening" };
 
     if (!this.modelPolicy.isReady()) {
       throw new Error(
@@ -100,8 +164,16 @@ export class Speaker {
           this.registry,
         );
 
-    const speakingSeatIds = routing.selectedSeatIds.filter((id) => id !== "Speaker");
-    this.callbacks.onSeatSelected?.(routing.selectedSeatIds);
+    const speakingSeatIds = routing.selectedSeatIds.filter((id) => id !== SPEAKER_SEAT_ID);
+
+    const cacheKey = computeCacheKey(request, routing.selectedSeatIds);
+    const cached = readCache(cacheKey, this.cacheConfig);
+    if (cached) {
+      emit({ type: "cache_hit", hash: cacheKey });
+      return cached;
+    }
+
+    emit({ type: "seat_selected", seats: routing.selectedSeatIds });
 
     const seatProfiles = speakingSeatIds.map((id) => this.registry.getOrThrow(id));
     const execProfile: ExecutionProfile = request.executionProfile ?? "federated";
@@ -111,8 +183,9 @@ export class Speaker {
     const maxTokens = request.constraints?.maxTokens ?? modeConfig.defaultMaxTokens;
     const maxLatencyMs = request.constraints?.maxLatencyMs ?? modeConfig.defaultMaxLatencyMs;
     const maxRounds = request.constraints?.maxRounds ?? modeConfig.maxRounds;
+    const profileConc = getProfileConcurrency(execProfile);
     const maxConcurrentSeats =
-      request.constraints?.maxConcurrentSeats ?? modeConfig.defaultMaxConcurrentSeats;
+      request.constraints?.maxConcurrentSeats ?? Math.min(modeConfig.defaultMaxConcurrentSeats, profileConc.maxConcurrentSeats);
 
     let budget = createBudget({ maxTokens, maxLatencyMs, maxRounds });
     const allRounds: RoundResult[] = [];
@@ -122,18 +195,18 @@ export class Speaker {
     let totalDegradedParses = 0;
 
     for (let round = 1; round <= maxRounds; round++) {
-      this.callbacks.onRoundStart?.(round);
+      const previousStatements = allRounds.flatMap((r) => r.statements);
+      const priorDisagreements = allRounds.length > 0 ? allRounds[allRounds.length - 1].disagreements : undefined;
+      let stage = this.determineStage(ctx, round, priorDisagreements);
+
+      emit({ type: "round_start", round, stage });
 
       const budgetCheck = checkBudget(budget);
       if (budgetCheck.exceeded) {
         stopReason = budgetCheck.reason!;
-        this.callbacks.onDebateEnd?.(stopReason);
+        emit({ type: "debate_end", reason: stopReason });
         break;
       }
-
-      const previousStatements = allRounds.flatMap((r) => r.statements);
-      const priorDisagreements = allRounds.length > 0 ? allRounds[allRounds.length - 1].disagreements : undefined;
-      let stage = this.determineStage(round, priorDisagreements);
 
       let roundSeats: SeatProfile[] = seatProfiles;
       let disputeContext: string | undefined;
@@ -159,9 +232,18 @@ export class Speaker {
         disputeContext,
         evidenceBundle: request.evidenceBundle,
         maxConcurrentSeats,
-        providerConcurrency: this.modelPolicy.getProviderConcurrency?.() ?? {},
-        onSeatSpeaking: this.callbacks.onSeatSpeaking,
+        providerConcurrency: this.mergeProviderConcurrency(execProfile),
+        onSeatSpeaking: (seatId, r) => {
+          emit({ type: "seat_speaking", seatId, round: r });
+        },
       });
+
+      for (const stmt of roundResult.statements) {
+        emit({ type: "seat_responded", seatId: stmt.seatId, statement: stmt });
+        for (const objection of stmt.objections) {
+          emit({ type: "objection_raised", seatId: stmt.seatId, objection });
+        }
+      }
 
       if (roundResult.failedSeats.length > 0) {
         seatFailureWarnings.push(
@@ -174,12 +256,14 @@ export class Speaker {
       totalParseRecoveries += roundResult.parseRecoveryCount;
       totalDegradedParses += roundResult.degradedParseCount;
 
+      const hasEvidence = (request.evidenceBundle ?? []).length > 0;
       const convergence = evaluateConvergence({
         statements: roundResult.statements,
         modeConfig,
         currentRound: round,
         priorDisagreements,
         stage,
+        hasEvidence,
       });
 
       const enrichedRoundResult: RoundResult = {
@@ -189,11 +273,17 @@ export class Speaker {
       };
 
       allRounds.push(enrichedRoundResult);
-      this.callbacks.onRoundComplete?.(round, enrichedRoundResult);
+      emit({ type: "round_complete", round, result: enrichedRoundResult });
 
       if (convergence.shouldStop && convergence.reason) {
         stopReason = convergence.reason;
-        this.callbacks.onDebateEnd?.(stopReason);
+        emit({ type: "debate_end", reason: stopReason });
+        break;
+      }
+
+      if (isEntropyConverged(allRounds)) {
+        stopReason = "entropy_converged";
+        emit({ type: "debate_end", reason: stopReason });
         break;
       }
     }
@@ -203,9 +293,13 @@ export class Speaker {
 
     const collapseWarnings = detectAntiCollapse(finalStatements);
     const decisionType = determineDecisionType(lastRound);
+    emit({ type: "consensus_reached", decisionType });
+
     const answerMode: AnswerMode = request.answerMode ?? "answer";
     const outputLength: OutputLength = request.constraints?.outputLength ?? "standard";
     const outputLanguage = request.outputLanguage;
+
+    emit({ type: "synthesis_start" });
 
     const finalAnswer = await this.synthesize(
       request.prompt,
@@ -217,6 +311,8 @@ export class Speaker {
       outputLanguage,
     );
 
+    emit({ type: "synthesis_complete", answer: finalAnswer });
+
     const minorityReport = buildMinorityReport(finalStatements, decisionType);
     const openQuestions = extractOpenQuestions(allRounds);
     const allWarnings = [
@@ -226,7 +322,7 @@ export class Speaker {
       ...seatFailureWarnings,
     ];
 
-    return {
+    const response: ParliagentResponse = {
       finalAnswer,
       decisionType,
       activatedSeats: routing.selectedSeatIds,
@@ -240,30 +336,63 @@ export class Speaker {
           }
         : {}),
       ...(request.trace === "full"
-        ? {
-            traceArtifact: {
-              selectedSeats: routing.selectedSeatIds,
-              routingReason: routing.routingReason,
-              rounds: allRounds,
-              stopReason,
-              modelAssignments,
-              totalTokensUsed: budget.tokensUsed,
-              totalLatencyMs: Date.now() - budget.startTime,
-              totalParseRecoveries,
-              totalDegradedParses,
-            },
-          }
+        ? (() => {
+            const dag = buildArgumentDAG(allRounds);
+            return {
+              traceArtifact: {
+                selectedSeats: routing.selectedSeatIds,
+                routingReason: routing.routingReason,
+                rounds: allRounds,
+                stopReason,
+                modelAssignments,
+                totalTokensUsed: budget.tokensUsed,
+                totalLatencyMs: Date.now() - budget.startTime,
+                totalParseRecoveries,
+                totalDegradedParses,
+                argumentDAG: dag,
+                dagPath: describeCriticalPath(dag),
+              },
+            };
+          })()
         : {}),
     };
+
+    writeCache(cacheKey, request, response, this.cacheConfig, routing.selectedSeatIds);
+    harvestDebateExhaust(
+      request.prompt, allRounds, decisionType, this.harvesterConfig,
+      response.traceArtifact?.argumentDAG,
+    );
+    return response;
+  }
+
+  private dispatchCallback(event: DebateEvent): void {
+    switch (event.type) {
+      case "seat_selected": this.callbacks.onSeatSelected?.(event.seats); break;
+      case "round_start": this.callbacks.onRoundStart?.(event.round); break;
+      case "seat_speaking": this.callbacks.onSeatSpeaking?.(event.seatId, event.round); break;
+      case "round_complete": this.callbacks.onRoundComplete?.(event.round, event.result); break;
+      case "debate_end": this.callbacks.onDebateEnd?.(event.reason); break;
+    }
+  }
+
+  private mergeProviderConcurrency(profile: ExecutionProfile): Partial<Record<string, number>> {
+    const explicit = this.modelPolicy.getProviderConcurrency?.() ?? {};
+    const profileConc = getProfileConcurrency(profile);
+    const merged: Partial<Record<string, number>> = {};
+    for (const provider of this.modelPolicy.availableProviders) {
+      merged[provider] = explicit[provider] ?? profileConc.perProviderLimit;
+    }
+    return merged;
   }
 
   /**
    * Determine stage for this round. Stages progress monotonically:
-   * opening → rebuttal → resolution. Never regresses.
+   * opening -> rebuttal -> resolution. Never regresses.
+   * Uses per-debate context to avoid instance-level state.
    */
-  private determineStage(round: number, priorDisagreements?: DisagreementRecord[]): AgendaStage {
+  private determineStage(ctx: DebateContext, round: number, priorDisagreements?: DisagreementRecord[]): AgendaStage {
     if (round === 1) {
-      this.highestStage = "opening";
+      ctx.highestStage = "opening";
       return "opening";
     }
 
@@ -278,10 +407,10 @@ export class Speaker {
       }
     }
 
-    if (Speaker.STAGE_ORDER[candidate] < Speaker.STAGE_ORDER[this.highestStage]) {
-      candidate = this.highestStage;
+    if (Speaker.STAGE_ORDER[candidate] < Speaker.STAGE_ORDER[ctx.highestStage]) {
+      candidate = ctx.highestStage;
     }
-    this.highestStage = candidate;
+    ctx.highestStage = candidate;
     return candidate;
   }
 

@@ -5,6 +5,7 @@ import type {
   CompletionResult,
 } from "../adapter.js";
 import { fetchWithRetry } from "../fetch.js";
+import { normalizeSchema } from "../schema-middleware.js";
 
 /**
  * FLOCK adapter — OpenAI-compatible API with FLOCK-specific auth and defaults.
@@ -63,7 +64,7 @@ export class FlockAdapter implements ModelAdapter {
                   json_schema: {
                     name: options.jsonSchema.name,
                     strict: true,
-                    schema: options.jsonSchema.schema,
+                    schema: normalizeSchema(options.jsonSchema.schema),
                   },
                 },
               }

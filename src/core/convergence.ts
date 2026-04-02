@@ -8,6 +8,7 @@ export interface ConvergenceInput {
   currentRound: number;
   priorDisagreements?: DisagreementRecord[];
   stage?: AgendaStage;
+  hasEvidence?: boolean;
 }
 
 export interface ConvergenceResult {
@@ -191,23 +192,52 @@ function deduplicateDisagreements(
 /**
  * Compute round-level convergence metrics including resolution tracking.
  */
+/**
+ * Compute effective weight for a seat, optionally applying evidence adherence penalty.
+ * When evidence is present and a seat's claims rely on speculative/missing_evidence provenance,
+ * that seat's weight is reduced by 80%.
+ */
+function effectiveWeight(s: SeatStatement, hasEvidence: boolean): number {
+  const base = s.confidenceScore ?? ((s.confidence - 1) / 4);
+  if (!hasEvidence || !s.claimProvenance) return base;
+
+  const weakCount = s.claimProvenance.filter(
+    (p) => p === "speculative" || p === "missing_evidence",
+  ).length;
+  const ratio = s.claimProvenance.length > 0 ? weakCount / s.claimProvenance.length : 0;
+  if (ratio > 0.5) return base * 0.1;
+  if (ratio > 0) return base * (1 - ratio * 0.8);
+  return base;
+}
+
 export function computeRoundResult(
   round: number,
   statements: SeatStatement[],
   priorDisagreements?: DisagreementRecord[],
   stage?: AgendaStage,
+  hasEvidence?: boolean,
 ): RoundResult {
   const disagreements = extractDisagreements(statements, priorDisagreements);
 
   const stances = statements.map((s) => s.stance);
-  const supportCount = stances.filter((s) => s === "support").length;
-  const opposeCount = stances.filter((s) => s === "oppose").length;
-  const mixedCount = stances.filter((s) => s === "mixed").length;
+  const evidencePresent = hasEvidence ?? false;
 
-  const totalSeats = statements.length;
+  const weightOf = (s: SeatStatement) => effectiveWeight(s, evidencePresent);
+
+  const weightedSupport = statements
+    .filter((s) => s.stance === "support")
+    .reduce((sum, s) => sum + weightOf(s), 0);
+  const weightedOppose = statements
+    .filter((s) => s.stance === "oppose")
+    .reduce((sum, s) => sum + weightOf(s), 0);
+  const weightedMixed = statements
+    .filter((s) => s.stance === "mixed")
+    .reduce((sum, s) => sum + weightOf(s), 0);
+  const totalWeight = statements.reduce((sum, s) => sum + weightOf(s), 0);
+
   const agreementRatio =
-    totalSeats > 0
-      ? Math.max(supportCount, opposeCount, mixedCount) / totalSeats
+    totalWeight > 0
+      ? Math.max(weightedSupport, weightedOppose, weightedMixed) / totalWeight
       : 0;
 
   const objectionCount = statements.reduce(
@@ -255,6 +285,7 @@ export function evaluateConvergence(
     input.statements,
     input.priorDisagreements,
     input.stage,
+    input.hasEvidence,
   );
 
   if (

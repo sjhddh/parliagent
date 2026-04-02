@@ -14,6 +14,5 @@ export const askCommand = addCommonOptions(
     mode: "micro",
     trace: "summary",
     answerMode: "answer",
-    progressPrefix: "Chamber",
   }),
 );

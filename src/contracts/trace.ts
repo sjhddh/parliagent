@@ -20,6 +20,7 @@ export const SeatStatement = z.object({
   claimProvenance: z.array(ClaimProvenance).optional(),
   objections: z.array(z.string()).max(2),
   confidence: z.number().int().min(1).max(5),
+  confidenceScore: z.number().min(0).max(1).optional(),
   warnings: z.array(z.string()).optional(),
 }).refine(
   (data) => !data.claimProvenance || data.claimProvenance.length === data.claims.length,
@@ -61,6 +62,7 @@ export const StopReason = z.enum([
   "round_limit",
   "blocking_warning",
   "issues_resolved",
+  "entropy_converged",
 ]);
 export type StopReason = z.infer<typeof StopReason>;
 
@@ -81,6 +83,29 @@ export const RoundResult = z.object({
 });
 export type RoundResult = z.infer<typeof RoundResult>;
 
+export const ArgumentNodeSchema = z.object({
+  id: z.string(),
+  seatId: z.string(),
+  claim: z.string(),
+  provenance: ClaimProvenance,
+  confidence: z.number(),
+  round: z.number().int(),
+  resilience: z.number(),
+});
+
+export const ArgumentEdgeSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  type: z.enum(["support", "attack"]),
+  strength: z.number(),
+});
+
+export const ArgumentDAGSchema = z.object({
+  nodes: z.array(ArgumentNodeSchema),
+  edges: z.array(ArgumentEdgeSchema),
+  criticalPath: z.array(z.string()),
+});
+
 export const DeliberationTrace = z.object({
   selectedSeats: z.array(z.string()),
   routingReason: z.string(),
@@ -91,5 +116,7 @@ export const DeliberationTrace = z.object({
   totalLatencyMs: z.number().int().optional(),
   totalParseRecoveries: z.number().int().optional(),
   totalDegradedParses: z.number().int().optional(),
+  argumentDAG: ArgumentDAGSchema.optional(),
+  dagPath: z.string().optional(),
 });
 export type DeliberationTrace = z.infer<typeof DeliberationTrace>;

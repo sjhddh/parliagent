@@ -19,10 +19,43 @@
 | **v0.4.0 Reliability + Evidence** | **complete** | JSON mode, evidence bundles, baseline comparison, convergence fix |
 | **v0.4.1 Review Fixes** | **complete** | Retry-with-feedback, Anthropic JSON prefill, convergence calibration |
 | **vNext Reliability-First Refactor (unreleased)** | **complete on main** | Speaker decomposition, provider-native schema path, decision calibration, concurrency governance |
+| **v1.0.0 V2 Upgrade** | **complete on main** | Infrastructure hardening, streaming, weighted consensus, entropy halting, argument DAG, harvester, Parliagent class |
 
-## Current Version: v0.4.1 (with unreleased vNext reliability refactor on main)
+## Current Version: v1.0.0
 
-Architecture: solid. Reliability: maturing. Not yet "fully robust" for large-chamber runs.
+Production-grade multi-agent debate framework with streaming output, weighted consensus, entropy-based halting, deterministic caching, argument DAG, and debate exhaust harvesting.
+
+## v1.0.0 Summary
+
+### Infrastructure Hardening
+- Message role normalization utility (`src/runtime/messages.ts`)
+- Enhanced 429 retry: 3 retries default, `Retry-After` header parsing, jitter
+- Dynamic concurrency by execution profile: federated(10), supreme(3), available(6)
+- Deterministic cache layer (`src/core/cache.ts`, opt-in via `PARLIAGENT_CACHE=on`)
+- Schema validator middleware for cross-provider JSON schema compatibility
+
+### Streaming and UX
+- Typed event system (`DebateEventBus`, `DebateEvent` discriminated union)
+- `AsyncGenerator debateStream()` on Speaker for real-time event yielding
+- CLI typewriter renderer with per-seat status, objection display, and synthesis progress
+
+### Consensus Evolution
+- `confidenceScore` (0-1) field on `SeatStatement` schema and prompts
+- Weighted consensus: `agreementRatio` now uses confidence-weighted voting
+- Evidence adherence penalty: seats with speculative/missing_evidence claims get weight reduced
+- Information entropy halting: stops debate when Jaccard distance of claims < 0.15 (logical stagnation)
+
+### Advanced Architecture
+- Argument DAG: claims as nodes, objections as attack edges, supporting claims as support edges
+- Proof of Logic: node resilience = `confidence * (1 + supports) / (1 + attacks)`
+- Critical path extraction via greedy BFS on highest-resilience nodes
+- DAG and `dagPath` included in `traceArtifact` when `trace: "full"`
+- Debate Exhaust Harvester: captures reasoning traces in ShareGPT JSONL format
+
+### New API Surface
+- `Parliagent` class: stateful session with `.on()` event listeners and string-prompt convenience
+- `Strategy` enum: `DYNAMIC_ADVERSARIAL`, `ROUND_ROBIN`, `ENTROPY_CONVERGENCE`, `ROUND_LIMIT`
+- Top-level `debate()` and `debateStream()` exports preserved for backward compatibility
 
 ## v0.4.x Summary
 
