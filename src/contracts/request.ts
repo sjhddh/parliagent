@@ -48,7 +48,7 @@ export const ParliagentRequest = z.object({
   prompt: z.string().min(1),
   mode: DebateMode.optional().default("micro"),
   executionProfile: ExecutionProfile.optional().default("federated"),
-  fullParliagent: z.boolean().optional().default(false),
+  fullParliagent: z.boolean().optional().default(true),
   taskType: TaskType.optional(),
   answerMode: AnswerMode.optional().default("answer"),
   outputLanguage: z.string().optional(),
