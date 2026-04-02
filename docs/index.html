@@ -450,7 +450,7 @@ hr {
 
 <p data-i18n="single1">Anthropic's engineering team <a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">recently documented</a> a key failure mode they encountered while building long-running coding agents: <strong>self-evaluation doesn't work.</strong></p>
 
-<blockquote>
+<blockquote data-i18n="bq_anthropic">
   "When asked to evaluate work they've produced, agents tend to respond by confidently praising the work — even when, to a human observer, the quality is obviously mediocre."
 </blockquote>
 
@@ -597,7 +597,7 @@ if (currentRound >= maxRounds) {
 
 <p data-i18n="case1">Theory is nice. Let's see it work. We asked all 33 seats of Parliagent:</p>
 
-<blockquote>
+<blockquote data-i18n="bq_question">
   "Should a startup use microservices or a monolith for their fintech platform that needs to handle payments, KYC, and regulatory compliance?"
 </blockquote>
 
@@ -606,19 +606,19 @@ if (currentRound >= maxRounds) {
 <div class="metrics-grid">
   <div class="metric-card">
     <div class="metric-value">33</div>
-    <div class="metric-label">Seats Activated</div>
+    <div class="metric-label" data-i18n="ml_seats">Seats Activated</div>
   </div>
   <div class="metric-card">
     <div class="metric-value">62</div>
-    <div class="metric-label">Disagreements</div>
+    <div class="metric-label" data-i18n="ml_disagree">Disagreements</div>
   </div>
   <div class="metric-card">
     <div class="metric-value">33</div>
-    <div class="metric-label">Warnings Raised</div>
+    <div class="metric-label" data-i18n="ml_warnings">Warnings Raised</div>
   </div>
   <div class="metric-card">
     <div class="metric-value">majority</div>
-    <div class="metric-label">Decision Type</div>
+    <div class="metric-label" data-i18n="ml_decision">Decision Type</div>
   </div>
 </div>
 
@@ -681,11 +681,11 @@ if (currentRound >= maxRounds) {
   <summary data-i18n="sum_warnings">View selected warnings (33 total raised)</summary>
   <div class="details-content">
     <ul>
-      <li>"Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade security controls" — SecurityPrivacySeat</li>
-      <li>"Distributed payment processing creates data residency and cross-border compliance issues that could trigger regulatory violations in multiple jurisdictions" — SecurityPrivacySeat</li>
-      <li>"Financial systems require ACID guarantees — distributed transactions or eventual consistency patterns could lead to regulatory violations or money loss" — VonNeumannSeat</li>
-      <li>"The planning fallacy suggests we're systematically overestimating the coordination benefits while underestimating implementation complexity" — KahnemanSeat</li>
-      <li>"Distributed financial systems without formal verification of consistency properties pose systemic risk to payment integrity" — TuringSeat</li>
+      <li data-i18n="li_w1">"Microservices architecture could violate PCI DSS requirements around network segmentation and data flow monitoring if not implemented with enterprise-grade security controls" — SecurityPrivacySeat</li>
+      <li data-i18n="li_w2">"Distributed payment processing creates data residency and cross-border compliance issues that could trigger regulatory violations in multiple jurisdictions" — SecurityPrivacySeat</li>
+      <li data-i18n="li_w3">"Financial systems require ACID guarantees — distributed transactions or eventual consistency patterns could lead to regulatory violations or money loss" — VonNeumannSeat</li>
+      <li data-i18n="li_w4">"The planning fallacy suggests we're systematically overestimating the coordination benefits while underestimating implementation complexity" — KahnemanSeat</li>
+      <li data-i18n="li_w5">"Distributed financial systems without formal verification of consistency properties pose systemic risk to payment integrity" — TuringSeat</li>
     </ul>
     <p data-i18n="warn_trace">Each warning is tied to the seat that raised it. You can trace <em>who</em> flagged what, and decide for yourself how much weight to give it.</p>
   </div>
@@ -736,7 +736,7 @@ if (currentRound >= maxRounds) {
 
 <p data-i18n="cost3">We're being honest about balanced mode: <strong>it has diminishing returns.</strong> It costs 13.3x baseline but only produces 1.7x more disagreements than fast. Almost everything resolves as "uncertain" (9 out of 10 runs). More seats don't automatically mean more clarity — they mean more perspectives, which can fragment rather than converge. We recommend fast for most use cases and reserve balanced for genuinely high-stakes decisions.</p>
 
-<div class="warning-box">
+<div class="warning-box" data-i18n="wb_caveat">
   <strong>A caveat our own parliament demanded we include:</strong> These benchmarks measure disagreement <em>volume</em> (how many objections are raised), not decision <em>quality</em> (whether the final answer is actually better). We don't yet have ground-truth validation comparing Parliagent decisions against outcomes or human expert panels. Ten prompts across six categories is enough to calibrate defaults, not enough to prove systematic superiority. We're being upfront about this because the parliament literally told us to — KahnemanSeat called it "measuring activity rather than accuracy."
 </div>
 
@@ -826,7 +826,7 @@ if (currentRound >= maxRounds) {
   <div class="seat-text" data-i18n="sq_kant_meta">"The article violates the categorical imperative by using manipulative framing and theatrical personas rather than principled argumentation."</div>
 </div>
 
-<div class="warning-box">
+<div class="warning-box" data-i18n="wb_circular">
   <strong>The circularity problem:</strong> "Using multi-agent deliberation to evaluate multi-agent deliberation invalidates core claims without resolution." — flagged by 5 separate seats across both reviews.
 </div>
 
@@ -921,12 +921,12 @@ if (result.warnings?.length) {
 <p data-i18n="next2">Here are the genuine open questions — several surfaced by the parliament's own self-review:</p>
 
 <ul>
-  <li><strong>Ground-truth validation:</strong> The parliament's sharpest critique of itself: we measure disagreement volume, not decision quality. The next step is comparing Parliagent outputs against human expert panels and tracking actual outcomes. Until then, we're honest that "more disagreements" is a proxy, not proof.</li>
-  <li><strong>Multi-provider diversity:</strong> Federated mode is live-validated with Anthropic+OpenAI and FLOCK+Anthropic combinations — the plumbing works. The open question is whether cross-provider debates produce <em>meaningfully different</em> disagreements than single-provider runs.</li>
-  <li><strong>Convergence tuning:</strong> 29/30 runs hitting the round limit suggests our convergence thresholds need work. Or maybe debates on hard problems <em>shouldn't</em> converge. We need more data to decide.</li>
-  <li><strong>Deep mode:</strong> Implemented but not benchmarked. 7-13 seats across 3 rounds with a 60k token budget. We want to understand when this adds value over fast mode before recommending it.</li>
-  <li><strong>Better routing:</strong> Keyword-based task classification works but misses subtlety. A security question framed as a business question won't trigger the security auto-upgrade. This needs a smarter classifier.</li>
-  <li><strong>FLOCK as a universal adapter:</strong> The FLOCK provider's OpenAI-compatible interface means any LiteLLM-style proxy or custom endpoint could plug in. We want to explore this as a path to supporting dozens of model backends through a single adapter pattern.</li>
+  <li data-i18n="li_n1"><strong>Ground-truth validation:</strong> The parliament's sharpest critique of itself: we measure disagreement volume, not decision quality. The next step is comparing Parliagent outputs against human expert panels and tracking actual outcomes. Until then, we're honest that "more disagreements" is a proxy, not proof.</li>
+  <li data-i18n="li_n2"><strong>Multi-provider diversity:</strong> Federated mode is live-validated with Anthropic+OpenAI and FLOCK+Anthropic combinations — the plumbing works. The open question is whether cross-provider debates produce <em>meaningfully different</em> disagreements than single-provider runs.</li>
+  <li data-i18n="li_n3"><strong>Convergence tuning:</strong> 29/30 runs hitting the round limit suggests our convergence thresholds need work. Or maybe debates on hard problems <em>shouldn't</em> converge. We need more data to decide.</li>
+  <li data-i18n="li_n4"><strong>Deep mode:</strong> Implemented but not benchmarked. 7-13 seats across 3 rounds with a 60k token budget. We want to understand when this adds value over fast mode before recommending it.</li>
+  <li data-i18n="li_n5"><strong>Better routing:</strong> Keyword-based task classification works but misses subtlety. A security question framed as a business question won't trigger the security auto-upgrade. This needs a smarter classifier.</li>
+  <li data-i18n="li_n6"><strong>FLOCK as a universal adapter:</strong> The FLOCK provider's OpenAI-compatible interface means any LiteLLM-style proxy or custom endpoint could plug in. We want to explore this as a path to supporting dozens of model backends through a single adapter pattern.</li>
 </ul>
 
 <p data-i18n="next3">The broader question — <em>is structured multi-agent deliberation fundamentally better than single-agent reasoning for complex decisions?</em> — doesn't have a clean answer yet. Our own parliament said as much. When we asked 33 seats to review this very article, every single one gave "mixed" — not "support." They found the architecture compelling but the evidence insufficient. They liked the honesty but wanted ground-truth validation. They thought the Nietzsche quote was memorable but worried it was gimmicky.</p>
@@ -1084,6 +1084,25 @@ if (result.warnings?.length) {
       sq_shannon_meta: '"关于结构化分歧的核心洞见在数学上是优雅的，但执行方式遮蔽而非放大了这个信号。文章存在信噪比问题。"',
       sq_nietzsche_meta: '"这篇文章有自我祝贺的框架问题，缺乏与其关于追求真理和结构化异议的宏大主张相匹配的哲学严谨性。"',
       sq_kant_meta: '"文章通过使用操纵性框架和戏剧性角色而非原则性论证，违反了绝对命令。"',
+      ml_seats: "激活席位",
+      ml_disagree: "分歧数",
+      ml_warnings: "警告数",
+      ml_decision: "决策类型",
+      bq_anthropic: '\n  "当被要求评估自己产出的工作时，agent倾向于自信地称赞其工作——即使在人类观察者看来，质量明显平庸。"\n',
+      bq_question: '\n  "一个金融科技创业公司应该用微服务还是单体来构建需要处理支付、KYC和监管合规的平台？"\n',
+      wb_caveat: '\n  <strong>议会要求我们必须加入的警告：</strong>这些基准测试衡量的是分歧<em>数量</em>（提出了多少反对意见），而非决策<em>质量</em>（最终答案是否真的更好）。我们还没有将Parliagent的决策与结果或人类专家组进行对照的基准验证。六个类别的十个提示足以校准默认值，但不足以证明系统性优越性。我们之所以坦诚说明，是因为议会确实要求了——KahnemanSeat称之为"衡量活动而非准确性"。\n',
+      wb_circular: '\n  <strong>循环论证问题：</strong>"用多智能体审议来评估多智能体审议，在未解决的情况下使核心主张无效。"——在两次审查中被5个不同席位标记。\n',
+      li_w1: '"如果不采用企业级安全控制，微服务架构可能违反PCI DSS关于网络分段和数据流监控的要求" — SecurityPrivacySeat',
+      li_w2: '"分布式支付处理产生数据驻留和跨境合规问题，可能引发多个司法管辖区的监管违规" — SecurityPrivacySeat',
+      li_w3: '"金融系统需要ACID保证——分布式事务或最终一致性模式可能导致监管违规或资金损失" — VonNeumannSeat',
+      li_w4: '"规划谬误表明我们在系统性地高估协调效益的同时低估实施复杂性" — KahnemanSeat',
+      li_w5: '"缺乏一致性属性形式化验证的分布式金融系统对支付完整性构成系统性风险" — TuringSeat',
+      li_n1: '<strong>基准真相验证：</strong>议会对自身最尖锐的批评：我们衡量分歧数量，而非决策质量。下一步是将Parliagent的输出与人类专家组进行对比并追踪实际结果。在此之前，我们坦承"更多分歧"只是代理指标，而非证据。',
+      li_n2: '<strong>多提供商多样性：</strong>联合模式已通过Anthropic+OpenAI和FLOCK+Anthropic组合的实时验证——管道运作正常。开放问题是跨提供商辩论是否产生与单提供商运行<em>有实质区别的</em>分歧。',
+      li_n3: '<strong>收敛调优：</strong>30次运行中有29次触发轮次限制，表明我们的收敛阈值需要调整。或者也许困难问题上的辩论<em>本就不该</em>收敛。我们需要更多数据来决定。',
+      li_n4: '<strong>Deep模式：</strong>已实现但未基准测试。7-13个席位跨3轮，60k token预算。我们想了解它何时相对于fast模式有附加价值，然后再推荐。',
+      li_n5: '<strong>更好的路由：</strong>基于关键词的任务分类有效但缺乏精细度。以商业问题框架提出的安全问题不会触发安全自动升级。这需要更智能的分类器。',
+      li_n6: '<strong>FLOCK作为通用适配器：</strong>FLOCK提供商的OpenAI兼容接口意味着任何LiteLLM风格的代理或自定义端点都可以接入。我们希望探索这条路径来通过单一适配器模式支持数十种模型后端。',
     },
     ko: {
       title: "AI 하나에게 묻지 마세요.<br>토론을 열어보세요.",
@@ -1192,6 +1211,25 @@ if (result.warnings?.length) {
       sq_shannon_meta: '"구조화된 의견 불일치에 대한 핵심 통찰은 수학적으로 우아하지만, 실행이 이 신호를 증폭시키기보다 가립니다. 글에 신호 대 잡음비 문제가 있습니다."',
       sq_nietzsche_meta: '"이 글은 자기 축하적 프레이밍으로 고통받으며, 진실 추구와 구조화된 이의에 대한 야심찬 주장에 맞는 철학적 엄밀성이 부족합니다."',
       sq_kant_meta: '"글은 원칙적 논증이 아닌 조작적 프레이밍과 연극적 페르소나를 사용하여 정언명령을 위반합니다."',
+      ml_seats: "활성 좌석",
+      ml_disagree: "의견 불일치",
+      ml_warnings: "경고 수",
+      ml_decision: "결정 유형",
+      bq_anthropic: '\n  "자신이 생산한 작업을 평가하라고 요청받으면, 에이전트는 자신감 있게 작업을 칭찬하는 경향이 있습니다 — 인간 관찰자에게는 품질이 분명히 평범해 보이는 경우에도."\n',
+      bq_question: '\n  "핀테크 스타트업이 결제, KYC, 규제 컴플라이언스를 처리해야 하는 플랫폼에 마이크로서비스를 사용해야 할까요, 모놀리스를 사용해야 할까요?"\n',
+      wb_caveat: '\n  <strong>의회가 반드시 포함하라고 요구한 주의사항:</strong> 이 벤치마크는 의견 불일치 <em>양</em>(얼마나 많은 이의가 제기되었는지)을 측정하지, 결정 <em>품질</em>(최종 답변이 실제로 더 나은지)을 측정하지 않습니다. Parliagent 결정을 결과나 인간 전문가 패널과 비교하는 기준 검증은 아직 없습니다. 6개 카테고리의 10개 프롬프트는 기본값을 보정하기에 충분하지만, 체계적 우월성을 증명하기에는 부족합니다. 의회가 실제로 요구했기 때문에 솔직히 밝힙니다 — KahnemanSeat는 이를 "정확성이 아닌 활동 측정"이라 불렀습니다.\n',
+      wb_circular: '\n  <strong>순환 논증 문제:</strong> "다중 에이전트 심의를 평가하기 위해 다중 에이전트 심의를 사용하면 해결 없이 핵심 주장이 무효화됩니다." — 두 리뷰에 걸쳐 5개 별도 좌석이 지적.\n',
+      li_w1: '"엔터프라이즈급 보안 제어 없이 구현하면 마이크로서비스 아키텍처가 네트워크 분할 및 데이터 흐름 모니터링에 대한 PCI DSS 요구사항을 위반할 수 있음" — SecurityPrivacySeat',
+      li_w2: '"분산 결제 처리는 데이터 거주지 및 국경 간 컴플라이언스 문제를 야기하여 여러 관할 구역에서 규제 위반을 초래할 수 있음" — SecurityPrivacySeat',
+      li_w3: '"금융 시스템은 ACID 보장이 필요 — 분산 트랜잭션 또는 최종 일관성 패턴이 규제 위반이나 자금 손실로 이어질 수 있음" — VonNeumannSeat',
+      li_w4: '"계획 오류는 우리가 조율 이점을 체계적으로 과대평가하면서 구현 복잡성을 과소평가하고 있음을 시사" — KahnemanSeat',
+      li_w5: '"일관성 속성의 정형 검증이 없는 분산 금융 시스템은 결제 무결성에 체계적 위험을 초래" — TuringSeat',
+      li_n1: '<strong>기준 검증:</strong> 의회의 자체에 대한 가장 날카로운 비평: 의견 불일치 양을 측정하지 결정 품질을 측정하지 않습니다. 다음 단계는 Parliagent 출력을 인간 전문가 패널과 비교하고 실제 결과를 추적하는 것입니다. 그때까지 "더 많은 의견 불일치"는 대리 지표일 뿐 증거가 아님을 솔직히 밝힙니다.',
+      li_n2: '<strong>다중 제공자 다양성:</strong> 연합 모드는 Anthropic+OpenAI 및 FLOCK+Anthropic 조합으로 라이브 검증 완료 — 배관은 작동합니다. 열린 질문은 크로스 제공자 토론이 단일 제공자 실행과 <em>의미 있게 다른</em> 의견 불일치를 생성하는지입니다.',
+      li_n3: '<strong>수렴 튜닝:</strong> 30회 중 29회가 라운드 제한에 도달한 것은 수렴 임계값에 작업이 필요함을 시사합니다. 혹은 어려운 문제에 대한 토론은 수렴하지 <em>않아야</em> 할 수도 있습니다. 결정하려면 더 많은 데이터가 필요합니다.',
+      li_n4: '<strong>Deep 모드:</strong> 구현되었지만 벤치마크 미완료. 3라운드에 걸쳐 7-13개 좌석, 60k 토큰 예산. Fast 모드 대비 언제 부가 가치가 있는지 이해한 후 권장하고 싶습니다.',
+      li_n5: '<strong>더 나은 라우팅:</strong> 키워드 기반 작업 분류는 작동하지만 미묘함을 놓칩니다. 비즈니스 질문으로 프레이밍된 보안 질문은 보안 자동 업그레이드를 트리거하지 않습니다. 더 스마트한 분류기가 필요합니다.',
+      li_n6: '<strong>FLOCK 범용 어댑터:</strong> FLOCK 제공자의 OpenAI 호환 인터페이스는 LiteLLM 스타일 프록시나 커스텀 엔드포인트가 연결 가능함을 의미합니다. 단일 어댑터 패턴으로 수십 개 모델 백엔드를 지원하는 경로로 탐색하고자 합니다.',
     }
   };
 
