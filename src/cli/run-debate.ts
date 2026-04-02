@@ -35,7 +35,7 @@ export async function runDebate(
     executionProfile:
       (opts.profile as ExecutionProfile | undefined) ??
       config.defaults?.executionProfile ??
-      "supreme",
+      "federated",
     fullParliagent: !!opts.fullParliagent,
     mode: (opts.mode as DebateMode) ?? config.defaults?.mode ?? defaults.mode,
     ...(outputLanguage ? { outputLanguage } : {}),
@@ -107,7 +107,7 @@ export function addCommonOptions(cmd: import("commander").Command) {
     .option("--language <code>", "Output language (e.g. zh, ja, es). Internal debate stays English.")
     .option("--lang <code>", "Alias for --language")
     .option("--full-parliagent", "Activate all 33 seats (high cost, explicit opt-in)", false)
-    .option("--profile <profile>", "Execution profile: supreme, available, federated", "supreme")
+    .option("--profile <profile>", "Execution profile: federated, available, supreme", "federated")
     .option("--seat <seats...>", "Preferred seats to include")
     .option("--exclude-seat <seats...>", "Seats to exclude")
     .option("--max-tokens <n>", "Maximum token budget", parseInt)

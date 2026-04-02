@@ -13,7 +13,7 @@ export class AnthropicAdapter implements ModelAdapter {
 
   constructor(config?: { apiKey?: string; defaultModel?: string }) {
     this.apiKey = config?.apiKey ?? process.env.ANTHROPIC_API_KEY ?? "";
-    this.defaultModel = config?.defaultModel ?? "claude-sonnet-4-20250514";
+    this.defaultModel = config?.defaultModel ?? process.env.ANTHROPIC_MODEL ?? "claude-opus-4-6";
   }
 
   isAvailable(): boolean {

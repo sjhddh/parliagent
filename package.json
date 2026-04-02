@@ -1,6 +1,6 @@
 {
   "name": "parliagent",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Parliagent — A skill-first multi-agent deliberation engine that simulates a parliament of expert personas",
   "type": "module",
   "main": "dist/index.js",

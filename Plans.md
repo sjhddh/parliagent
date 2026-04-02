@@ -592,8 +592,9 @@ Config surface:
 
 Recommended use:
 
-- `supreme` — default, all seats on the operator-designated provider for uniform quality
+- `federated` — default, each seat uses its preferred provider's best model
 - `available` — seats follow their fallback chain
+- `supreme` — all seats on one operator-designated provider
 - `federated` — when you want provider-native seat diversity
 - `supreme` — when you want all seats on one designated provider for uniform quality
 

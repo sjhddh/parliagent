@@ -13,7 +13,7 @@ export class GoogleAdapter implements ModelAdapter {
 
   constructor(config?: { apiKey?: string; defaultModel?: string }) {
     this.apiKey = config?.apiKey ?? process.env.GOOGLE_API_KEY ?? process.env.GEMINI_API_KEY ?? "";
-    this.defaultModel = config?.defaultModel ?? "gemini-2.5-flash";
+    this.defaultModel = config?.defaultModel ?? process.env.GOOGLE_MODEL ?? "gemini-3.1-pro-preview";
   }
 
   isAvailable(): boolean {

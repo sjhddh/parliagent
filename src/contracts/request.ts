@@ -47,7 +47,7 @@ export type ParliagentConstraints = z.infer<typeof ParliagentConstraints>;
 export const ParliagentRequest = z.object({
   prompt: z.string().min(1),
   mode: DebateMode.optional().default("micro"),
-  executionProfile: ExecutionProfile.optional().default("supreme"),
+  executionProfile: ExecutionProfile.optional().default("federated"),
   fullParliagent: z.boolean().optional().default(false),
   taskType: TaskType.optional(),
   answerMode: AnswerMode.optional().default("answer"),

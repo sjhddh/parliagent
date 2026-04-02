@@ -20,7 +20,7 @@ export class OpenAIAdapter implements ModelAdapter {
     this.apiKey = config?.apiKey ?? process.env.OPENAI_API_KEY ?? "";
     this.baseUrl =
       config?.baseUrl ?? process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
-    this.defaultModel = config?.defaultModel ?? "gpt-4o";
+    this.defaultModel = config?.defaultModel ?? process.env.OPENAI_MODEL ?? "gpt-5.4";
   }
 
   isAvailable(): boolean {

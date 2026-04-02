@@ -126,9 +126,9 @@ Mode controls **how many seats debate**. Profile controls **which models they us
 
 | Profile | Behavior | When to Use |
 |---------|----------|-------------|
-| **`supreme`** | All seats + synthesis on the operator-designated provider (defaults to primary) | **Default.** Uniform quality, predictable behavior. |
-| `available` | Seats follow their per-seat fallback chain | When you want seats to use their preferred providers if available |
-| `federated` | OpenAISeat/ClaudeSeat/GeminiSeat prefer their native family; others use primary | When you have multiple API keys and want provider-native seat diversity |
+| **`federated`** | Each seat uses its preferred provider's best model (OpenAISeat→gpt-5.4, ClaudeSeat→claude-opus-4-6, GeminiSeat→gemini-3.1-pro-preview, others→primary) | **Default.** Best model per seat, maximum quality. |
+| `available` | Seats walk their fallback chain: preferred → primary → any | When you want fallback flexibility |
+| `supreme` | All seats on one operator-designated provider | When you want uniform single-provider behavior |
 
 ```bash
 # CLI
@@ -168,7 +168,7 @@ Optional `parliagent.config.json` in your working directory:
 {
   "primaryProvider": "anthropic",
   "supremeProvider": "anthropic",
-  "defaults": { "mode": "fast", "executionProfile": "supreme", "trace": "summary", "outputLanguage": "en" },
+  "defaults": { "mode": "fast", "executionProfile": "federated", "trace": "summary", "outputLanguage": "en" },
   "budgetOverrides": { "maxTokens": 15000, "maxLatencyMs": 20000 }
 }
 ```
