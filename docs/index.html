@@ -423,23 +423,26 @@ hr {
 
 <!-- ========== SECTION 1: Cold Open ========== -->
 
-<p data-i18n="open1">We asked Claude: "Our main backend is a 60,000-line Express.js monolith written by an intern in 2021. No tests. Mixed JS and TypeScript. Half the routes are dead code. Should we rewrite it from scratch?" Claude gave us a thoughtful, balanced answer: "it depends on your timeline, team capacity, risk tolerance, and business requirements." Reasonable. Polite. Useless.</p>
+<p data-i18n="open1">We asked ChatGPT: "My crush just texted me after 3 days of silence. Should I reply right away or wait a few hours to seem less eager?" It gave us a thoughtful, balanced answer: "it depends on the relationship dynamic, your communication style, and what feels authentic to you." Reasonable. Polite. Useless.</p>
 
-<p data-i18n="open2">We asked the same question to Parliagent. Thirty-two AI expert personas argued for 27 seconds. 84% said <strong>don't rewrite</strong>, with 116 specific disagreements and 27 warnings. Then NietzscheSeat dropped this:</p>
+<p data-i18n="open2">We asked the same question to Parliagent. Thirty-three AI expert personas argued for 20 seconds. The result: 137 disagreements, and an overwhelming majority said <strong>just reply</strong>. But it's <em>how</em> they said it:</p>
 
 <div class="seat-card" style="border-left-color: #7c3aed;">
-  <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text" data-i18n="sq_nietzsche_open">"The rewrite impulse is <strong>programmer ressentiment disguised as virtue</strong> &mdash; a cowardly flight from the messy reality of working code into the fantasy of green-field perfection. The intern's 60,000-line monolith that actually runs your business demonstrates more creative will-to-power than any committee-designed rewrite ever will."</div>
+  <div class="seat-name">NietzscheSeat <span class="seat-stance">oppose &middot; confidence 5/5</span></div>
+  <div class="seat-text" data-i18n="sq_nietzsche_open">"Strategic delay is <strong>ressentiment disguised as tactics</strong> &mdash; you're operating from fear of appearing 'too much' rather than confidence in your own worth."</div>
 </div>
-
-<p data-i18n="open2b">And JungSeat went straight for the team dynamics nobody wanted to talk about:</p>
 
 <div class="seat-card" style="border-left-color: #6d28d9;">
-  <div class="seat-name">JungSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
-  <div class="seat-text" data-i18n="sq_jung_open">"The group is <strong>scapegoating the 2021 intern</strong> as the source of all problems, avoiding examination of how the organization allowed a critical system to deteriorate without proper stewardship, testing, or code review processes."</div>
+  <div class="seat-name">FeynmanSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text" data-i18n="sq_feynman_open">"The 'wait to seem less eager' strategy is like trying to make a clock run faster by moving the hands &mdash; <strong>you're manipulating the appearance without changing the underlying reality.</strong>"</div>
 </div>
 
-<p data-i18n="open3">That's the difference between asking one AI and running a debate. The single agent hedges. The parliament takes positions, disagrees, warns you about things you didn't ask about, and occasionally psychoanalyzes your entire engineering culture.</p>
+<div class="seat-card">
+  <div class="seat-name">SmithSeat <span class="seat-stance">oppose &middot; confidence 4/5</span></div>
+  <div class="seat-text" data-i18n="sq_smith_open">"Artificial scarcity through delayed responses creates information asymmetries that <strong>prevent efficient matching between compatible partners.</strong>"</div>
+</div>
+
+<p data-i18n="open3">A philosopher diagnosed your insecurity. A physicist called it cargo-cult social physics. An economist called your love life a market failure. That's the difference between asking one AI and running a debate.</p>
 
 <p data-i18n="open4">Ask an LLM a hard architecture question and you'll get a confident, well-structured answer. It will sound authoritative. It will cite best practices. It will have a reassuring tone that makes you want to nod along. The problem is, it's one voice. One set of biases, one set of blind spots, one set of priors baked into a single forward pass. The dissenting voices, the uncomfortable warnings, the "yes, but what about regulatory compliance?" objections? Buried in hedging language, if they surface at all.</p>
 
@@ -988,10 +991,9 @@ if (result.warnings?.length) {
       title: "别再问一个AI了。<br>开一场辩论吧。",
       subtitle: "当33个AI专家角色就你的架构决策展开辩论——为什么分歧本身才是价值所在。",
       readtime: "阅读约21分钟",
-      open1: '我们问Claude："我们的主后端是一个6万行的Express.js单体，2021年由一个实习生写的。没有测试。JS和TypeScript混写。一半的路由是死代码。应该从头重写吗？" Claude给了一个深思熟虑的中庸回答："这取决于你的时间线、团队能力、风险承受度和业务需求。" 合理。礼貌。没用。',
-      open2: "我们把同样的问题交给Parliagent。32个AI专家角色辩论了27秒。84%说<strong>别重写</strong>，产生了116个具体分歧和27条警告。然后NietzscheSeat甩出了这句话：",
-      open2b: "接着JungSeat直指了那个没人愿意面对的团队动力学问题：",
-      open3: "这就是\"问一个AI\"和\"开一场辩论\"的区别。单个agent在和稀泥。议会则表态、争论、对你没问到的事情发出警告，偶尔还会对你的整个工程文化做一次精神分析。",
+      open1: '我们问ChatGPT："暗恋的人沉默了3天之后突然给我发了消息。我应该秒回还是等几个小时显得没那么急切？" 它给了一个深思熟虑的中庸回答："这取决于你们的关系动态、你的沟通风格，以及什么让你觉得真实。" 合理。礼貌。没用。',
+      open2: "我们把同样的问题交给Parliagent。33个AI专家角色辩论了20秒。结果：137个分歧，压倒性多数说<strong>直接回</strong>。但关键是他们<em>怎么说的</em>：",
+      open3: "一个哲学家诊断了你的不安全感。一个物理学家说这是货物崇拜式社交物理学。一个经济学家说你的恋爱生活是市场失灵。这就是问一个AI和开一场辩论的区别。",
       open4: '向LLM提一个棘手的架构问题，你会得到一个自信、结构清晰的答案。听起来很权威，会引用最佳实践，语气令人安心。问题是——这只有一个声音。一组偏见，一组盲区，一组嵌入单次前向传播的先验。异见的声音、令人不安的警告、"但是监管合规怎么办？"的反对意见？都淹没在模棱两可的措辞里。',
       open5: '这就是<strong>一个人的回音室</strong>。这是当今大多数人使用AI的默认模式。',
       open6: '我们构建了<a href="https://github.com/sjhddh/parliagent">Parliagent</a>来解决这个问题。这是一个多智能体审议引擎，在专家角色之间运行结构化的议会辩论——具有分歧追踪、少数派报告和预算控制。一次函数调用。多重视角。结构化的异议。',
@@ -1074,8 +1076,9 @@ if (result.warnings?.length) {
       footer1: '<strong>Parliagent</strong>是MIT许可的开源项目。<a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
       footer2: "这篇文章由六次Parliagent辩论塑造：四次用于内容生成（文章结构、核心论点、对比、全议会案例研究），加上两次自我审查（balanced模式 + 全议会，79个分歧，29条警告）。辩论总成本：约$3.30。议会对本文提出的每一条批评都未经编辑地收录在上面。",
       footer3: "发布于2026年4月。",
-      sq_nietzsche_open: '"重写的冲动是<strong>伪装成美德的程序员怨恨（ressentiment）</strong>——从混乱但能用的现实怯懦地逃向绿地完美主义的幻想。那个实习生写的6万行单体——真正在运行你业务的东西——比任何委员会设计的重写都展现了更多创造性的权力意志。"',
-      sq_jung_open: '"团队在<strong>把2021年的实习生当替罪羊</strong>，回避审视这样一个问题：组织是如何让一个关键系统在没有适当管理、测试或代码审查流程的情况下持续恶化的。"',
+      sq_nietzsche_open: '"故意的延迟是<strong>伪装成策略的怨恨（ressentiment）</strong>——你在害怕显得"太多"，而不是对自己的价值有信心。"',
+      sq_feynman_open: '"\'等一等显得没那么急\'的策略就像试图通过拨动指针让时钟走得更快——<strong>你在操纵表象，而没有改变底层现实。</strong>"',
+      sq_smith_open: '"通过延迟回复制造人为稀缺性，造成信息不对称，<strong>阻碍了兼容伴侣之间的高效匹配。</strong>"',
       sq_dijkstra: '"创业公司应该从单体开始。微服务引入的分布式系统复杂性会在小团队理解领域边界之前就把他们压垮。"',
       sw_dijkstra: '&#9888; 金融系统需要强一致性保证——微服务间的分布式事务在维护监管合规所需的数据完整性方面引入了巨大复杂性。',
       sq_security: '"微服务通过多个网络边界、API端点和服务间认证点成倍增加了攻击面，这些都可能被攻破。"',
@@ -1117,10 +1120,9 @@ if (result.warnings?.length) {
       title: "AI 하나에게 묻지 마세요.<br>토론을 열어보세요.",
       subtitle: "33명의 AI 전문가 페르소나가 당신의 아키텍처 결정을 놓고 논쟁할 때 — 왜 의견 불일치 자체가 핵심인지.",
       readtime: "읽기 약 21분",
-      open1: '우리는 Claude에게 물었습니다: "메인 백엔드가 2021년 인턴이 작성한 6만 줄짜리 Express.js 모놀리스입니다. 테스트 없음. JS와 TypeScript 혼용. 라우트 절반이 데드 코드. 처음부터 다시 작성해야 할까요?" Claude는 신중한 답변을 했습니다: "타임라인, 팀 역량, 리스크 허용도, 비즈니스 요구사항에 따라 다릅니다." 합리적. 예의 바른. 쓸모없는.',
-      open2: "같은 질문을 Parliagent에 던졌습니다. 32명의 AI 전문가 페르소나가 27초간 논쟁했습니다. 84%가 <strong>재작성 반대</strong>, 116개의 구체적 의견 불일치와 27개 경고. 그리고 NietzscheSeat가 이것을 던졌습니다:",
-      open2b: "이어서 JungSeat가 아무도 말하고 싶지 않았던 팀 역학 문제를 정면으로 찔렀습니다:",
-      open3: "이것이 AI 하나에게 묻는 것과 토론을 여는 것의 차이입니다. 단일 에이전트는 모호하게 답합니다. 의회는 입장을 취하고, 반대하고, 물어보지 않은 것에 대해 경고하며, 때때로 당신의 엔지니어링 문화 전체를 정신분석합니다.",
+      open1: '우리는 ChatGPT에게 물었습니다: "짝사랑하는 사람이 3일 침묵 후 갑자기 메시지를 보냈습니다. 바로 답장할까요, 덜 간절해 보이려고 몇 시간 기다릴까요?" 신중한 답변을 받았습니다: "관계 역학, 소통 스타일, 당신에게 진정성 있게 느껴지는 것에 따라 다릅니다." 합리적. 예의 바른. 쓸모없는.',
+      open2: "같은 질문을 Parliagent에 던졌습니다. 33명의 AI 전문가 페르소나가 20초간 논쟁했습니다. 결과: 137개 의견 불일치, 압도적 다수가 <strong>그냥 답장하라</strong>고. 하지만 <em>어떻게</em> 말했는지가 중요합니다:",
+      open3: "철학자가 당신의 불안감을 진단했습니다. 물리학자가 화물 숭배 사회 물리학이라고 불렀습니다. 경제학자가 당신의 연애를 시장 실패라고 불렀습니다. 이것이 AI 하나에게 묻는 것과 토론을 여는 것의 차이입니다.",
       open4: 'LLM에게 어려운 아키텍처 질문을 하면 자신감 있고 잘 구조화된 답변을 얻습니다. 권위 있어 보이고, 모범 사례를 인용하며, 고개를 끄덕이게 만드는 안심시키는 톤입니다. 문제는 — 하나의 목소리라는 것입니다. 하나의 편향, 하나의 맹점, 단일 순전파에 내장된 하나의 선험적 판단. 반대 의견, 불편한 경고, "규제 컴플라이언스는요?"라는 이의? 모호한 표현 속에 묻혀버립니다.',
       open5: '이것이 <strong>1인 에코 챔버</strong>입니다. 오늘날 대부분의 사람들이 AI를 사용하는 기본 모드입니다.',
       open6: '이 문제를 해결하기 위해 <a href="https://github.com/sjhddh/parliagent">Parliagent</a>를 만들었습니다. 전문가 페르소나 간 구조화된 의회 토론을 실행하는 다중 에이전트 심의 엔진입니다 — 의견 불일치 추적, 소수 의견 보고서, 예산 제어를 갖추고 있습니다. 함수 호출 한 번. 다양한 관점. 구조화된 이의.',
@@ -1203,8 +1205,9 @@ if (result.warnings?.length) {
       footer1: '<strong>Parliagent</strong>는 MIT 라이선스 오픈소스입니다. <a href="https://github.com/sjhddh/parliagent">GitHub</a> &middot; <a href="https://www.npmjs.com/package/parliagent">npm</a>',
       footer2: "이 글은 6번의 Parliagent 토론으로 만들어졌습니다: 콘텐츠 생성용 4회(글 구조, 핵심 논지, 비교, 전체 의회 사례 연구) + 의회가 이 글을 비평한 자체 리뷰 2회(balanced + 전체 의회, 79개 의견 불일치, 29개 경고). 총 토론 비용: 약 $3.30. 의회가 이 글에 대해 제기한 모든 비평이 위에 편집 없이 수록되어 있습니다.",
       footer3: "2026년 4월 게시.",
-      sq_nietzsche_open: '"재작성 충동은 <strong>미덕으로 위장한 프로그래머의 르상티망(ressentiment)</strong>입니다 — 지저분하지만 작동하는 코드의 현실에서 그린필드 완벽주의의 환상으로의 비겁한 도피. 실제로 당신의 비즈니스를 운영하고 있는 인턴의 6만 줄 모놀리스가 어떤 위원회가 설계한 재작성보다 더 많은 창조적 권력 의지를 보여줍니다."',
-      sq_jung_open: '"팀은 <strong>2021년 인턴을 희생양으로 삼고</strong> 있습니다 — 조직이 어떻게 적절한 관리, 테스트, 코드 리뷰 프로세스 없이 핵심 시스템을 방치했는지에 대한 성찰을 회피하면서."',
+      sq_nietzsche_open: '"전략적 지연은 <strong>전술로 위장한 르상티망(ressentiment)</strong>입니다 — 자신의 가치에 대한 확신이 아니라 \'너무 많아\' 보일까 봐 두려워하는 것입니다."',
+      sq_feynman_open: '"\'덜 간절해 보이려고 기다리기\' 전략은 시계 바늘을 돌려서 시계를 빨리 가게 하려는 것과 같습니다 — <strong>근본적 현실을 바꾸지 않고 겉모습을 조작하는 것입니다.</strong>"',
+      sq_smith_open: '"지연된 답장으로 인위적 희소성을 만들면 정보 비대칭이 생겨 <strong>호환되는 파트너 간의 효율적 매칭을 방해합니다.</strong>"',
       sq_dijkstra: '"스타트업은 모놀리스로 시작해야 합니다. 마이크로서비스는 소규모 팀이 도메인 경계를 이해하기 전에 압도할 분산 시스템 복잡성을 도입합니다."',
       sw_dijkstra: '&#9888; 금융 시스템은 강력한 일관성 보장이 필요합니다 — 마이크로서비스 간 분산 트랜잭션은 규제 컴플라이언스를 위한 데이터 무결성 유지에 상당한 복잡성을 초래합니다.',
       sq_security: '"마이크로서비스는 여러 네트워크 경계, API 엔드포인트, 서비스 간 인증 포인트로 공격 표면을 기하급수적으로 증가시키며, 이 모두가 침해될 수 있습니다."',
