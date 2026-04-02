@@ -659,7 +659,7 @@ if (currentRound >= maxRounds) {
 
 <h2>What It Costs</h2>
 
-<p>Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All three live-validated providers (Anthropic, OpenAI, FLOCK) have been tested individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
+<p>Benchmark data below is from 10 prompts across 6 categories (coding, planning, writing, strategy, security, analysis), running against Anthropic Claude, measured on April 2, 2026. All four providers (Anthropic, OpenAI, Google/Gemini, FLOCK) have been live-validated individually and in federated combinations; cost benchmarks use Anthropic as the reference.</p>
 
 <table>
   <thead>
@@ -699,9 +699,9 @@ if (currentRound >= maxRounds) {
 
 <p>If your question has a single good answer, don't convene a parliament. Just answer it.</p>
 
-<h3>Four providers, three fully tested</h3>
+<h3>Four providers, all tested</h3>
 
-<p>Parliagent ships adapters for four LLM providers. Three are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations. The fourth is implemented but untested due to lack of a key:</p>
+<p>Parliagent ships adapters for four LLM providers. All four are live-validated end-to-end against real API endpoints — individually and in federated/supreme combinations:</p>
 
 <table>
   <thead>
@@ -710,8 +710,8 @@ if (currentRound >= maxRounds) {
   <tbody>
     <tr><td><strong>Anthropic</strong></td><td>Live-validated + benchmarked</td><td>Single, federated, supreme, full parliament</td></tr>
     <tr><td><strong>OpenAI</strong></td><td>Live-validated</td><td>Single, federated (with Anthropic)</td></tr>
+    <tr><td><strong>Google/Gemini</strong></td><td>Live-validated</td><td>Single</td></tr>
     <tr><td><strong>FLOCK</strong></td><td>Live-validated</td><td>Single, federated (with Anthropic), supreme</td></tr>
-    <tr><td>Google AI</td><td>Implemented, not tested</td><td>No key available</td></tr>
   </tbody>
 </table>
 
@@ -772,9 +772,10 @@ graph TD
 
 <pre><code class="language-bash">npm install parliagent</code></pre>
 
-<pre><code class="language-bash"># Set at least one provider key (Anthropic, OpenAI, or FLOCK — all live-validated)
+<pre><code class="language-bash"># Set at least one provider key — all four are live-validated
 export ANTHROPIC_API_KEY=sk-ant-...
 # export OPENAI_API_KEY=sk-...
+# export GOOGLE_API_KEY=...          # or GEMINI_API_KEY
 # export FLOCK_API_KEY=sk-...  FLOCK_MODEL=your-model-name
 
 # Quick question — 2 seats, 1 round, ~16 seconds
@@ -821,7 +822,7 @@ if (result.warnings?.length) {
 
 <h2>What Comes Next</h2>
 
-<p>Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (3 live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
+<p>Parliagent ships 33 production-grade seats, 4 debate modes, 3 execution profiles, 5 answer modes, 4 provider adapters (all live-validated), a CLI, an SDK, and a serverless adapter. 151 tests across 14 files. It works. The benchmarks are real. The limitations are documented.</p>
 
 <p>Here are the genuine open questions we're still working through:</p>
 
