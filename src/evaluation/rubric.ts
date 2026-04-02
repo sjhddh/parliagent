@@ -19,7 +19,7 @@ export interface EvaluationResult {
   totalScore: number;
   maxPossible: number;
   percentScore: number;
-  parliamentBeatBaseline: boolean;
+  parliamentBeatBaseline: boolean | null;
   summary: string;
 }
 
@@ -58,7 +58,7 @@ export function evaluateResponse(
   const maxPossible = dimensions.reduce((sum, d) => sum + d.maxScore, 0);
   const percentScore = maxPossible > 0 ? Math.round((totalScore / maxPossible) * 100) : 0;
 
-  let parliamentBeatBaseline = false;
+  let parliamentBeatBaseline: boolean | null = null;
   if (baselineResponse) {
     const baselineAsResponse: ParliagentResponse = {
       finalAnswer: baselineResponse,

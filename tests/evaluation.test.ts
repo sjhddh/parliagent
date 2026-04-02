@@ -93,10 +93,12 @@ describe("Evaluation rubric", () => {
     expect(categories.has("actionability")).toBe(true);
   });
 
-  it("parliamentBeatBaseline flag works", () => {
+  it("parliamentBeatBaseline is true with baseline, null without", () => {
     const response = makeResponse();
-    const result = evaluateResponse(archFixture, response, "Just use microservices.");
-    expect(typeof result.parliamentBeatBaseline).toBe("boolean");
+    const withBaseline = evaluateResponse(archFixture, response, "Just use microservices.");
+    const withoutBaseline = evaluateResponse(archFixture, response);
+    expect(withBaseline.parliamentBeatBaseline).toBe(true);
+    expect(withoutBaseline.parliamentBeatBaseline).toBeNull();
   });
 });
 

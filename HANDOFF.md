@@ -98,7 +98,8 @@
 | **OpenAI** | Yes | Yes (3/3 single) | No | `provider-validation-*.json` |
 | **Google/Gemini** | Yes | Yes (3/3 single) | No | `provider-validation-*.json` |
 | **FLOCK** | Yes | Yes (6/6: single + federated + supreme) | No | `flock-validation-*.json` |
-| **Federated** (all 4) | Yes | Yes (4/4 with all providers) | No | `provider-validation-*.json` |
+
+All four providers are also validated in federated combinations (4/4 with all providers). See `provider-validation-*.json`.
 
 ## Default Recommendations
 

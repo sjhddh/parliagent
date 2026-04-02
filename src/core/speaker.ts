@@ -463,13 +463,44 @@ export class Speaker {
 }
 
 /**
- * Extract and parse JSON from LLM output that may contain markdown fences,
- * preamble text, trailing commentary, or multiple JSON-like blocks.
+ * Extract and parse JSON from LLM output using multiple strategies:
+ * 1. Direct parse (if output is clean JSON)
+ * 2. Strip markdown fences and parse
+ * 3. Brace-depth extraction (handles preamble/trailing text)
+ * 4. Truncation recovery (close unclosed braces/brackets)
+ * 5. Regex fallback for individual fields
  */
 function extractJSON(raw: string): unknown {
-  let text = raw.trim();
+  const text = raw.trim();
 
-  text = text.replace(/```(?:json|JSON|js|javascript)?\s*\n?/g, "").trim();
+  const strategies: Array<() => unknown> = [
+    () => JSON.parse(text),
+    () => {
+      const stripped = text
+        .replace(/^[^{]*/, "")
+        .replace(/```\s*$/g, "")
+        .trim();
+      return JSON.parse(stripped);
+    },
+    () => extractByBraceDepth(text),
+    () => recoverTruncatedJSON(text),
+    () => extractFieldsViaRegex(text),
+  ];
+
+  for (const strategy of strategies) {
+    try {
+      const result = strategy();
+      if (result && typeof result === "object") return result;
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error("No valid JSON found after all extraction strategies");
+}
+
+function extractByBraceDepth(raw: string): unknown {
+  const text = raw.replace(/```(?:json|JSON|js|javascript|typescript)?\s*\n?/g, "").trim();
 
   const braceStart = text.indexOf("{");
   if (braceStart === -1) throw new Error("No JSON object found");
@@ -494,6 +525,70 @@ function extractJSON(raw: string): unknown {
   }
 
   throw new Error("Unbalanced JSON braces");
+}
+
+function recoverTruncatedJSON(raw: string): unknown {
+  const text = raw.replace(/```(?:json|JSON|js|javascript|typescript)?\s*\n?/g, "").trim();
+  const braceStart = text.indexOf("{");
+  if (braceStart === -1) throw new Error("No JSON");
+
+  let fragment = text.slice(braceStart);
+
+  let openBraces = 0;
+  let openBrackets = 0;
+  let inString = false;
+  let escape = false;
+
+  for (const ch of fragment) {
+    if (escape) { escape = false; continue; }
+    if (ch === "\\") { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === "{") openBraces++;
+    if (ch === "}") openBraces--;
+    if (ch === "[") openBrackets++;
+    if (ch === "]") openBrackets--;
+  }
+
+  if (inString) fragment += '"';
+
+  const lastSignificant = fragment.search(/["\d\]}\w]\s*$/);
+  if (lastSignificant >= 0) {
+    const afterLast = fragment.slice(lastSignificant + 1).trim();
+    if (afterLast === "" || afterLast === ",") {
+      fragment = fragment.slice(0, lastSignificant + 1);
+    }
+  }
+
+  while (openBrackets > 0) { fragment += "]"; openBrackets--; }
+  while (openBraces > 0) { fragment += "}"; openBraces--; }
+
+  return JSON.parse(fragment);
+}
+
+function extractFieldsViaRegex(raw: string): Record<string, unknown> {
+  const stanceMatch = raw.match(/"stance"\s*:\s*"(support|mixed|oppose|uncertain)"/);
+  const summaryMatch = raw.match(/"summary"\s*:\s*"([^"]+)"/);
+  const confidenceMatch = raw.match(/"confidence"\s*:\s*(\d)/);
+
+  if (!stanceMatch && !summaryMatch) throw new Error("No recognizable fields");
+
+  const claimsMatch = raw.match(/"claims"\s*:\s*\[([^\]]*)\]/);
+  let claims: string[] = [];
+  if (claimsMatch) {
+    claims = claimsMatch[1]
+      .split(",")
+      .map((s) => s.trim().replace(/^"|"$/g, ""))
+      .filter((s) => s.length > 0);
+  }
+
+  return {
+    stance: stanceMatch?.[1] ?? "uncertain",
+    summary: summaryMatch?.[1] ?? raw.slice(0, 150),
+    claims: claims.length > 0 ? claims : ["Recovered from partial output"],
+    objections: [],
+    confidence: confidenceMatch ? parseInt(confidenceMatch[1]) : 2,
+  };
 }
 
 function parseStatement(

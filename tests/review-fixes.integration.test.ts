@@ -477,7 +477,7 @@ describe("Evaluation fixtures — full coverage", () => {
       expect(result.percentScore).toBeGreaterThanOrEqual(0);
       expect(result.percentScore).toBeLessThanOrEqual(100);
       expect(result.summary).toContain("Score:");
-      expect(typeof result.parliamentBeatBaseline).toBe("boolean");
+      expect(result.parliamentBeatBaseline).toBeNull();
     });
   }
 
@@ -570,6 +570,6 @@ describe("Regression: parliamentBeatBaseline uses same rubric for both sides", (
     const withoutBaseline = evaluateResponse(fixture, response);
 
     expect(withBaseline.parliamentBeatBaseline).toBe(true);
-    expect(withoutBaseline.parliamentBeatBaseline).toBe(false);
+    expect(withoutBaseline.parliamentBeatBaseline).toBeNull();
   });
 });
