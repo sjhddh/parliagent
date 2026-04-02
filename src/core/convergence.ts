@@ -325,7 +325,8 @@ export function getDisputeParticipants(
   disagreements: DisagreementRecord[],
   maxDisputes: number = 3,
 ): string[] {
-  const open = disagreements.filter((d) => d.status === "open" && d.type === "claim_conflict");
+  const resolvableTypes = new Set(["claim_conflict", "risk_warning", "priority_conflict"]);
+  const open = disagreements.filter((d) => d.status === "open" && resolvableTypes.has(d.type));
   const topDisputes = open.slice(0, maxDisputes);
   const seatSet = new Set<string>();
   for (const d of topDisputes) {

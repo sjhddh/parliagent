@@ -211,4 +211,4 @@ A hard-blocked safety prompt returns a response with `activatedSeats: []` and a 
 | Google/Gemini | Live-validated | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
 | FLOCK | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` + `FLOCK_MODEL` |
 
-All four providers are production-validated individually and in federated/supreme combinations. FLOCK uses `x-litellm-api-key` header auth and requires `FLOCK_MODEL` explicitly.
+All four providers are live-validated individually and in federated/supreme combinations. FLOCK uses `x-litellm-api-key` header auth and requires `FLOCK_MODEL` explicitly.

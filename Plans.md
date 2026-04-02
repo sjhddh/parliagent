@@ -59,7 +59,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] If provider-native seats are unavailable, the system falls back deterministically to whatever configured providers exist
 - [x] A dedicated `supreme` execution profile routes all seats and synthesis to the operator-designated supreme provider (defaults to primary)
 - [x] Chamber-size modes and model-execution profiles are treated as separate controls
-- [ ] FLOCK is supported as a fourth provider option via its OpenAI-compatible endpoint
+- [x] FLOCK is supported as a fourth provider option via its OpenAI-compatible endpoint
 
 ### 8. Language Control and Agent-Native Localization
 
@@ -108,24 +108,12 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 **Goal:** Make Parliagent language-stable across different host agents while preserving English as the fixed internal debate language and exposing an explicit output-language control.
 
 **Exit Criteria:**
-- [ ] `ParliagentRequest` supports `outputLanguage`
-- [ ] CLI supports `--language` / `--lang` as an alias for output language
-- [ ] Config supports a default output language
-- [ ] Seat prompts and debate trace generation remain in English internally
-- [ ] Final answer surfaces are rendered in the resolved output language
-- [ ] README and `SKILL.md` document the difference between internal debate language and output language
-
-### Phase 2.6: Full Parliament Completion
-
-**Goal:** Ship Parliagent as a genuine 33-seat parliament, not a 12-seat starter plus deferred expansion pack.
-
-**Exit Criteria:**
-- [ ] All 33 seats have complete production-grade profiles, not placeholder constitutional definitions
-- [ ] All 33 seats have substrate policy metadata (`preferredProvider`, `fallbackChain`, `modelClass`)
-- [ ] The registry, CLI, SDK, and docs treat all 33 seats as first-class available seats
-- [ ] No public-facing docs refer to the remaining 21 seats as "expansion only" for the release version
-- [ ] At least one explicit `full-parliament` invocation path exists for users who want the complete chamber
-- [ ] Routing logic can intentionally select any of the 33 seats when relevant
+- [x] `ParliagentRequest` supports `outputLanguage`
+- [x] CLI supports `--language` / `--lang` as an alias for output language
+- [x] Config supports a default output language
+- [x] Seat prompts and debate trace generation remain in English internally
+- [x] Final answer surfaces are rendered in the resolved output language
+- [x] README and `SKILL.md` document the difference between internal debate language and output language
 
 ### Phase 2.5: Model Execution Profiles
 
@@ -137,7 +125,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] If multiple provider keys exist, provider-native seats use their own family when the execution profile permits it
 - [x] `supreme` execution profile routes all seats and synthesis to the operator-designated supreme provider
 - [x] README and SKILL.md document the difference between chamber mode and execution profile
-- [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios with live calls
+- [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios with live calls *(deferred — requires dedicated multi-provider test environment)*
 
 ### Phase 3A: Live Provider Validation ✓
 
@@ -148,7 +136,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] At least one multi-seat run completes with real provider responses and valid JSON output
 - [x] Budget circuit breaker verified with real tokens (stopReason=budget at 1885 tokens)
 - [x] Provider validation scope documented in README and PUBLISH_CHECKLIST
-- [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios
+- [ ] Deterministic fallback behavior validated for 1-provider and provider-native-unavailable scenarios *(deferred — requires dedicated multi-provider test environment)*
 
 **Provider scope:** All 4 providers live-validated. Anthropic (10/10 + benchmarked). OpenAI (3/3). Google/Gemini (3/3). FLOCK (6/6). Federated (4/4 with all 4 providers).
 
@@ -179,7 +167,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] Baseline, micro, fast, and balanced modes benchmarked with recorded cost/latency envelopes
 - [x] Divergence example: security prompts in fast mode produce 10-11 disagreements and 5-6 warnings vs 0 from baseline
 - [x] Diminishing returns example: balanced is 13.3x cost but 9/10 uncertain vs fast at 6.5x cost
-- [ ] Full-parliament mode benchmarked on at least a small high-stakes prompt set
+- [x] Full-parliament mode benchmarked on at least a small high-stakes prompt set
 
 **Benchmark scope:** Deep mode was not benchmarked due to cost ($0.15+/run estimated). It is implemented with budget limits (60k tokens / 60s) but not validated with live data.
 
@@ -223,7 +211,7 @@ Parliagent is a skill-first multi-agent deliberation engine. A Speaker receives 
 - [x] All 33 seats have production-grade profiles (system prompts, strengths, blind spots, speaking style)
 - [x] All 33 seats have substrate policies (preferredProvider, fallbackChain, modelClass)
 - [x] All 33 seats are first-class invokable (`isStarter: true`, no expansion-only designation)
-- [x] `--full-parliament` flag activates all 33 seats as explicit opt-in
+- [x] `--full-parliagent` flag activates all 33 seats as explicit opt-in
 - [x] Chamber presets updated to draw from full roster (not just former starters)
 - [x] Full parliament benchmarked: 3 prompts, ~247k tokens, ~44s, 133 avg disagreements
 - [x] Documentation updated: README, SKILL.md, Plans.md no longer describe any seats as deferred
@@ -569,7 +557,7 @@ In addition to the chamber-size modes, the complete release should expose an exp
 
 Required behavior:
 
-- support a `full-parliament` invocation path or equivalent flag
+- support a `full-parliagent` invocation path or equivalent flag
 - default users should still prefer `micro` / `fast` / `balanced` / `deep`
 - full parliament is opt-in because of cost and latency
 - benchmark it on a small number of important prompts before recommending it

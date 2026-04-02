@@ -84,9 +84,8 @@ These defaults are backed by benchmark data (10 prompts × 3 modes: micro/fast/b
 | **OpenAI** | Live-validated | `OPENAI_API_KEY` |
 | **Google/Gemini** | Live-validated | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
 | **FLOCK** | Live-validated (OpenAI-compatible) | `FLOCK_API_KEY` + `FLOCK_MODEL` |
-| **Federated** | Live-validated (all 4 providers) | Multiple keys |
 
-All four providers are live-validated individually and in federated combinations. Set at least one key.
+All four providers are live-validated individually and in federated combinations (multiple keys). Set at least one key.
 
 FLOCK uses the OpenAI-compatible API format with `x-litellm-api-key` header auth. Model must be specified explicitly:
 

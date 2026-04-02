@@ -14,6 +14,26 @@
 | Phase 4: Release Readiness | **complete** | Package artifact verified |
 | Phase 5: 33-Seat Complete Parliament | **complete** | All 33 production-grade, benchmarked |
 | **Parliagent Upgrade (v0.3)** | **complete** | Protocol + convergence + evidence + evaluation |
+| **v0.3 Review Fixes (2 rounds)** | **complete** | 13 issues resolved from code review |
+| **v0.3.1 Hardening** | **complete** | Runtime compat, parsing robustness, protocol completion |
+
+## v0.3.1 Hardening Summary
+
+### Runtime and Structured Output
+- OpenAI adapter: auto-selects `max_completion_tokens` for o-series models, `max_tokens` for standard models
+- JSON parser rewritten with brace-depth tracking — handles markdown fences, preamble/trailing text, nested objects
+- Seat failure isolation: failed seats are excluded from convergence calculations, tracked in separate warnings
+- `usage` fields made optional in OpenAI response cast (prevents crash on missing usage data)
+
+### Protocol Completion
+- Resolution protocol extended to cover `risk_warning` and `priority_conflict` disputes (not just `claim_conflict`)
+- `getDisputeParticipants` and `formatDisputeContext` include all resolvable dispute types
+- Protocol invariant tests: convergence cannot claim "converged" with open disputes (9 new invariant tests)
+
+### Truth Surface Alignment
+- Plans.md: merged duplicate Phase 2.6/5, checked Phase 2.7 language support, fixed flag names, checked FLOCK
+- Provider terminology unified to "live-validated" across README, SKILL.md, HANDOFF
+- Removed "Federated" as provider table row (it's an execution profile, not a provider)
 
 ## Upgrade Summary (v0.3)
 
@@ -64,10 +84,11 @@
 
 ## Test Suite
 
-210 tests across 17 files — all passing. Includes:
+222 tests across 18 files — all passing. Includes:
 - 26 protocol upgrade tests (agenda stages, dispute lifecycle, convergence, evidence)
 - 10 evaluation rubric tests
 - 23 review-fix integration tests (determineDecisionType, Speaker.debate() integration, calibration with trace, all 8 fixtures exercised)
+- 9 protocol invariant tests (convergence safety, dispute-driven decisionType, resolution coverage)
 
 ## Provider Validation Status
 

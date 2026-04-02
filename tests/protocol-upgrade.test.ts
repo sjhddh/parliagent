@@ -248,12 +248,13 @@ describe("Issue-level convergence", () => {
 });
 
 describe("Targeted dispute exchange — getDisputeParticipants", () => {
-  it("returns seats from top open claim_conflict disputes", () => {
+  it("returns seats from top open resolvable disputes", () => {
     const disputes: DisagreementRecord[] = [
       { id: "D-1", topic: "Dispute 1", seats: ["A", "B"], type: "claim_conflict", status: "open" },
       { id: "D-2", topic: "Dispute 2", seats: ["C", "D"], type: "claim_conflict", status: "open" },
       { id: "D-3", topic: "Warning", seats: ["E"], type: "risk_warning", status: "open" },
       { id: "D-4", topic: "Resolved", seats: ["F", "G"], type: "claim_conflict", status: "resolved" },
+      { id: "D-5", topic: "Uncertain", seats: ["H"], type: "uncertainty", status: "open" },
     ];
 
     const participants = getDisputeParticipants(disputes, 3);
@@ -261,13 +262,14 @@ describe("Targeted dispute exchange — getDisputeParticipants", () => {
     expect(participants).toContain("B");
     expect(participants).toContain("C");
     expect(participants).toContain("D");
-    expect(participants).not.toContain("E");
+    expect(participants).toContain("E");
     expect(participants).not.toContain("F");
+    expect(participants).not.toContain("H");
   });
 
-  it("returns empty when no open claim_conflicts", () => {
+  it("returns empty when no open resolvable disputes", () => {
     const disputes: DisagreementRecord[] = [
-      { topic: "Warning", seats: ["A"], type: "risk_warning", status: "open" },
+      { topic: "Uncertain", seats: ["A"], type: "uncertainty", status: "open" },
       { topic: "Resolved", seats: ["B", "C"], type: "claim_conflict", status: "resolved" },
     ];
     expect(getDisputeParticipants(disputes)).toEqual([]);

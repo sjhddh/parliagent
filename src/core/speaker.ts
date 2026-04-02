@@ -167,6 +167,7 @@ export class Speaker {
     let budget = createBudget({ maxTokens, maxLatencyMs, maxRounds });
 
     const allRounds: RoundResult[] = [];
+    const seatFailureWarnings: string[] = [];
     let stopReason: StopReason = "round_limit";
 
     for (let round = 1; round <= maxRounds; round++) {
@@ -210,6 +211,12 @@ export class Speaker {
         stage,
         disputeContext,
       );
+
+      if (roundResult.failedSeats.length > 0) {
+        seatFailureWarnings.push(
+          `Round ${round}: ${roundResult.failedSeats.length} seat(s) failed to respond: ${roundResult.failedSeats.join(", ")}`,
+        );
+      }
 
       budget = addTokens(budget, roundResult.tokensUsed);
       budget = advanceRound(budget);
@@ -258,6 +265,7 @@ export class Speaker {
       ...safetyWarnings,
       ...extractWarnings(allRounds),
       ...collapseWarnings,
+      ...seatFailureWarnings,
     ];
 
     const response: ParliagentResponse = {
@@ -318,8 +326,10 @@ export class Speaker {
 
     if (priorDisagreements) {
       const openDisputes = priorDisagreements.filter((d) => d.status === "open");
-      const claimConflicts = openDisputes.filter((d) => d.type === "claim_conflict");
-      if (claimConflicts.length >= 1) {
+      const resolvable = openDisputes.filter((d) =>
+        d.type === "claim_conflict" || d.type === "risk_warning" || d.type === "priority_conflict",
+      );
+      if (resolvable.length >= 1) {
         candidate = "resolution";
       }
     }
@@ -332,10 +342,11 @@ export class Speaker {
   }
 
   private formatDisputeContext(disagreements: DisagreementRecord[]): string {
-    const open = disagreements.filter((d) => d.status === "open" && d.type === "claim_conflict");
+    const resolvableTypes = new Set(["claim_conflict", "risk_warning", "priority_conflict"]);
+    const open = disagreements.filter((d) => d.status === "open" && resolvableTypes.has(d.type));
     return open
       .slice(0, 5)
-      .map((d, i) => `${i + 1}. [${d.seats.join(" vs ")}] ${d.topic}`)
+      .map((d, i) => `${i + 1}. [${d.type}: ${d.seats.join(" vs ")}] ${d.topic}`)
       .join("\n");
   }
 
@@ -348,7 +359,7 @@ export class Speaker {
     seed?: string,
     stage?: AgendaStage,
     disputeContext?: string,
-  ): Promise<{ statements: SeatStatement[]; tokensUsed: number }> {
+  ): Promise<{ statements: SeatStatement[]; failedSeats: string[]; tokensUsed: number }> {
     const isRebuttal = round > 1 && previousStatements.length > 0;
     const isResolution = stage === "resolution";
     const numericSeed = seed ? hashSeed(seed) : undefined;
@@ -397,7 +408,14 @@ export class Speaker {
     });
 
     const statements = await Promise.all(promises);
-    return { statements, tokensUsed: roundTokens };
+    const successful = statements.filter((s) => !isSeatFailure(s));
+    const failed = statements.filter((s) => isSeatFailure(s));
+
+    return {
+      statements: successful.length > 0 ? successful : statements,
+      failedSeats: failed.map((s) => s.seatId),
+      tokensUsed: roundTokens,
+    };
   }
 
   private async synthesize(
@@ -444,21 +462,47 @@ export class Speaker {
   }
 }
 
+/**
+ * Extract and parse JSON from LLM output that may contain markdown fences,
+ * preamble text, trailing commentary, or multiple JSON-like blocks.
+ */
+function extractJSON(raw: string): unknown {
+  let text = raw.trim();
+
+  text = text.replace(/```(?:json|JSON|js|javascript)?\s*\n?/g, "").trim();
+
+  const braceStart = text.indexOf("{");
+  if (braceStart === -1) throw new Error("No JSON object found");
+
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+
+  for (let i = braceStart; i < text.length; i++) {
+    const ch = text[i];
+    if (escape) { escape = false; continue; }
+    if (ch === "\\") { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === "{") depth++;
+    if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return JSON.parse(text.slice(braceStart, i + 1));
+      }
+    }
+  }
+
+  throw new Error("Unbalanced JSON braces");
+}
+
 function parseStatement(
   raw: string,
   seatId: string,
   round: number,
 ): SeatStatement {
   try {
-    const cleaned = raw
-      .replace(/```json\s*/g, "")
-      .replace(/```\s*/g, "")
-      .trim();
-
-    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON found");
-
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = extractJSON(raw) as Record<string, unknown>;
 
     const claims = Array.isArray(parsed.claims)
       ? parsed.claims.slice(0, 3).map(String)
@@ -514,6 +558,10 @@ function validateConfidence(c: unknown): 1 | 2 | 3 | 4 | 5 {
   const n = Number(c);
   if (n >= 1 && n <= 5) return Math.round(n) as 1 | 2 | 3 | 4 | 5;
   return 3;
+}
+
+function isSeatFailure(stmt: SeatStatement): boolean {
+  return stmt.claims.length === 1 && stmt.claims[0] === "Seat could not produce a response";
 }
 
 function fallbackStatement(
