@@ -53,3 +53,40 @@ function normalizeNode(node: Record<string, unknown>): Record<string, unknown> {
 
   return node;
 }
+
+/**
+ * Strip `additionalProperties` from a JSON schema tree.
+ * Gemini's API does not recognise this keyword and rejects payloads that
+ * include it.  Call this on the *already-normalised* schema before sending
+ * it to Google's generateContent endpoint.
+ */
+export function stripAdditionalProperties(
+  schema: Record<string, unknown>,
+): Record<string, unknown> {
+  return stripNode(structuredClone(schema));
+}
+
+function stripNode(node: Record<string, unknown>): Record<string, unknown> {
+  delete node.additionalProperties;
+
+  if (node.properties && typeof node.properties === "object") {
+    const props = node.properties as Record<string, Record<string, unknown>>;
+    for (const [key, value] of Object.entries(props)) {
+      if (value && typeof value === "object") {
+        props[key] = stripNode(value);
+      }
+    }
+  }
+
+  if (node.items && typeof node.items === "object") {
+    node.items = stripNode(node.items as Record<string, unknown>);
+  }
+
+  for (const combo of ["anyOf", "oneOf", "allOf"] as const) {
+    if (Array.isArray(node[combo])) {
+      node[combo] = (node[combo] as Record<string, unknown>[]).map(stripNode);
+    }
+  }
+
+  return node;
+}
